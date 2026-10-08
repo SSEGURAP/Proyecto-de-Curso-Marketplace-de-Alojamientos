@@ -1,0 +1,6 @@
+<select [ngModel]="value" (ngModelChange)="onHandleChange($event)">
+  <option value="''">{{ placeholder }}</option>
+  @for (option of options; track option) {
+    <option [value]="option">{{ option }}</option>
+  }
+</select>
