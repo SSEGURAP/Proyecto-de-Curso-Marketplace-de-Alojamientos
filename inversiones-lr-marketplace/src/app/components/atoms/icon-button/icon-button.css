@@ -1,0 +1,22 @@
+button{
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-control);
+    color: var(--color-title);
+    cursor: pointer;
+}
+
+button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.material-icons{
+    font-size: 18px;
+}
