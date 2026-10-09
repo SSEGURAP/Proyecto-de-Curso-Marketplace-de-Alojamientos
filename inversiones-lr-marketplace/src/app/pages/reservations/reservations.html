@@ -1,0 +1,53 @@
+<section class="reservations">
+  <div class="header">
+    <app-label text="Mis reservas" variant="title"></app-label>
+  </div>
+
+  @if (reservas.length === 0) {
+    <div class="empty">
+      <app-label text="Aún no tienes reservas" variant="heading"></app-label>
+      <p>Explora los alojamientos y reserva tu próxima estadía.</p>
+      <app-button
+        label="Ver alojamientos"
+        variant="accent"
+        (clicked)="irACatalogo()">
+      </app-button>
+    </div>
+  } @else {
+    <div class="lista">
+      @for (reserva of reservas; track reserva.id) {
+        <article class="card">
+          <div class="info">
+            <app-label [text]="reserva.alojamientoNombre" variant="heading"></app-label>
+            <app-label [text]="reserva.ciudad" variant="muted"></app-label>
+
+            <div class="detalle">
+              <span><strong>Llegada:</strong> {{ formatFecha(reserva.fechaLlegada) }}</span>
+              <span><strong>Salida:</strong> {{ formatFecha(reserva.fechaSalida) }}</span>
+              <span><strong>Noches:</strong> {{ reserva.numeroNoches }}</span>
+              <span><strong>Huéspedes:</strong> {{ reserva.numeroHuespedes }}</span>
+            </div>
+
+            <div class="huesped">
+              <span>{{ reserva.nombreHuesped }}</span>
+              <span>{{ reserva.correoHuesped }}</span>
+            </div>
+
+            <div class="precio">
+              <app-label [text]="formatMoney(reserva.valorTotal)" variant="heading"></app-label>
+              <span class="estado">{{ reserva.estado }}</span>
+            </div>
+          </div>
+
+          <div class="acciones">
+            <app-button
+              label="Eliminar"
+              variant="outline"
+              (clicked)="eliminarReserva(reserva.id)">
+            </app-button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

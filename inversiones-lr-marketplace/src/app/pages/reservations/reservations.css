@@ -1,0 +1,92 @@
+.reservations {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) 40px;
+}
+
+.header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) 0;
+}
+
+.empty p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.detalle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.huesped {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.precio {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+}
+
+.estado {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.acciones {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .reservations {
+    padding: var(--spacing-md) 16px;
+  }
+}
