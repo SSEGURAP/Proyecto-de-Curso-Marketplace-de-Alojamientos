@@ -1,0 +1,10 @@
+select{
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-surface-muted);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    cursor: pointer;
+}

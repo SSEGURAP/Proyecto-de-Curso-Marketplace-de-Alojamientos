@@ -1,0 +1,14 @@
+.photo-rating {
+  position: relative;
+  height: 232px;
+}
+
+app-photo { 
+    height: 100%; 
+}
+
+.rating {
+  position: absolute;
+  left: var(--spacing-sm);
+  bottom: var(--spacing-sm);
+}

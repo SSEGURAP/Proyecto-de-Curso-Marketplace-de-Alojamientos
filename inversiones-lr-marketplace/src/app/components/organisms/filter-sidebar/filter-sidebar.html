@@ -1,0 +1,53 @@
+<aside class="sidebar">
+  <app-label text="Filtros" variant="title"></app-label>
+
+  <div class="card">
+    <app-select-field
+      label="Ciudad"
+      placeholder="Todas las ciudades"
+      [options]="ciudades"
+      [value]="ciudad"
+      (valueChange)="onCiudadChange($event)">
+    </app-select-field>
+
+    <hr>
+
+    <app-counter-field
+      label="Huéspedes"
+      unit="huéspedes"
+      [value]="huespedes"
+      [min]="1"
+      [max]="10"
+      (valueChange)="onHuespedesChange($event)">
+    </app-counter-field>
+
+    <hr>
+
+    <app-checkbox-group
+      label="Tipo de propiedad"
+      [options]="tipos"
+      [selected]="tiposSeleccionados"
+      (selectedChange)="onTiposChange($event)">
+    </app-checkbox-group>
+
+    <hr>
+
+    <app-range-field
+      label="Precio máximo"
+      [min]="0"
+      [max]="precioLimite"
+      [step]="10000"
+      [value]="precioMaximo"
+      (valueChange)="onPrecioChange($event)">
+    </app-range-field>
+
+    <hr>
+
+    <app-button 
+      label="Limpiar filtros" 
+      variant="outline" 
+      [fullWidth]="true" 
+      (clicked)="clearFilters()">
+    </app-button>
+  </div>
+</aside>
