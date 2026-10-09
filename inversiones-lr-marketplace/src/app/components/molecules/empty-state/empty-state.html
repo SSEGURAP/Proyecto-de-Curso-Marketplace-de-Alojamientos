@@ -1,0 +1,13 @@
+<div class="empty-state">
+  <!-- Ilustración SVG (lupa + texto "Filtros no coinciden") -->
+  <div class="illustration" [innerHTML]="svgContent"></div>
+
+  <app-label [text]="title" variant="heading"></app-label>
+  <p class="subtitle">{{ subtitle }}</p>
+
+  <app-button
+    [label]="buttonLabel"
+    variant="outline"
+    (clicked)="onReset()">
+  </app-button>
+</div>

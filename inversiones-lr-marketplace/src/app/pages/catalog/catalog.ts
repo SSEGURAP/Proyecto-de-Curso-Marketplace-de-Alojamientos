@@ -5,11 +5,12 @@ import { FilterSidebar } from '../../components/organisms/filter-sidebar/filter-
 import { AlojamientoCard } from '../../components/organisms/alojamiento-card/alojamiento-card';
 import { AlojamientoService } from '../../services/alojamiento';
 import { Alojamiento, FiltroAlojamiento } from '../../models/alojamiento.model';
+import { EmptyState } from '../../components/molecules/empty-state/empty-state';
 
 @Component({
   selector: 'app-catalog-page',
   standalone: true,
-  imports: [Label, FilterSidebar, AlojamientoCard],
+  imports: [Label, FilterSidebar, AlojamientoCard, EmptyState],
   templateUrl: './catalog.html',
   styleUrl: './catalog.css',
 })
@@ -75,4 +76,9 @@ export class CatalogPage implements OnInit {
   onViewDetail(id: number): void {
     this.router.navigate(['/alojamiento', id]);
   }
+
+  onResetFilters(): void {
+  // Fuerza la recarga de todos los alojamientos activos
+  this.cargarDatosIniciales();
+}
 }
