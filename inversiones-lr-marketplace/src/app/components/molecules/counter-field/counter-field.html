@@ -1,0 +1,16 @@
+<div class="field">
+    <app-label [text]="label"></app-label>
+    <div class="counter">
+        <app-icon-button 
+            icon="add" 
+            [disabled]="value >= max" 
+            (clicked)="increase()">
+        </app-icon-button>
+        <span>{{value}} {{unit}}</span>
+        <app-icon-button 
+            icon="remove"
+            [disabled]="value <= min" 
+            (clicked)="decrease()">
+        </app-icon-button>
+    </div>
+</div>
