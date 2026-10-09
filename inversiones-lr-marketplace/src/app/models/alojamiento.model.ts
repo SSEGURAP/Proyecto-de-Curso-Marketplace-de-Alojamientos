@@ -27,6 +27,12 @@ export interface Resena {
   comentario: string;
 }
 
+/** Forma del archivo assets/data/marketplace-data.json */
+export interface MarketplaceData {
+  alojamientos: Alojamiento[];
+  resenas: Resena[];
+}
+
 export interface Cotizacion {
   alojamientoId: number;
   fechaLlegada: string;

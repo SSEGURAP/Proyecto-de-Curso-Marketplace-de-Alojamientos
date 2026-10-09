@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Label } from '../../atoms/label/label';
-import { Button } from '../../atoms/button/button';
 import { AlojamientoCardCompressed } from '../alojamiento-card-compressed/alojamiento-card-compressed';
 import { AlojamientoService } from '../../../services/alojamiento';
 import { Alojamiento } from '../../../models/alojamiento.model';
@@ -9,13 +8,13 @@ import { Alojamiento } from '../../../models/alojamiento.model';
 @Component({
   selector: 'app-featured-alojamientos',
   standalone: true,
-  imports: [Label, Button, AlojamientoCardCompressed],
+  imports: [Label, AlojamientoCardCompressed, RouterLink],
   templateUrl: './featured-alojamientos.html',
   styleUrl: './featured-alojamientos.css',
 })
 export class FeaturedAlojamientos implements OnInit {
 
-  destacados: Alojamiento[] = [];
+  alojamientosDestacados: Alojamiento[] = [];
   cargando: boolean = true;
 
   constructor(
@@ -32,15 +31,11 @@ export class FeaturedAlojamientos implements OnInit {
 
     this.alojamientoService.getAlojamientos().subscribe({
       next: (data) => {
-        // Ordenamos por calificación descendente y tomamos los 3 mejores
-        this.destacados = [...data]
-          .sort((a, b) => b.calificacion - a.calificacion)
-          .slice(0, 3);
-
+        this.alojamientosDestacados = data.slice(0, 3);
         this.cargando = false;
       },
       error: (err) => {
-        console.error('Error al cargar destacados', err);
+        console.error('Error al cargar alojamientos destacados', err);
         this.cargando = false;
       }
     });

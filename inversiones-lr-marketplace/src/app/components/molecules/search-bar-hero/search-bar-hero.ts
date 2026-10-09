@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IconComponent } from '../../atoms/icon/icon';
 import { InputComponent } from '../../atoms/input/input';
 
 @Component({
   selector: 'app-search-bar-hero',
   standalone: true,
-  imports: [IconComponent, InputComponent],
+  imports: [ InputComponent],
   templateUrl: './search-bar-hero.html',
   styleUrl: './search-bar-hero.css',
 })
