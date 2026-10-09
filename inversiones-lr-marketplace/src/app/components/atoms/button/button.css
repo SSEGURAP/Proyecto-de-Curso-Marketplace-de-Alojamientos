@@ -42,3 +42,18 @@ button.outline {
 button.outline:hover:not(:disabled) {
   background-color: #f0f4fa;
 }
+
+button.accent {
+  background-color: var(--color-accent);
+  color: var(--color-text-strong);
+  font-weight: 600;
+}
+
+button.accent:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+button.full-width {
+  width: 100%;
+  padding: var(--spacing-md);
+}
