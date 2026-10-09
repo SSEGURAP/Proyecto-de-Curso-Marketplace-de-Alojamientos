@@ -1,0 +1,40 @@
+<article class="card-compressed">
+  <!-- Imagen + Badge de calificación -->
+  <div class="photo-wrapper">
+    <app-photo
+      [src]="alojamiento.imagenPrincipal"
+      [alt]="alojamiento.nombre">
+    </app-photo>
+
+    <app-badge
+      class="rating"
+      [text]="alojamiento.calificacion + ' ★'"
+      variant="overlay">
+    </app-badge>
+  </div>
+
+  <!-- Información -->
+  <div class="info">
+    <app-label
+      [text]="getUbicacion()"
+      variant="muted">
+    </app-label>
+
+    <app-label
+      [text]="alojamiento.nombre"
+      variant="heading">
+    </app-label>
+
+    <app-price-tag
+      [price]="alojamiento.precioNoche">
+    </app-price-tag>
+  </div>
+
+  <!-- Botón -->
+  <app-button
+    label="Ver Detalle"
+    variant="accent"
+    [fullWidth]="true"
+    (clicked)="onViewDetail()">
+  </app-button>
+</article>

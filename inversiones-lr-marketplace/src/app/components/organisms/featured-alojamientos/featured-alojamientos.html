@@ -1,0 +1,27 @@
+<section class="featured">
+  <div class="header">
+    <app-label text="Alojamientos destacados" variant="title"></app-label>
+    <p class="subtitle">Los mejor calificados por nuestros huéspedes</p>
+  </div>
+
+  @if (cargando) {
+    <p class="loading">Cargando destacados...</p>
+  } @else {
+    <div class="grid">
+      @for (alojamiento of destacados; track alojamiento.id) {
+        <app-alojamiento-card-compressed
+          [alojamiento]="alojamiento"
+          (viewDetail)="onViewDetail($event)">
+        </app-alojamiento-card-compressed>
+      }
+    </div>
+
+    <div class="cta">
+      <app-button
+        label="Explorar más alojamientos"
+        variant="outline"
+        (clicked)="explorarMas()">
+      </app-button>
+    </div>
+  }
+</section>
