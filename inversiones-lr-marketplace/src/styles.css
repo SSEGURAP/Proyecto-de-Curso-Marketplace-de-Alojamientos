@@ -1,4 +1,5 @@
 :root {
+  --font-family: 'Inter', sans-serif;
   --color-primary: #001745;
   --color-title: #10224D;
   --color-text: #232D35;
@@ -25,4 +26,15 @@
   --color-accent: #F3B901;
   --color-accent-hover: #DBA600;
   --radius-full: 999px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
 }
