@@ -45,3 +45,12 @@
   font-size: 14px;
   font-weight: 500;
 }
+
+.logo-section {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo-section:hover {
+  opacity: 0.9;
+}

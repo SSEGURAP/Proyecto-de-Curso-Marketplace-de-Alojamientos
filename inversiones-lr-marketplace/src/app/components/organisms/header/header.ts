@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { SearchBar } from '../../molecules/search-bar/search-bar';
-import { IconComponent } from '../../atoms/icon/icon';
 import { Logo } from '../../atoms/logo/logo';
-import { LinkComponent } from '../../atoms/link/link';   // ← esta línea
+import { LinkComponent } from '../../atoms/link/link';
 
 @Component({
-  imports: [SearchBar, IconComponent, Logo, LinkComponent],  // ← agrega LinkComponent aquí
   selector: 'app-header',
-  styleUrl: './header.css',
+  standalone: true,
+  imports: [SearchBar, Logo, LinkComponent],
   templateUrl: './header.html',
+  styleUrl: './header.css',
 })
 export class Header {
 
@@ -22,6 +23,8 @@ export class Header {
     checkOut: string;
   }>();
 
+  constructor(private router: Router) {}
+
   onSearch(): void {
     this.search.emit({
       destination: this.destination,
@@ -30,4 +33,7 @@ export class Header {
     });
   }
 
+  irAHome(): void {
+    this.router.navigate(['/home']);
+  }
 }

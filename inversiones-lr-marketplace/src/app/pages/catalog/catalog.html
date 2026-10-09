@@ -1,0 +1,31 @@
+<section class="catalog">
+  <div class="header">
+    <app-label text="Alojamientos" variant="title"></app-label>
+  </div>
+
+  <div class="content">
+    <!-- Sidebar de filtros -->
+    <app-filter-sidebar
+      [ciudades]="ciudades"
+      [tipos]="tipos"
+      [precioLimite]="precioLimite"
+      (filtersChange)="onFiltersChange($event)">
+    </app-filter-sidebar>
+
+    <!-- Grid de tarjetas -->
+    <div class="grid">
+      @if (cargando) {
+        <p class="empty">Cargando alojamientos...</p>
+      } @else if (alojamientos.length === 0) {
+        <p class="empty">No se encontraron alojamientos con los filtros seleccionados.</p>
+      } @else {
+        @for (alojamiento of alojamientos; track alojamiento.id) {
+          <app-alojamiento-card
+            [alojamiento]="alojamiento"
+            (viewDetail)="onViewDetail($event)">
+          </app-alojamiento-card>
+        }
+      }
+    </div>
+  </div>
+</section>
