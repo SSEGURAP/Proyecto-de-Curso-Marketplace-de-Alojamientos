@@ -4,7 +4,6 @@
   </div>
 
   <div class="content">
-    <!-- Sidebar de filtros -->
     <app-filter-sidebar
       [ciudades]="ciudades"
       [tipos]="tipos"
@@ -12,12 +11,13 @@
       (filtersChange)="onFiltersChange($event)">
     </app-filter-sidebar>
 
-    <!-- Grid de tarjetas -->
     <div class="grid">
       @if (cargando) {
         <p class="empty">Cargando alojamientos...</p>
+      } @else if (error) {
+        <p class="empty error">{{ error }}</p>
       } @else if (alojamientos.length === 0) {
-        <p class="empty">No se encontraron alojamientos con los filtros seleccionados.</p>
+        <app-empty-state (resetFilters)="limpiarFiltros()"></app-empty-state>
       } @else {
         @for (alojamiento of alojamientos; track alojamiento.id) {
           <app-alojamiento-card
