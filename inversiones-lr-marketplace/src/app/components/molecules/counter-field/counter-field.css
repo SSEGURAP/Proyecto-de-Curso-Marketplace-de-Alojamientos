@@ -9,7 +9,7 @@
     align-items: center;
     justify-content: space-between;
     background-color: var(--color-surface-muted);
-    border-radius: var(--raduis-sm);
+    border-radius: var(--radius-sm);
     font-size: var(--font-size-md);
     color: var(--color-title);
 }
