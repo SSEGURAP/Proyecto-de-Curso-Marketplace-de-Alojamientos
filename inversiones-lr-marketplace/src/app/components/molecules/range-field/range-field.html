@@ -1,0 +1,11 @@
+<div class="field">
+  <app-label [text]="label"></app-label>
+  <app-range-slider
+    [min]="min"
+    [max]="max"
+    [step]="step"
+    [value]="value"
+    (valueChange)="onValueChange($event)">
+  </app-range-slider>
+  <span class="value">{{ formatPrice() }}</span>
+</div>
