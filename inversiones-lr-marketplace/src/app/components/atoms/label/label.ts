@@ -8,5 +8,5 @@ import { Component, Input } from '@angular/core';
 })
 export class Label {
   @Input() text: string = '';
-  @Input() variant: 'title' | 'field' = 'field';
+  @Input() variant: 'title' | 'field' | 'heading' | 'body' | 'muted' = 'field';
 }
