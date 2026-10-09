@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   imports: [],
@@ -6,4 +6,17 @@ import { Component } from '@angular/core';
   styleUrl: './link.css',
   templateUrl: './link.html',
 })
-export class Link {}
+export class LinkComponent {
+
+  @Input() label: string = '';
+  @Input() href: string = '#';
+  @Input() active: boolean = false;
+
+  @Output() clicked = new EventEmitter<void>();
+
+  onClick(event: Event): void {
+    event.preventDefault();
+    this.clicked.emit();
+  }
+
+}
