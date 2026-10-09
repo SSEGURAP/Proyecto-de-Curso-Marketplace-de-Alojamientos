@@ -58,6 +58,6 @@ export interface Reserva {
 export interface FiltroAlojamiento {
   ciudad?: string;
   huespedes?: number;
-  tipo?: string;
+  tipos?: string[];
   precioMaximo?: number;
 }
