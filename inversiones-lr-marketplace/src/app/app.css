@@ -1,0 +1,8 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+main {
+  /* El contenido de las páginas se renderiza aquí */
+}
