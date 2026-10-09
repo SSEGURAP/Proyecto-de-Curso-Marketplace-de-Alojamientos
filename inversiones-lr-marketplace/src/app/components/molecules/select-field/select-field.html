@@ -1,0 +1,9 @@
+<div class="field">
+    <app-label [text]="label"></app-label>
+    <app-select
+        [options]="options"
+        [placeholder]="placeholder"
+        [value]="value"
+        (valueChange)="valueChange.emit($event)">
+    </app-select>
+</div>

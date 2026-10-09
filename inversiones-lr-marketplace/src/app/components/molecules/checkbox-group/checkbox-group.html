@@ -1,0 +1,10 @@
+<div class="field">
+    <app-label [text]="label"></app-label>
+    @for (option of options; track option){
+        <app-checkbox
+            [label]="option"
+            [isChecked]="isSelected(option)"
+            (checkedChange)="onToggle(option, $event)">
+        </app-checkbox>
+    }
+</div>
