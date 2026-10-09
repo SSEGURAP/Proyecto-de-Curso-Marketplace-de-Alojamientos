@@ -1,18 +1,7 @@
-<section class="home">
-  <div class="hero">
-    <app-label
-      text="Encuentra tu próximo alojamiento"
-      variant="title">
-    </app-label>
+<div class="home-page">
+  <!-- Hero Section -->
+  <app-hero (search)="onSearch($event)"></app-hero>
 
-    <p class="subtitle">
-      Explora cientos de propiedades en las mejores ciudades de Colombia.
-    </p>
-
-    <app-button
-      label="Ver alojamientos"
-      variant="accent"
-      routerLink="/alojamientos">
-    </app-button>
-  </div>
-</section>
+  <!-- Alojamientos Destacados -->
+  <app-featured-alojamientos></app-featured-alojamientos>
+</div>
