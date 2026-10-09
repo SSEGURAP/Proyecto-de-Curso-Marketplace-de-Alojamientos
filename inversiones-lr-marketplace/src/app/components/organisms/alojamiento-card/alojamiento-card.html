@@ -1,0 +1,24 @@
+<article class="card">
+  <app-photo-rating
+    [src]="alojamiento.imagenPrincipal"
+    [alt]="alojamiento.nombre"
+    [rating]="alojamiento.calificacion">
+  </app-photo-rating>
+
+  <div class="info">
+    <app-label [text]="getUbicacion()" variant="muted"></app-label>
+    <app-label [text]="alojamiento.nombre" variant="heading"></app-label>
+    <app-label [text]="getDetalle()" variant="muted"></app-label>
+    <app-price-tag [price]="alojamiento.precioNoche"></app-price-tag>
+    <app-service-list [services]="alojamiento.servicios"></app-service-list>
+  </div>
+
+  <hr>
+
+  <app-button
+    label="Ver Detalle"
+    variant="accent"
+    [fullWidth]="true"
+    (clicked)="onViewDetail()">
+  </app-button>
+</article>

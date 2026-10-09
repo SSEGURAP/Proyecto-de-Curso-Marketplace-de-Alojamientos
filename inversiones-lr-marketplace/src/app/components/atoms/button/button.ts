@@ -11,7 +11,8 @@ export class Button {
   @Input() label: string = '';
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() disabled: boolean = false;
-  @Input() variant: 'primary' | 'secondary' | 'outline' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'outline' | 'accent' = 'primary';
+  @Input() fullWidth: boolean = false;
 
   @Output() clicked = new EventEmitter<void>();
 
