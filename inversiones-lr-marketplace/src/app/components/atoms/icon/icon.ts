@@ -2,11 +2,11 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   imports: [],
-  selector: 'app-icon',
+  selector: 'app-icon-component',
   styleUrl: './icon.css',
   templateUrl: './icon.html',
 })
-export class Icon {
+export class IconComponent {
   @Input() name: string = '';
   @Input() size: string = '24px';
   @Input() color: string = 'currentColor';
