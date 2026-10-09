@@ -1,0 +1,5 @@
+.service-list { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: var(--spacing-xs); 
+}
