@@ -1,0 +1,15 @@
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.counter{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-surface-muted);
+    border-radius: var(--raduis-sm);
+    font-size: var(--font-size-md);
+    color: var(--color-title);
+}

@@ -1,0 +1,10 @@
+.title{
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-title);
+}
+
+.field{
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
