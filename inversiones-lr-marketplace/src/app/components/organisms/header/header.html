@@ -1,0 +1,38 @@
+<header class="header">
+  <div class="header-content">
+
+    <!-- Logo -->
+    <div class="logo-section">
+      <app-logo></app-logo>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-section">
+      <app-search-bar
+        [destination]="destination"
+        [checkIn]="checkIn"
+        [checkOut]="checkOut"
+        (destinationChange)="destination = $event"
+        (checkInChange)="checkIn = $event"
+        (checkOutChange)="checkOut = $event"
+        (search)="onSearch()">
+      </app-search-bar>
+    </div>
+
+    <!-- Acciones derecha -->
+    <div class="actions-section">
+      <app-link 
+        label="Mis reservas" 
+        href="/reservas"
+        [active]="false">
+      </app-link>
+
+      <app-link 
+        label="Alojamientos" 
+        href="/alojamientos"
+        [active]="false">
+      </app-link>
+    </div>
+
+  </div>
+</header>
