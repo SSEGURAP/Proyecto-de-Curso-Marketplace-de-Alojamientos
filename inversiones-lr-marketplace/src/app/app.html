@@ -6,3 +6,9 @@
   label="Cancelar" 
   variant="outline">
 </app-button>
+
+<app-input
+  placeholder="¿A dónde vas?"
+  [value]="destino"
+  (valueChange)="destino = $event">
+</app-input>
