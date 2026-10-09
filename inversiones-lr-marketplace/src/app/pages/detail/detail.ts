@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
 import { Button } from '../../components/atoms/button/button';
 import { Photo } from '../../components/atoms/photo/photo';
-import { InputComponent } from '../../components/atoms/input/input';
 import { ServiceList } from '../../components/molecules/service-list/service-list';
 import { PriceTag } from '../../components/molecules/price-tag/price-tag';
 import { CounterField } from '../../components/molecules/counter-field/counter-field';
@@ -19,7 +19,6 @@ import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamien
     Label,
     Button,
     Photo,
-    InputComponent,
     ServiceList,
     PriceTag,
     CounterField
@@ -27,13 +26,13 @@ import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamien
   templateUrl: './detail.html',
   styleUrl: './detail.css',
 })
-export class DetailPage implements OnInit {
-
+export class DetailPage implements OnInit, OnDestroy {
   alojamiento: Alojamiento | null = null;
   resenas: Resena[] = [];
   cotizacion: Cotizacion | null = null;
   cargando: boolean = true;
   error: string = '';
+  errorFormulario: string = '';
   mensajeExito: string = '';
 
   // Formulario
@@ -43,6 +42,11 @@ export class DetailPage implements OnInit {
   nombreHuesped: string = '';
   correoHuesped: string = '';
 
+  /** Fecha mínima seleccionable (hoy, en hora local) en formato YYYY-MM-DD */
+  hoy: string = this.obtenerHoyLocal();
+
+  private destroy$ = new Subject<void>();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -51,9 +55,9 @@ export class DetailPage implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    const id = idParam ? Number(idParam) : null;
+    const id = idParam ? Number(idParam) : NaN;
 
-    if (!id || isNaN(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
       this.error = 'ID de alojamiento inválido';
       this.cargando = false;
       return;
@@ -62,38 +66,48 @@ export class DetailPage implements OnInit {
     this.cargarAlojamiento(id);
   }
 
-  cargarAlojamiento(id: number): void {
-    this.cargando = true;
-
-    this.alojamientoService.getAlojamientoById(id).subscribe({
-      next: (data) => {
-        if (!data) {
-          this.error = 'Alojamiento no encontrado';
-          this.cargando = false;
-          return;
-        }
-        this.alojamiento = data;
-        this.numeroHuespedes = 1;
-        this.cargarResenas(id);
-        this.cargando = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = 'Error al cargar el alojamiento';
-        this.cargando = false;
-      }
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  cargarResenas(id: number): void {
-    this.alojamientoService.getResenasByAlojamiento(id).subscribe({
-      next: (data) => {
-        this.resenas = data;
-      }
-    });
+  /**
+   * Alojamiento + reseñas en una sola suscripción (sin subscribe anidado).
+   * Ambas consultas reutilizan la misma petición HTTP cacheada en el servicio.
+   * Si fallan las reseñas, el detalle igual se muestra.
+   */
+  private cargarAlojamiento(id: number): void {
+    this.cargando = true;
+
+    forkJoin({
+      alojamiento: this.alojamientoService.getAlojamientoById(id),
+      resenas: this.alojamientoService.getResenasByAlojamiento(id).pipe(
+        catchError(() => of<Resena[]>([]))
+      )
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ alojamiento, resenas }) => {
+          if (!alojamiento) {
+            this.error = 'Alojamiento no encontrado';
+          } else {
+            this.alojamiento = alojamiento;
+            this.resenas = resenas;
+            this.numeroHuespedes = 1;
+          }
+          this.cargando = false;
+        },
+        error: (err: Error) => {
+          console.error(err);
+          this.error = 'Error al cargar el alojamiento';
+          this.cargando = false;
+        }
+      });
   }
 
   calcularCotizacion(): void {
+    this.errorFormulario = '';
+
     if (!this.alojamiento || !this.fechaLlegada || !this.fechaSalida) {
       this.cotizacion = null;
       return;
@@ -105,9 +119,14 @@ export class DetailPage implements OnInit {
       this.fechaSalida,
       this.numeroHuespedes
     );
+
+    if (!this.cotizacion) {
+      this.errorFormulario = 'La fecha de salida debe ser posterior a la fecha de llegada.';
+    }
   }
 
   onFechasChange(): void {
+    this.mensajeExito = '';
     this.calcularCotizacion();
   }
 
@@ -122,7 +141,12 @@ export class DetailPage implements OnInit {
     }
 
     if (!this.nombreHuesped.trim() || !this.correoHuesped.trim()) {
-      alert('Por favor completa nombre y correo');
+      this.errorFormulario = 'Por favor completa nombre y correo.';
+      return;
+    }
+
+    if (!this.correoValido(this.correoHuesped)) {
+      this.errorFormulario = 'Ingresa un correo electrónico válido.';
       return;
     }
 
@@ -141,9 +165,16 @@ export class DetailPage implements OnInit {
       estado: 'CONFIRMADA'
     };
 
-    this.alojamientoService.guardarReserva(reserva);
+    const guardada = this.alojamientoService.guardarReserva(reserva);
+
+    if (!guardada) {
+      this.errorFormulario = 'No se pudo guardar la reserva en este navegador. Intenta de nuevo.';
+      return;
+    }
+
+    this.errorFormulario = '';
     this.mensajeExito = `¡Reserva confirmada! ID: ${reserva.id}`;
-    
+
     // Limpiar formulario
     this.fechaLlegada = '';
     this.fechaSalida = '';
@@ -156,7 +187,23 @@ export class DetailPage implements OnInit {
     this.router.navigate(['/alojamientos']);
   }
 
+  /** Método público: la plantilla no puede usar el Router privado directamente */
+  irAReservas(): void {
+    this.router.navigate(['/reservas']);
+  }
+
   formatMoney(valor: number): string {
     return '$' + valor.toLocaleString('es-CO') + ' COP';
+  }
+
+  private correoValido(correo: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim());
+  }
+
+  private obtenerHoyLocal(): string {
+    const d = new Date();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${d.getFullYear()}-${mes}-${dia}`;
   }
 }

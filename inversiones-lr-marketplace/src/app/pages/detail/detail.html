@@ -12,15 +12,16 @@
     @if (mensajeExito) {
       <div class="exito">
         <app-label [text]="mensajeExito" variant="heading"></app-label>
-        <app-button label="Ver mis reservas" variant="accent" (clicked)="router.navigate(['/reservas'])"></app-button>
+        <app-button label="Ver mis reservas" variant="accent" (clicked)="irAReservas()"></app-button>
       </div>
     }
 
-    <!-- Galería principal -->
+    <!-- Galería principal (imagen above-the-fold: carga inmediata) -->
     <div class="gallery">
       <app-photo
         [src]="alojamiento.imagenPrincipal"
-        [alt]="alojamiento.nombre">
+        [alt]="alojamiento.nombre"
+        loading="eager">
       </app-photo>
     </div>
 
@@ -66,6 +67,7 @@
           <input
             type="date"
             [(ngModel)]="fechaLlegada"
+            [attr.min]="hoy"
             (change)="onFechasChange()"
             class="date-input">
         </div>
@@ -75,6 +77,7 @@
           <input
             type="date"
             [(ngModel)]="fechaSalida"
+            [attr.min]="fechaLlegada || hoy"
             (change)="onFechasChange()"
             class="date-input">
         </div>
@@ -126,6 +129,10 @@
             placeholder="tu@correo.com"
             class="text-input">
         </div>
+
+        @if (errorFormulario) {
+          <p class="error-form" role="alert">{{ errorFormulario }}</p>
+        }
 
         <app-button
           label="Confirmar reserva"
