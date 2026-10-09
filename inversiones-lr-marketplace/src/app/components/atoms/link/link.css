@@ -1,0 +1,19 @@
+a {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #F6F7F8;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+a.active {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
