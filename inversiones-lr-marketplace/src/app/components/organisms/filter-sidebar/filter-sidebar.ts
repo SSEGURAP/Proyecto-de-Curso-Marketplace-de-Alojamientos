@@ -1,0 +1,67 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RangeField } from '../../molecules/range-field/range-field';
+import { CheckboxGroup } from '../../molecules/checkbox-group/checkbox-group';
+import { CounterField } from '../../molecules/counter-field/counter-field';
+import { SelectField } from '../../molecules/select-field/select-field';
+import { Button } from '../../atoms/button/button';
+import { Label } from '../../atoms/label/label';
+import { FiltroAlojamiento } from '../../../models/alojamiento.model';
+
+@Component({
+  imports: [Label, Button, SelectField, CounterField, CheckboxGroup, RangeField],
+  selector: 'app-filter-sidebar',
+  styleUrl: './filter-sidebar.css',
+  templateUrl: './filter-sidebar.html',
+})
+export class FilterSidebar {
+  @Input() ciudades: string[] = [];
+  @Input() tipos: string[] = [];
+  @Input() precioLimite: number = 1000000;
+  @Output() filtersChange = new EventEmitter<FiltroAlojamiento>();
+
+  ciudad: string = '';
+  huespedes: number = 1;
+  tiposSeleccionados: string[] = [];
+  precioMaximo: number = 0;
+
+  ngOnInit(): void {
+    this.precioMaximo = this.precioLimite;
+  }
+
+  onCiudadChange(ciudad: string): void {
+    this.ciudad = ciudad;
+    this.emitFilters();
+  }
+
+  onHuespedesChange(huespedes: number): void {
+    this.huespedes = huespedes;
+    this.emitFilters();
+  }
+
+  onTiposChange(tipos: string[]): void {
+    this.tiposSeleccionados = tipos;
+    this.emitFilters();
+  }
+
+  onPrecioChange(precio: number): void {
+    this.precioMaximo = precio;
+    this.emitFilters();
+  }
+
+  clearFilters(): void {
+    this.ciudad = '';
+    this.huespedes = 1;
+    this.tiposSeleccionados = [];
+    this.precioMaximo = this.precioLimite;
+    this.emitFilters();
+  }
+
+  emitFilters(): void {
+    this.filtersChange.emit({
+      ciudad: this.ciudad || undefined,
+      huespedes: this.huespedes,
+      tipos: this.tiposSeleccionados,
+      precioMaximo: this.precioMaximo,
+    });
+  }
+}
