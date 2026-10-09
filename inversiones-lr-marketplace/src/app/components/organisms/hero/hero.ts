@@ -1,11 +1,10 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { Label } from '../../atoms/label/label';
 import { SearchBarHero } from '../../molecules/search-bar-hero/search-bar-hero';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [Label, SearchBarHero],
+  imports: [SearchBarHero],
   templateUrl: './hero.html',
   styleUrl: './hero.css',
 })
