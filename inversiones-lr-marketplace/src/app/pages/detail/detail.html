@@ -8,7 +8,6 @@
     </div>
   } @else if (alojamiento) {
 
-    <!-- Mensaje de éxito -->
     @if (mensajeExito) {
       <div class="exito">
         <app-label [text]="mensajeExito" variant="heading"></app-label>
@@ -16,21 +15,17 @@
       </div>
     }
 
-    <!-- Galería principal (imagen above-the-fold: carga inmediata) -->
-    <div class="gallery">
-      <app-photo
-        [src]="alojamiento.imagenPrincipal"
-        [alt]="alojamiento.nombre"
-        loading="eager">
-      </app-photo>
-    </div>
+    <app-photo-gallery
+      [images]="alojamiento.imagenes"
+      [alt]="alojamiento.nombre">
+    </app-photo-gallery>
 
     <div class="content">
-      <!-- Información principal -->
       <div class="info">
-        <app-label [text]="alojamiento.ubicacion + ', ' + alojamiento.ciudad" variant="muted"></app-label>
+        <app-label [text]="getUbicacion(alojamiento)" variant="muted"></app-label>
         <app-label [text]="alojamiento.nombre" variant="title"></app-label>
-        <app-label [text]="alojamiento.tipo + ' · ' + alojamiento.capacidad + ' huéspedes · ' + alojamiento.habitaciones + ' habitaciones'" variant="muted"></app-label>
+        <app-label [text]="getCaracteristicas(alojamiento)" variant="muted"></app-label>
+        <app-badge [text]="getCalificacion(alojamiento)" variant="chip"></app-badge>
 
         <p class="descripcion">{{ alojamiento.descripcion }}</p>
 
@@ -44,21 +39,24 @@
           }
         </ul>
 
+        <app-label text="Reseñas" variant="heading"></app-label>
         @if (resenas.length > 0) {
-          <app-label text="Reseñas" variant="heading"></app-label>
           <div class="resenas">
             @for (resena of resenas; track resena.id) {
               <div class="resena">
-                <strong>{{ resena.usuario }}</strong>
-                <span>{{ resena.calificacion }} ★</span>
+                <div class="resena-header">
+                  <strong>{{ resena.usuario }}</strong>
+                  <span>{{ resena.calificacion }} ★</span>
+                </div>
                 <p>{{ resena.comentario }}</p>
               </div>
             }
           </div>
+        } @else {
+          <p class="sin-resenas">Este alojamiento aún no tiene reseñas.</p>
         }
       </div>
 
-      <!-- Sidebar de cotización y reserva -->
       <aside class="sidebar">
         <app-price-tag [price]="alojamiento.precioNoche"></app-price-tag>
 

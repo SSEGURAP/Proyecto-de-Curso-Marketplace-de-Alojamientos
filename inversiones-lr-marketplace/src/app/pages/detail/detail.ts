@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
 import { Button } from '../../components/atoms/button/button';
-import { Photo } from '../../components/atoms/photo/photo';
 import { ServiceList } from '../../components/molecules/service-list/service-list';
 import { PriceTag } from '../../components/molecules/price-tag/price-tag';
 import { CounterField } from '../../components/molecules/counter-field/counter-field';
 import { AlojamientoService } from '../../services/alojamiento';
 import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamiento.model';
+import { PhotoGallery } from '../../components/molecules/photo-gallery/photo-gallery';
+import { Badge } from '../../components/atoms/badge/badge';
 
 @Component({
   selector: 'app-detail-page',
@@ -18,7 +19,8 @@ import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamien
     FormsModule,
     Label,
     Button,
-    Photo,
+    Badge,
+    PhotoGallery,
     ServiceList,
     PriceTag,
     CounterField
@@ -35,14 +37,12 @@ export class DetailPage implements OnInit, OnDestroy {
   errorFormulario: string = '';
   mensajeExito: string = '';
 
-  // Formulario
   fechaLlegada: string = '';
   fechaSalida: string = '';
   numeroHuespedes: number = 1;
   nombreHuesped: string = '';
   correoHuesped: string = '';
 
-  /** Fecha mínima seleccionable (hoy, en hora local) en formato YYYY-MM-DD */
   hoy: string = this.obtenerHoyLocal();
 
   private destroy$ = new Subject<void>();
@@ -72,11 +72,6 @@ export class DetailPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Alojamiento + reseñas en una sola suscripción (sin subscribe anidado).
-   * Ambas consultas reutilizan la misma petición HTTP cacheada en el servicio.
-   * Si fallan las reseñas, el detalle igual se muestra.
-   */
   private cargarAlojamiento(id: number): void {
     this.cargando = true;
 
@@ -113,6 +108,12 @@ export class DetailPage implements OnInit, OnDestroy {
 
     if (!this.alojamiento || !this.fechaLlegada || !this.fechaSalida) {
       this.cotizacion = null;
+      return;
+    }
+
+    if (this.fechaLlegada < this.hoy) {
+      this.cotizacion = null;
+      this.errorFormulario = 'La fecha de llegada no puede ser anterior a la fecha actual.';
       return;
     }
 
@@ -178,7 +179,6 @@ export class DetailPage implements OnInit, OnDestroy {
     this.errorFormulario = '';
     this.mensajeExito = `¡Reserva confirmada! ID: ${reserva.id}`;
 
-    // Limpiar formulario
     this.fechaLlegada = '';
     this.fechaSalida = '';
     this.nombreHuesped = '';
@@ -190,9 +190,27 @@ export class DetailPage implements OnInit, OnDestroy {
     this.router.navigate(['/alojamientos']);
   }
 
-  /** Método público: la plantilla no puede usar el Router privado directamente */
   irAReservas(): void {
     this.router.navigate(['/reservas']);
+  }
+
+  getUbicacion(alojamiento: Alojamiento): string {
+    if (alojamiento.ubicacion.includes(alojamiento.ciudad)) {
+      return alojamiento.ubicacion;
+    }
+    return alojamiento.ubicacion + ', ' + alojamiento.ciudad;
+  }
+
+  getCaracteristicas(alojamiento: Alojamiento): string {
+    return alojamiento.tipo + ' · ' +
+      alojamiento.capacidad + ' huéspedes · ' +
+      alojamiento.habitaciones + ' habitaciones · ' +
+      alojamiento.camas + ' camas · ' +
+      alojamiento.banos + ' baños';
+  }
+
+  getCalificacion(alojamiento: Alojamiento): string {
+    return alojamiento.calificacion + ' ★ · ' + this.resenas.length + ' reseña(s)';
   }
 
   formatMoney(valor: number): string {

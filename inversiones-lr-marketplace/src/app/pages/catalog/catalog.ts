@@ -1,5 +1,5 @@
 import { ChangeDetectorRef ,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, catchError, debounceTime, forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
 import { FilterSidebar } from '../../components/organisms/filter-sidebar/filter-sidebar';
@@ -25,6 +25,8 @@ export class CatalogPage implements OnInit, OnDestroy {
   precioLimite: number = 1000000;
   cargando: boolean = true;
   error: string = '';
+  destino: string = '';
+  ciudadBuscada: string = '';
 
   private destroy$ = new Subject<void>();
   private filtro$ = new Subject<FiltroAlojamiento>();
@@ -32,12 +34,14 @@ export class CatalogPage implements OnInit, OnDestroy {
   constructor(
     private alojamientoService: AlojamientoService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.cargarDatosIniciales();
     this.escucharFiltros();
+    this.escucharBusqueda();
   }
 
   ngOnDestroy(): void {
@@ -64,6 +68,7 @@ export class CatalogPage implements OnInit, OnDestroy {
             this.precioLimite = Math.max(...alojamientos.map(a => a.precioNoche));
           }
           this.cargando = false;
+          this.aplicarDestino();
           this.cdr.markForCheck();
         },
         error: (err: Error) => {
@@ -92,6 +97,35 @@ export class CatalogPage implements OnInit, OnDestroy {
         this.alojamientos = data;
         this.cdr.markForCheck();
       });
+  }
+
+  private escucharBusqueda(): void {
+    this.route.queryParamMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.destino = params.get('destino') ?? '';
+        this.aplicarDestino();
+      });
+  }
+
+  private aplicarDestino(): void {
+    if (!this.destino || this.ciudades.length === 0) {
+      return;
+    }
+
+    const buscado = this.normalizar(this.destino);
+    const ciudad = this.ciudades.find(c => this.normalizar(c).includes(buscado));
+
+    if (ciudad) {
+      this.ciudadBuscada = ciudad;
+    } else {
+      this.alojamientos = [];
+    }
+    this.cdr.markForCheck();
+  }
+
+  private normalizar(texto: string): string {
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   }
 
   onFiltersChange(filtro: FiltroAlojamiento): void {
