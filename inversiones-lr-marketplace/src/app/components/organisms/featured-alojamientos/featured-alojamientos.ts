@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Label } from '../../atoms/label/label';
 import { AlojamientoCardCompressed } from '../alojamiento-card-compressed/alojamiento-card-compressed';
@@ -19,7 +19,8 @@ export class FeaturedAlojamientos implements OnInit {
 
   constructor(
     private alojamientoService: AlojamientoService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -33,10 +34,12 @@ export class FeaturedAlojamientos implements OnInit {
       next: (data) => {
         this.alojamientosDestacados = data.slice(0, 3);
         this.cargando = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error al cargar alojamientos destacados', err);
         this.cargando = false;
+        this.cdr.markForCheck();
       }
     });
   }
