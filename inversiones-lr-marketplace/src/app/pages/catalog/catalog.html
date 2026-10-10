@@ -1,6 +1,17 @@
 <section class="catalog">
-  <div class="header">
+    <div class="header">
     <app-label text="Alojamientos" variant="title"></app-label>
+
+    @if (fechaLlegada) {
+      <div class="aviso">
+        <app-label [text]="getTextoFechas()" variant="body"></app-label>
+        <app-button label="Quitar fechas" variant="outline" (clicked)="quitarFechas()"></app-button>
+      </div>
+    }
+
+    @if (errorFechas) {
+      <p class="aviso error" role="alert">{{ errorFechas }}</p>
+    }
   </div>
 
   <div class="content">

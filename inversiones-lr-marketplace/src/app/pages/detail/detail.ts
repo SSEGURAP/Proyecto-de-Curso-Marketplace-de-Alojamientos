@@ -64,6 +64,8 @@ export class DetailPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.fechaLlegada = this.route.snapshot.queryParamMap.get('llegada') ?? '';
+    this.fechaSalida = this.route.snapshot.queryParamMap.get('salida') ?? '';
     this.cargarAlojamiento(id);
   }
 
@@ -90,6 +92,7 @@ export class DetailPage implements OnInit, OnDestroy {
             this.alojamiento = alojamiento;
             this.resenas = resenas;
             this.numeroHuespedes = 1;
+            this.calcularCotizacion();
           }
           this.cargando = false;
           this.cdr.markForCheck();
@@ -124,8 +127,14 @@ export class DetailPage implements OnInit, OnDestroy {
       this.numeroHuespedes
     );
 
-    if (!this.cotizacion) {
+        if (!this.cotizacion) {
       this.errorFormulario = 'La fecha de salida debe ser posterior a la fecha de llegada.';
+      return;
+    }
+
+    if (!this.alojamientoService.estaDisponible(this.alojamiento.id, this.fechaLlegada, this.fechaSalida)) {
+      this.cotizacion = null;
+      this.errorFormulario = 'El alojamiento ya está reservado en esas fechas. Elige otras.';
     }
   }
 
