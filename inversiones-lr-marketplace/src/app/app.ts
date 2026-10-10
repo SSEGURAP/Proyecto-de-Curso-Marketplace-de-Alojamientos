@@ -1,15 +1,16 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Logo } from './components/atoms/logo/logo';
-import { Icon } from './components/atoms/icon/icon';
-import { Button } from './components/atoms/button/button';
+import { Header } from './components/organisms/header/header';
 
 @Component({
-  imports: [RouterOutlet, Logo, Icon, Button],
   selector: 'app-root',
-  styleUrl: './app.css',
+  standalone: true,
+  imports: [RouterOutlet, Header],
   templateUrl: './app.html',
+  styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('inversiones-lr-marketplace');
+  onSearch(data: { destination: string; checkIn: string; checkOut: string }): void {
+    console.log('Búsqueda desde header:', data);
+  }
 }

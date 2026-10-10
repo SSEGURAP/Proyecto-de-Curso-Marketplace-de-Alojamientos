@@ -1,0 +1,43 @@
+<div class="search-bar-hero">
+
+  <div class="field destination">
+    <app-input
+      placeholder="Añade una ciudad, hotel, dirección o lugar..."
+      [value]="destination"
+      (valueChange)="onDestinationChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field dates">
+    <app-input
+      class="date-input"
+      type="date"
+      [value]="checkIn"
+      (click)="$any($event.target).showPicker?.()"
+      (valueChange)="onCheckInChange($event)">
+    </app-input>
+
+    <span class="dot" aria-hidden="true">•</span>
+
+    <app-input
+      class="date-input"
+      type="date"
+      [value]="checkOut"
+      (click)="$any($event.target).showPicker?.()"
+      (valueChange)="onCheckOutChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field guests">
+    <span class="guests-text">2 huéspedes, 1 habitación</span>
+  </div>
+
+  <button class="search-button" type="button" (click)="onSearchClick()">
+    Buscar
+  </button>
+
+</div>

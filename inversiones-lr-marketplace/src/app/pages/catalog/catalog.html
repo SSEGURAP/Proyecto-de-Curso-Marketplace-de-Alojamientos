@@ -1,0 +1,31 @@
+<section class="catalog">
+  <div class="header">
+    <app-label text="Alojamientos" variant="title"></app-label>
+  </div>
+
+  <div class="content">
+    <app-filter-sidebar
+      [ciudades]="ciudades"
+      [tipos]="tipos"
+      [precioLimite]="precioLimite"
+      (filtersChange)="onFiltersChange($event)">
+    </app-filter-sidebar>
+
+    <div class="grid">
+      @if (cargando) {
+        <p class="empty">Cargando alojamientos...</p>
+      } @else if (error) {
+        <p class="empty error">{{ error }}</p>
+      } @else if (alojamientos.length === 0) {
+        <app-empty-state (resetFilters)="limpiarFiltros()"></app-empty-state>
+      } @else {
+        @for (alojamiento of alojamientos; track alojamiento.id) {
+          <app-alojamiento-card
+            [alojamiento]="alojamiento"
+            (viewDetail)="onViewDetail($event)">
+          </app-alojamiento-card>
+        }
+      }
+    </div>
+  </div>
+</section>

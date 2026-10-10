@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { RangeField } from '../../molecules/range-field/range-field';
 import { CheckboxGroup } from '../../molecules/checkbox-group/checkbox-group';
 import { CounterField } from '../../molecules/counter-field/counter-field';
@@ -13,7 +13,7 @@ import { FiltroAlojamiento } from '../../../models/alojamiento.model';
   styleUrl: './filter-sidebar.css',
   templateUrl: './filter-sidebar.html',
 })
-export class FilterSidebar {
+export class FilterSidebar implements OnChanges {
   @Input() ciudades: string[] = [];
   @Input() tipos: string[] = [];
   @Input() precioLimite: number = 1000000;
@@ -22,10 +22,12 @@ export class FilterSidebar {
   ciudad: string = '';
   huespedes: number = 1;
   tiposSeleccionados: string[] = [];
-  precioMaximo: number = 0;
+  precioMaximo: number = 1000000;
 
-  ngOnInit(): void {
-    this.precioMaximo = this.precioLimite;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['precioLimite']) {
+      this.precioMaximo = this.precioLimite;
+    }
   }
 
   onCiudadChange(ciudad: string): void {

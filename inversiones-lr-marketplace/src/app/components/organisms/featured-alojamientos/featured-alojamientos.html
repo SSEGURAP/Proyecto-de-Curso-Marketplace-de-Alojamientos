@@ -1,0 +1,24 @@
+<section class="featured">
+  <div class="header">
+    <app-label text="Alojamientos destacados" variant="title"></app-label>
+
+    <a class="explore-link" routerLink="/alojamientos">
+      Explorar más →
+    </a>
+  </div>
+
+  @if (cargando) {
+    <p class="loading">Cargando alojamientos destacados...</p>
+  } @else if (alojamientosDestacados.length === 0) {
+    <p class="loading">No hay alojamientos disponibles.</p>
+  } @else {
+    <div class="grid">
+      @for (alojamiento of alojamientosDestacados; track alojamiento.id) {
+        <app-alojamiento-card-compressed
+          [alojamiento]="alojamiento"
+          (viewDetail)="onViewDetail($event)">
+        </app-alojamiento-card-compressed>
+      }
+    </div>
+  }
+</section>

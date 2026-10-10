@@ -1,0 +1,4943 @@
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\main.ts 
+================================================== 
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\index.html 
+================================================== 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>InversionesLrMarketplace</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\styles.css 
+================================================== 
+:root {
+  --font-family: 'Inter', sans-serif;
+  --color-primary: #001745;
+  --color-title: #10224D;
+  --color-text: #232D35;
+  --color-text-muted: #4F545C;
+  --color-surface: #FEFEFE;
+  --color-surface-muted: #F2F3F5;
+  --color-control: #D9D9D9;
+
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 13px;
+
+  --color-text-strong: #010211;
+  --color-text-secondary: #3C4248;
+  --color-accent: #F3B901;
+  --color-accent-hover: #DBA600;
+  --radius-full: 999px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\app.config.ts 
+================================================== 
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes),
+    provideHttpClient()
+  ]
+};.
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\app.routes.ts 
+================================================== 
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./pages/home/home').then(m => m.HomePage)
+  },
+  {
+    path: 'alojamientos',
+    loadComponent: () => import('./pages/catalog/catalog').then(m => m.CatalogPage)
+  },
+  {
+    path: 'alojamiento/:id',
+    loadComponent: () => import('./pages/detail/detail').then(m => m.DetailPage)
+  },
+  {
+    path: 'reservas',
+    loadComponent: () => import('./pages/reservations/reservations').then(m => m.ReservationsPage)
+  },
+  {
+    path: '**',
+    redirectTo: 'home'
+  }
+];..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\app.spec.ts 
+================================================== 
+import { TestBed } from '@angular/core/testing';
+import { App } from './app';
+
+describe('App', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+    })
+      .compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, inversiones-lr-marketplace');
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\app.ts 
+================================================== 
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Header } from './components/organisms/header/header';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, Header],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+})
+export class App {
+  onSearch(data: { destination: string; checkIn: string; checkOut: string }): void {
+    console.log('Búsqueda desde header:', data);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\app.html 
+================================================== 
+<app-header (search)="onSearch($event)"></app-header>
+
+<main>
+  <router-outlet></router-outlet>
+</main>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\app.css 
+================================================== 
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+main {
+  /* El contenido de las páginas se renderiza aquí */
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\badge\badge.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Badge } from './badge';
+
+describe('Badge', () => {
+  let component: Badge;
+  let fixture: ComponentFixture<Badge>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Badge],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Badge);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\badge\badge.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-badge',
+  styleUrl: './badge.css',
+  templateUrl: './badge.html',
+})
+export class Badge {
+  @Input() text: string = '';
+  @Input() variant: 'overlay' | 'chip' = 'chip';
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\badge\badge.html 
+================================================== 
+<span [class]="variant">{{ text }}</span>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\badge\badge.css 
+================================================== 
+span {
+  display: inline-block;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.overlay {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-surface);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.chip {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-surface-muted);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\button\button.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Button } from './button';
+
+describe('Button', () => {
+  let component: Button;
+  let fixture: ComponentFixture<Button>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Button],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Button);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\button\button.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-button',
+  styleUrl: './button.css',
+  templateUrl: './button.html',
+})
+export class Button {
+
+  @Input() label: string = '';
+  @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() disabled: boolean = false;
+  @Input() variant: 'primary' | 'secondary' | 'outline' | 'accent' = 'primary';
+  @Input() fullWidth: boolean = false;
+
+  @Output() clicked = new EventEmitter<void>();
+
+  onClick(): void {
+    if (!this.disabled) {
+      this.clicked.emit();
+    }
+  }
+
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\button\button.html 
+================================================== 
+<button
+  [type]="type"
+  [disabled]="disabled"
+  [class]="variant"
+  [class.full-width]="fullWidth"
+  (click)="onClick()">
+  {{ label }}
+</button>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\button\button.css 
+================================================== 
+button {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Variantes */
+button.primary {
+  background-color: #032C70;
+  color: #ffffff;
+}
+
+button.primary:hover:not(:disabled) {
+  background-color: #021f4f;
+}
+
+button.secondary {
+  background-color: #F2F3F5;
+  color: #032C70;
+}
+
+button.secondary:hover:not(:disabled) {
+  background-color: #e4e6e9;
+}
+
+button.outline {
+  background-color: transparent;
+  color: #032C70;
+  border: 1.5px solid #032C70;
+}
+
+button.outline:hover:not(:disabled) {
+  background-color: #f0f4fa;
+}
+
+button.accent {
+  background-color: var(--color-accent);
+  color: var(--color-text-strong);
+  font-weight: 600;
+}
+
+button.accent:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+button.full-width {
+  width: 100%;
+  padding: var(--spacing-md);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\checkbox\checkbox.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Checkbox } from './checkbox';
+
+describe('Checkbox', () => {
+  let component: Checkbox;
+  let fixture: ComponentFixture<Checkbox>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Checkbox],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Checkbox);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\checkbox\checkbox.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-checkbox',
+  styleUrl: './checkbox.css',
+  templateUrl: './checkbox.html',
+})
+export class Checkbox {
+  @Input() label: string = '';
+  @Input() isChecked: boolean = false;
+  @Output() checkedChange = new EventEmitter<boolean>();
+
+  onChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.checkedChange.emit(target.checked);
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\checkbox\checkbox.html 
+================================================== 
+<label class="checkbox">
+  <input type="checkbox" [checked]="isChecked" (change)="onChange($event)">
+  <span>
+    {{ label }}
+  </span>
+</label>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\checkbox\checkbox.css 
+================================================== 
+.checkbox{
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+input{
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--color-primary);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon\icon.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Icon } from './icon';
+
+describe('Icon', () => {
+  let component: Icon;
+  let fixture: ComponentFixture<Icon>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Icon],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Icon);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon\icon.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-icon-component',
+  styleUrl: './icon.css',
+  templateUrl: './icon.html',
+})
+export class IconComponent {
+  @Input() name: string = '';
+  @Input() size: string = '24px';
+  @Input() color: string = 'currentColor';
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon\icon.html 
+================================================== 
+<span 
+  class="material-icons"
+  [style.font-size]="size"
+  [style.color]="color">
+  {{ name }}
+</span>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon\icon.css 
+================================================== 
+.material-icons {
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon-button\icon-button.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { IconButton } from './icon-button';
+
+describe('IconButton', () => {
+  let component: IconButton;
+  let fixture: ComponentFixture<IconButton>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [IconButton],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(IconButton);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon-button\icon-button.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-icon-button',
+  styleUrl: './icon-button.css',
+  templateUrl: './icon-button.html',
+})
+export class IconButton {
+  @Input() icon: string = '';
+  @Input() disabled: boolean = false;
+  @Output() clicked = new EventEmitter<void>();
+
+  onClick(): void { 
+    if (!this.disabled) {
+      this.clicked.emit();
+    }
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon-button\icon-button.html 
+================================================== 
+<button type="button" [disabled]="disabled" (click)="onClick()">
+    <span class="material-icons">
+        {{icon}}
+    </span>
+</button>
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\icon-button\icon-button.css 
+================================================== 
+button{
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-control);
+    color: var(--color-title);
+    cursor: pointer;
+}
+
+button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.material-icons{
+    font-size: 18px;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\input\input.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Input } from './input';
+
+describe('Input', () => {
+  let component: Input;
+  let fixture: ComponentFixture<Input>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Input],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Input);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\input\input.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-input',
+  styleUrl: './input.css',
+  templateUrl: './input.html',
+})
+export class InputComponent {
+
+  @Input() type: string = 'text';
+  @Input() placeholder: string = '';
+  @Input() value: string = '';
+  @Input() disabled: boolean = false;
+
+  @Output() valueChange = new EventEmitter<string>();
+
+  onInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.value = target.value;
+    this.valueChange.emit(this.value);
+  }
+
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\input\input.html 
+================================================== 
+<input
+  [type]="type"
+  [placeholder]="placeholder"
+  [value]="value"
+  [disabled]="disabled"
+  (input)="onInput($event)"
+/>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\input\input.css 
+================================================== 
+input {
+  width: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: #032C70;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+input::placeholder {
+  color: #899199;
+}
+
+input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\label\label.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Label } from './label';
+
+describe('Label', () => {
+  let component: Label;
+  let fixture: ComponentFixture<Label>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Label],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Label);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\label\label.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-label',
+  styleUrl: './label.css',
+  templateUrl: './label.html',
+})
+export class Label {
+  @Input() text: string = '';
+  @Input() variant: 'title' | 'field' | 'heading' | 'body' | 'muted' = 'field';
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\label\label.html 
+================================================== 
+<span [class]="variant">{{text}}</span>
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\label\label.css 
+================================================== 
+.title{
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-title);
+}
+
+.field{
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.heading { 
+    font-size: var(--font-size-md); 
+    font-weight: 600; 
+    color: var(--color-text-strong); 
+}
+
+.body { 
+    font-size: var(--font-size-md); 
+    color: var(--color-text-strong); 
+}
+
+.muted { 
+    font-size: var(--font-size-md); 
+    color: var(--color-text-secondary); 
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\link\link.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Link } from './link';
+
+describe('Link', () => {
+  let component: Link;
+  let fixture: ComponentFixture<Link>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Link],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Link);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\link\link.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-link',
+  standalone: true,
+  imports: [],
+  templateUrl: './link.html',
+  styleUrl: './link.css',
+})
+export class LinkComponent {
+
+  @Input() label: string = '';
+  @Input() href: string = '#';
+  @Input() active: boolean = false;
+
+  @Output() clicked = new EventEmitter<void>();
+
+  constructor(private router: Router) {}
+
+  onClick(event: Event): void {
+    event.preventDefault();
+
+    if (this.href && this.href.startsWith('/')) {
+      this.router.navigateByUrl(this.href);
+    }
+
+    this.clicked.emit();
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\link\link.html 
+================================================== 
+<a 
+  [href]="href"
+  [class.active]="active"
+  (click)="onClick($event)">
+  {{ label }}
+</a>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\link\link.css 
+================================================== 
+:host {
+  display: inline-block;
+}
+
+a {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #F6F7F8;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  padding: 4px 0;
+  display: inline-block;
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+a.active {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\logo\logo.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Logo } from './logo';
+
+describe('Logo', () => {
+  let component: Logo;
+  let fixture: ComponentFixture<Logo>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Logo],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Logo);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\logo\logo.ts 
+================================================== 
+import { Component } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-logo',
+  styleUrl: './logo.css',
+  templateUrl: './logo.html',
+})
+export class Logo {}
+
+
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\logo\logo.html 
+================================================== 
+<svg width="128" height="29" viewBox="0 0 128 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="28.2342" height="28.1311" fill="white"/>
+<rect x="32.9741" width="28.2342" height="28.1311" fill="white"/>
+<path d="M8.84619 22.3256V5.48804H11.9094V19.7688H19.3567V22.3256H8.84619Z" fill="#032C70"/>
+<path d="M40.5771 22.5404V5.49744H46.9487C48.2539 5.49744 49.349 5.7249 50.234 6.17982C51.1244 6.63474 51.7964 7.27274 52.25 8.09382C52.709 8.90935 52.9385 9.8608 52.9385 10.9482C52.9385 12.0411 52.7062 12.9898 52.2417 13.7942C51.7826 14.5931 51.1051 15.2117 50.2091 15.65C49.3131 16.0827 48.2124 16.2991 46.9072 16.2991H42.3691V13.736H46.4924C47.2556 13.736 47.8806 13.6306 48.3673 13.4197C48.854 13.2034 49.2135 12.8899 49.4458 12.4794C49.6836 12.0633 49.8026 11.5529 49.8026 10.9482C49.8026 10.3435 49.6836 9.82752 49.4458 9.40033C49.208 8.9676 48.8457 8.64028 48.359 8.41837C47.8723 8.19091 47.2446 8.07718 46.4758 8.07718H43.6551V22.5404H40.5771ZM49.3546 14.8178L53.5608 22.5404H50.1261L45.9946 14.8178H49.3546Z" fill="#032C70"/>
+<path d="M76.4527 10.4216C76.3751 9.69812 76.0481 9.13476 75.4718 8.73157C74.901 8.32838 74.1584 8.12678 73.244 8.12678C72.6011 8.12678 72.0497 8.22344 71.5897 8.41675C71.1297 8.61006 70.7778 8.87241 70.534 9.20379C70.2902 9.53518 70.1655 9.91352 70.1599 10.3388C70.1599 10.6923 70.2403 10.9988 70.401 11.2584C70.5673 11.518 70.7917 11.7389 71.0743 11.9212C71.357 12.0979 71.6701 12.247 72.0137 12.3685C72.3573 12.4901 72.7036 12.5922 73.0528 12.6751L74.6488 13.0727C75.2917 13.2219 75.9096 13.4235 76.5025 13.6775C77.1011 13.9316 77.6359 14.2519 78.1069 14.6386C78.5835 15.0252 78.9603 15.4919 79.2374 16.0387C79.5145 16.5855 79.6531 17.2261 79.6531 17.9607C79.6531 18.9549 79.3982 19.8303 78.8883 20.587C78.3785 21.3381 77.6414 21.9263 76.6771 22.3516C75.7184 22.7714 74.5574 22.9812 73.1941 22.9812C71.8696 22.9812 70.7197 22.7769 69.7443 22.3682C68.7745 21.9595 68.0152 21.363 67.4666 20.5787C66.9235 19.7944 66.6298 18.8389 66.5854 17.7122H69.6196C69.6639 18.3031 69.8468 18.7947 70.1682 19.1869C70.4897 19.579 70.9081 19.8717 71.4235 20.065C71.9444 20.2583 72.5263 20.355 73.1691 20.355C73.8397 20.355 74.4271 20.2556 74.9314 20.0567C75.4413 19.8524 75.8403 19.5707 76.1285 19.2117C76.4167 18.8472 76.5635 18.4219 76.5691 17.9359C76.5635 17.494 76.4333 17.1295 76.1784 16.8423C75.9234 16.5496 75.566 16.3065 75.106 16.1132C74.6516 15.9144 74.1196 15.7377 73.51 15.583L71.5731 15.0859C70.171 14.7269 69.0626 14.1829 68.248 13.4538C67.4389 12.7193 67.0343 11.7444 67.0343 10.5293C67.0343 9.52966 67.3059 8.65424 67.849 7.9031C68.3976 7.15195 69.143 6.56926 70.0851 6.15503C71.0272 5.73527 72.094 5.52539 73.2855 5.52539C74.4936 5.52539 75.5521 5.73527 76.461 6.15503C77.3754 6.56926 78.0931 7.14643 78.614 7.88653C79.1349 8.6211 79.4037 9.46614 79.4203 10.4216H76.4527Z" fill="white"/>
+<path d="M88.6454 9.99913V12.3188H81.3052V9.99913H88.6454ZM83.1174 6.95036H86.1266V18.8969C86.1266 19.3001 86.1876 19.6094 86.3095 19.8248C86.437 20.0347 86.6032 20.1783 86.8083 20.2556C87.0133 20.3329 87.2405 20.3716 87.4899 20.3716C87.6783 20.3716 87.8501 20.3578 88.0053 20.3301C88.166 20.3025 88.2879 20.2777 88.3711 20.2556L88.8781 22.6001C88.7174 22.6554 88.4874 22.7161 88.1882 22.7824C87.8945 22.8487 87.5342 22.8873 87.1075 22.8984C86.3538 22.9205 85.675 22.8073 85.0709 22.5587C84.4668 22.3047 83.9875 21.9125 83.6328 21.3823C83.2837 20.8521 83.1119 20.1893 83.1174 19.394V6.95036Z" fill="white"/>
+<path d="M94.8363 22.9812C94.0272 22.9812 93.2984 22.8376 92.65 22.5504C92.0072 22.2577 91.4973 21.8269 91.1205 21.258C90.7492 20.6891 90.5635 19.9877 90.5635 19.1537C90.5635 18.4357 90.6966 17.842 90.9626 17.3725C91.2286 16.903 91.5916 16.5275 92.0515 16.2458C92.5115 15.9641 93.0297 15.7515 93.606 15.6079C94.1879 15.4587 94.7892 15.351 95.4099 15.2848C96.158 15.2074 96.7649 15.1384 97.2304 15.0776C97.6959 15.0114 98.0339 14.9119 98.2445 14.7794C98.4607 14.6413 98.5687 14.4287 98.5687 14.1415V14.0918C98.5687 13.4677 98.3831 12.9844 98.0118 12.6419C97.6405 12.2995 97.1057 12.1283 96.4074 12.1283C95.6703 12.1283 95.0857 12.2885 94.6534 12.6088C94.2267 12.9291 93.9385 13.3075 93.7889 13.7438L90.9792 13.3461C91.2009 12.5729 91.5666 11.9267 92.0765 11.4075C92.5863 10.8828 93.2098 10.4907 93.9468 10.2311C94.6839 9.96599 95.4985 9.83343 96.3908 9.83343C97.0059 9.83343 97.6183 9.90523 98.2279 10.0488C98.8375 10.1924 99.3945 10.4299 99.8988 10.7613C100.403 11.0872 100.808 11.5318 101.112 12.0952C101.423 12.6585 101.578 13.3627 101.578 14.2077V22.7244H98.6851V20.9763H98.5853C98.4025 21.3298 98.1448 21.6612 97.8123 21.9705C97.4853 22.2743 97.0724 22.5201 96.5737 22.7078C96.0804 22.8901 95.5013 22.9812 94.8363 22.9812ZM95.6177 20.7775C96.2218 20.7775 96.7455 20.6588 97.1888 20.4213C97.6321 20.1783 97.973 19.8579 98.2113 19.4602C98.4551 19.0626 98.577 18.629 98.577 18.1595V16.66C98.4828 16.7373 98.3221 16.8091 98.0949 16.8754C97.8732 16.9417 97.6238 16.9997 97.3467 17.0494C97.0697 17.0991 96.7953 17.1433 96.5238 17.182C96.2522 17.2206 96.0167 17.2538 95.8172 17.2814C95.3683 17.3421 94.9665 17.4415 94.6119 17.5796C94.2572 17.7177 93.9773 17.911 93.7723 18.1595C93.5672 18.4026 93.4647 18.7174 93.4647 19.104C93.4647 19.6563 93.667 20.0733 94.0715 20.355C94.4761 20.6367 94.9915 20.7775 95.6177 20.7775Z" fill="white"/>
+<path d="M106.017 27.4964C105.607 27.4964 105.227 27.4633 104.878 27.397C104.534 27.3362 104.26 27.2644 104.055 27.1816L104.753 24.8453C105.191 24.9723 105.582 25.0331 105.925 25.0276C106.269 25.022 106.571 24.9143 106.832 24.7045C107.098 24.5001 107.322 24.1577 107.505 23.6772L107.763 22.9895L103.132 9.99913H106.325L109.267 19.6094H109.4L112.351 9.99913H115.552L110.439 24.2654C110.201 24.9392 109.885 25.5164 109.492 25.9969C109.098 26.4829 108.616 26.853 108.045 27.107C107.48 27.3666 106.804 27.4964 106.017 27.4964Z" fill="white"/>
+<path d="M127.726 13.3627L124.982 13.661C124.905 13.3848 124.769 13.1252 124.575 12.8822C124.387 12.6392 124.132 12.4431 123.81 12.294C123.489 12.1449 123.095 12.0703 122.63 12.0703C122.004 12.0703 121.477 12.2056 121.051 12.4762C120.629 12.7469 120.422 13.0976 120.427 13.5284C120.422 13.8985 120.557 14.1995 120.834 14.4314C121.117 14.6634 121.583 14.854 122.231 15.0031L124.409 15.467C125.617 15.7266 126.515 16.1381 127.102 16.7014C127.695 17.2648 127.994 18.0021 128 18.9135C127.994 19.7143 127.759 20.4213 127.293 21.0343C126.833 21.6419 126.193 22.1169 125.373 22.4593C124.553 22.8017 123.611 22.973 122.547 22.973C120.984 22.973 119.726 22.6471 118.773 21.9954C117.82 21.3381 117.252 20.424 117.069 19.2531L120.003 18.9714C120.136 19.5459 120.419 19.9794 120.851 20.2721C121.283 20.5649 121.846 20.7112 122.539 20.7112C123.253 20.7112 123.827 20.5649 124.259 20.2721C124.697 19.9794 124.916 19.6177 124.916 19.1869C124.916 18.8223 124.775 18.5213 124.492 18.2838C124.215 18.0463 123.783 17.8641 123.195 17.737L121.017 17.2814C119.793 17.0273 118.886 16.5993 118.299 15.9972C117.712 15.3897 117.421 14.622 117.426 13.6941C117.421 12.9098 117.634 12.2305 118.066 11.6561C118.504 11.0761 119.111 10.6288 119.887 10.3139C120.668 9.9936 121.569 9.83343 122.588 9.83343C124.085 9.83343 125.262 10.151 126.121 10.7862C126.986 11.4213 127.521 12.2802 127.726 13.3627Z" fill="white"/>
+</svg>
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\logo\logo.css 
+================================================== 
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\photo\photo.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Photo } from './photo';
+
+describe('Photo', () => {
+  let component: Photo;
+  let fixture: ComponentFixture<Photo>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Photo],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Photo);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\photo\photo.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-photo',
+  styleUrl: './photo.css',
+  templateUrl: './photo.html',
+})
+export class Photo {
+  @Input() src: string = '';
+  @Input() alt: string = '';
+  @Input() loading: 'lazy' | 'eager' = 'lazy';
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\photo\photo.html 
+================================================== 
+<img [src]="src" [alt]="alt" [attr.loading]="loading" decoding="async">..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\photo\photo.css 
+================================================== 
+:host { 
+    display: block; 
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-muted);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\range-slider\range-slider.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RangeSlider } from './range-slider';
+
+describe('RangeSlider', () => {
+  let component: RangeSlider;
+  let fixture: ComponentFixture<RangeSlider>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RangeSlider],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(RangeSlider);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\range-slider\range-slider.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  imports: [],
+  selector: 'app-range-slider',
+  styleUrl: './range-slider.css',
+  templateUrl: './range-slider.html',
+})
+export class RangeSlider {
+  @Input() min: number = 0;
+  @Input() max: number = 100;
+  @Input() step: number = 1;
+  @Input() value: number = 0;
+  @Output() valueChange = new EventEmitter<number>();
+
+  onInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.value = Number(target.value);
+    this.valueChange.emit(this.value);
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\range-slider\range-slider.html 
+================================================== 
+<input type="range" [min]="min" [max]="max" [step]="step" [value]="value" (input)="onInput($event)">
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\range-slider\range-slider.css 
+================================================== 
+input{
+    width: 100%;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\select\select.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Select } from './select';
+
+describe('Select', () => {
+  let component: Select;
+  let fixture: ComponentFixture<Select>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Select],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Select);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\select\select.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  imports: [FormsModule],
+  selector: 'app-select',
+  styleUrl: './select.css',
+  templateUrl: './select.html',
+})
+export class Select {
+  @Input() options: string[] = [];
+  @Input() placeholder: string = 'Seleccione una opción';
+  @Input() value: string = '';
+  @Output() valueChange = new EventEmitter<string>();
+
+  onHandleChange(value: string): void {
+    this.value = value;
+    this.valueChange.emit(value);
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\select\select.html 
+================================================== 
+<select [ngModel]="value" (ngModelChange)="onHandleChange($event)">
+    <option value="">{{ placeholder }}</option>
+  @for (option of options; track option) {
+    <option [value]="option">{{ option }}</option>
+  }
+</select>
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\atoms\select\select.css 
+================================================== 
+select{
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-surface-muted);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text);
+    cursor: pointer;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\checkbox-group\checkbox-group.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CheckboxGroup } from './checkbox-group';
+
+describe('CheckboxGroup', () => {
+  let component: CheckboxGroup;
+  let fixture: ComponentFixture<CheckboxGroup>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CheckboxGroup],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(CheckboxGroup);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\checkbox-group\checkbox-group.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Checkbox } from '../../atoms/checkbox/checkbox';
+import { Label } from '../../atoms/label/label';
+
+@Component({
+  imports: [Label, Checkbox],
+  selector: 'app-checkbox-group',
+  styleUrl: './checkbox-group.css',
+  templateUrl: './checkbox-group.html',
+})
+export class CheckboxGroup {
+  @Input() label: string = '';
+  @Input() options: string[] = [];
+  @Input() selected: string[] = [];
+  @Output() selectedChange = new EventEmitter<string[]>();
+
+  isSelected(option: string): boolean {
+    return this.selected.includes(option);
+  }
+
+  onToggle(option: string, isChecked: boolean): void {
+    if (isChecked) {
+      this.selected = [...this.selected, option];
+    } else {
+      this.selected = this.selected.filter(item => item !== option);
+    }
+    this.selectedChange.emit(this.selected);
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\checkbox-group\checkbox-group.html 
+================================================== 
+<div class="field">
+    <app-label [text]="label"></app-label>
+    @for (option of options; track option){
+        <app-checkbox
+            [label]="option"
+            [isChecked]="isSelected(option)"
+            (checkedChange)="onToggle(option, $event)">
+        </app-checkbox>
+    }
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\checkbox-group\checkbox-group.css 
+================================================== 
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\counter-field\counter-field.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CounterField } from './counter-field';
+
+describe('CounterField', () => {
+  let component: CounterField;
+  let fixture: ComponentFixture<CounterField>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CounterField],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(CounterField);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\counter-field\counter-field.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Label } from '../../atoms/label/label';
+import { IconButton } from '../../atoms/icon-button/icon-button';
+
+@Component({
+  imports: [Label, IconButton],
+  selector: 'app-counter-field',
+  styleUrl: './counter-field.css',
+  templateUrl: './counter-field.html',
+})
+export class CounterField {
+  @Input() label: string = '';
+  @Input() unit: string = '';
+  @Input() value: number = 1;
+  @Input() min: number = 1;
+  @Input() max: number = 10;
+  @Output() valueChange = new EventEmitter<number>();
+
+  increase(): void{
+    if (this.value < this.max) {
+      this.value++;
+      this.valueChange.emit(this.value);
+    }
+  }
+
+  decrease(): void{
+    if (this.value > this.min) {
+      this.value--;
+      this.valueChange.emit(this.value);
+    }
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\counter-field\counter-field.html 
+================================================== 
+<div class="field">
+    <app-label [text]="label"></app-label>
+    <div class="counter">
+        <app-icon-button 
+            icon="add" 
+            [disabled]="value >= max" 
+            (clicked)="increase()">
+        </app-icon-button>
+        <span>{{value}} {{unit}}</span>
+        <app-icon-button 
+            icon="remove"
+            [disabled]="value <= min" 
+            (clicked)="decrease()">
+        </app-icon-button>
+    </div>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\counter-field\counter-field.css 
+================================================== 
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.counter{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-surface-muted);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-md);
+    color: var(--color-title);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\empty-state\empty-state.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EmptyState } from './empty-state';
+
+describe('EmptyState', () => {
+  let component: EmptyState;
+  let fixture: ComponentFixture<EmptyState>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [EmptyState],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(EmptyState);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\empty-state\empty-state.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Button } from '../../atoms/button/button';
+
+@Component({
+  selector: 'app-empty-state',
+  standalone: true,
+  imports: [Button],
+  templateUrl: './empty-state.html',
+  styleUrl: './empty-state.css',
+})
+export class EmptyState {
+  @Input() title: string = 'No se encontraron alojamientos con los filtros seleccionados.';
+  @Input() subtitle: string = 'Intenta ajustar tus filtros o busca en otra ciudad';
+  @Input() buttonLabel: string = 'Limpiar filtros';
+
+  @Output() resetFilters = new EventEmitter<void>();
+
+  onReset(): void {
+    this.resetFilters.emit();
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\empty-state\empty-state.html 
+================================================== 
+<div class="empty-state" role="status">
+  <!-- Lupa original de Figma (solo el icono; texto y botón son HTML real) -->
+  <svg
+    class="icon"
+    viewBox="149 0 144 144"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false">
+    <path
+      fill="currentColor"
+      fill-rule="evenodd"
+      d="M280.513 140.87L232.03 92.6609C228.182 95.7218 223.757 98.145 218.755 99.9305C213.753 101.716 208.43 102.609 202.787 102.609C188.806 102.609 176.974 97.7943 167.291 88.1653C157.607 78.5363 152.765 66.7711 152.765 52.8696C152.765 38.9682 157.607 27.203 167.291 17.574C176.974 7.94499 188.806 3.13049 202.787 3.13049C216.767 3.13049 228.599 7.94499 238.283 17.574C247.967 27.203 252.808 38.9682 252.808 52.8696C252.808 58.4812 251.911 63.774 250.115 68.7479C248.319 73.7218 245.882 78.1218 242.804 81.9479L291.287 130.157L280.513 140.87ZM202.787 87.3044C212.406 87.3044 220.583 83.9566 227.317 77.2609C234.05 70.5653 237.417 62.4348 237.417 52.8696C237.417 43.3044 234.05 35.174 227.317 28.4783C220.583 21.7827 212.406 18.4348 202.787 18.4348C193.167 18.4348 184.991 21.7827 178.257 28.4783C171.523 35.174 168.156 43.3044 168.156 52.8696C168.156 62.4348 171.523 70.5653 178.257 77.2609C184.991 83.9566 193.167 87.3044 202.787 87.3044Z" />
+  </svg>
+
+  <h2 class="title">{{ title }}</h2>
+  <p class="subtitle">{{ subtitle }}</p>
+
+  <app-button
+    [label]="buttonLabel"
+    variant="outline"
+    (clicked)="onReset()">
+  </app-button>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\empty-state\empty-state.css 
+================================================== 
+/* El host es el elemento que el grid del catálogo ve como "item".
+   grid-column debe ir aquí (no en un div interno) para ocupar las 3 columnas. */
+:host {
+  display: block;
+  grid-column: 1 / -1;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 420px;
+  padding: var(--spacing-lg) var(--spacing-md);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.icon {
+  width: 144px;
+  height: 144px;
+  flex-shrink: 0;
+  color: #1C1B1F;
+  margin-bottom: calc(var(--spacing-lg) + var(--spacing-sm)); /* 32px */
+}
+
+.title {
+  margin: 0 0 var(--spacing-md);
+  max-width: 440px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-strong);
+}
+
+.subtitle {
+  margin: 0 0 calc(var(--spacing-lg) + var(--spacing-sm)); /* 32px */
+  max-width: 400px;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .empty-state {
+    min-height: 320px;
+  }
+
+  .icon {
+    width: 112px;
+    height: 112px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\photo-rating\photo-rating.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PhotoRating } from './photo-rating';
+
+describe('PhotoRating', () => {
+  let component: PhotoRating;
+  let fixture: ComponentFixture<PhotoRating>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PhotoRating],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PhotoRating);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\photo-rating\photo-rating.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+import { Badge } from '../../atoms/badge/badge';
+import { Photo } from '../../atoms/photo/photo';
+
+@Component({
+  imports: [Photo, Badge],
+  selector: 'app-photo-rating',
+  styleUrl: './photo-rating.css',
+  templateUrl: './photo-rating.html',
+})
+export class PhotoRating {
+  @Input() src: string = '';
+  @Input() alt: string = '';
+  @Input() rating: number = 0;
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\photo-rating\photo-rating.html 
+================================================== 
+<div class="photo-rating">
+  <app-photo 
+    [src]="src" 
+    [alt]="alt">
+  </app-photo>
+  <app-badge class="rating" 
+    [text]="rating + ' ★'" 
+    variant="overlay">
+  </app-badge>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\photo-rating\photo-rating.css 
+================================================== 
+.photo-rating {
+  position: relative;
+  height: 232px;
+}
+
+app-photo { 
+    height: 100%; 
+}
+
+.rating {
+  position: absolute;
+  left: var(--spacing-sm);
+  bottom: var(--spacing-sm);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\price-tag\price-tag.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PriceTag } from './price-tag';
+
+describe('PriceTag', () => {
+  let component: PriceTag;
+  let fixture: ComponentFixture<PriceTag>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PriceTag],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PriceTag);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\price-tag\price-tag.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+import { Label } from '../../atoms/label/label';
+
+@Component({
+  imports: [Label],
+  selector: 'app-price-tag',
+  styleUrl: './price-tag.css',
+  templateUrl: './price-tag.html',
+})
+export class PriceTag {
+  @Input() price: number = 0;
+  @Input() unit: string = 'noche';
+
+  formatPrice(): string {
+    return '$' + this.price.toLocaleString('es-CO') + ' COP';
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\price-tag\price-tag.html 
+================================================== 
+<div class="price-tag">
+  <app-label [text]="formatPrice()" variant="heading"></app-label>
+  <app-label [text]="'/ ' + unit" variant="muted"></app-label>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\price-tag\price-tag.css 
+================================================== 
+.price-tag { 
+    display: flex; 
+    align-items: baseline; 
+    gap: var(--spacing-xs); 
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\range-field\range-field.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RangeField } from './range-field';
+
+describe('RangeField', () => {
+  let component: RangeField;
+  let fixture: ComponentFixture<RangeField>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RangeField],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(RangeField);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\range-field\range-field.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RangeSlider } from '../../atoms/range-slider/range-slider';
+import { Label } from '../../atoms/label/label';
+
+@Component({
+  imports: [Label, RangeSlider],
+  selector: 'app-range-field',
+  styleUrl: './range-field.css',
+  templateUrl: './range-field.html',
+})
+export class RangeField {
+  @Input() label: string = '';
+  @Input() min: number = 0;
+  @Input() max: number = 100;
+  @Input() step: number = 1;
+  @Input() value: number = 0;
+  @Output() valueChange = new EventEmitter<number>();
+
+  onValueChange(value: number): void {
+    this.value = value;
+    this.valueChange.emit(value);
+  }
+
+  formatPrice(): string {
+    return '$' + this.value.toLocaleString('es-CO') + ' COP';
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\range-field\range-field.html 
+================================================== 
+<div class="field">
+  <app-label [text]="label"></app-label>
+  <app-range-slider
+    [min]="min"
+    [max]="max"
+    [step]="step"
+    [value]="value"
+    (valueChange)="onValueChange($event)">
+  </app-range-slider>
+  <span class="value">{{ formatPrice() }}</span>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\range-field\range-field.css 
+================================================== 
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.value { 
+    align-self: flex-end; 
+    font-size: var(--font-size-sm); 
+    font-weight: 600; 
+    color: var(--color-text); 
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar\search-bar.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SearchBar } from './search-bar';
+
+describe('SearchBar', () => {
+  let component: SearchBar;
+  let fixture: ComponentFixture<SearchBar>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SearchBar],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SearchBar);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar\search-bar.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IconComponent } from '../../atoms/icon/icon';
+import { InputComponent } from '../../atoms/input/input';
+
+@Component({
+  imports: [IconComponent, InputComponent],   // ← ESTO es lo que faltaba
+  selector: 'app-search-bar',
+  styleUrl: './search-bar.css',
+  templateUrl: './search-bar.html',
+})
+export class SearchBar {
+
+  @Input() destination: string = '';
+  @Input() checkIn: string = '';
+  @Input() checkOut: string = '';
+
+  @Output() destinationChange = new EventEmitter<string>();
+  @Output() checkInChange = new EventEmitter<string>();
+  @Output() checkOutChange = new EventEmitter<string>();
+  @Output() search = new EventEmitter<void>();
+
+  onDestinationChange(value: string): void {
+    this.destination = value;
+    this.destinationChange.emit(value);
+  }
+
+  onCheckInChange(value: string): void {
+    this.checkIn = value;
+    this.checkInChange.emit(value);
+  }
+
+  onCheckOutChange(value: string): void {
+    this.checkOut = value;
+    this.checkOutChange.emit(value);
+  }
+
+  onSearchClick(): void {
+    this.search.emit();
+  }
+
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar\search-bar.html 
+================================================== 
+<div class="search-bar">
+  <!-- Destino -->
+  <div class="field">
+    <app-icon-component name="search" size="20px" color="#899199"></app-icon-component>
+    <app-input
+      placeholder="¿A dónde vas?"
+      [value]="destination"
+      (valueChange)="onDestinationChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Entrada -->
+  <div class="field">
+    <app-icon-component name="calendar_today" size="18px" color="#899199"></app-icon-component>
+    <app-input
+      placeholder="Entrada"
+      [value]="checkIn"
+      (valueChange)="onCheckInChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Salida -->
+  <div class="field">
+    <app-input
+      placeholder="Salida"
+      [value]="checkOut"
+      (valueChange)="onCheckOutChange($event)">
+    </app-input>
+  </div>
+
+  <!-- Botón buscar -->
+  <button class="search-button" (click)="onSearchClick()">
+    <app-icon-component name="search" size="22px" color="#ffffff"></app-icon-component>
+  </button>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar\search-bar.css 
+================================================== 
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #FDFEFE;
+  border-radius: 26px;
+  height: 52px;
+  padding: 0 6px 0 18px;
+  gap: 4px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.field app-input {
+  flex: 1;
+}
+
+.divider {
+  width: 1px;
+  height: 28px;
+  background-color: #E0E3E7;
+  flex-shrink: 0;
+}
+
+.search-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #032C70;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.search-button:hover {
+  background-color: #021f4f;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar-hero\search-bar-hero.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SearchBarHero } from './search-bar-hero';
+
+describe('SearchBarHero', () => {
+  let component: SearchBarHero;
+  let fixture: ComponentFixture<SearchBarHero>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SearchBarHero],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SearchBarHero);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar-hero\search-bar-hero.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { InputComponent } from '../../atoms/input/input';
+
+@Component({
+  selector: 'app-search-bar-hero',
+  standalone: true,
+  imports: [ InputComponent],
+  templateUrl: './search-bar-hero.html',
+  styleUrl: './search-bar-hero.css',
+})
+export class SearchBarHero {
+
+  @Input() destination: string = '';
+  @Input() checkIn: string = '';
+  @Input() checkOut: string = '';
+
+  @Output() destinationChange = new EventEmitter<string>();
+  @Output() checkInChange = new EventEmitter<string>();
+  @Output() checkOutChange = new EventEmitter<string>();
+  @Output() search = new EventEmitter<void>();
+
+  onDestinationChange(value: string): void {
+    this.destination = value;
+    this.destinationChange.emit(value);
+  }
+
+  onCheckInChange(value: string): void {
+    this.checkIn = value;
+    this.checkInChange.emit(value);
+  }
+
+  onCheckOutChange(value: string): void {
+    this.checkOut = value;
+    this.checkOutChange.emit(value);
+  }
+
+  onSearchClick(): void {
+    this.search.emit();
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar-hero\search-bar-hero.html 
+================================================== 
+<div class="search-bar-hero">
+
+  <!-- Destino -->
+  <div class="field destination">
+    <app-input
+      placeholder="Añade una ciudad, hotel, dirección o lugar..."
+      [value]="destination"
+      (valueChange)="onDestinationChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Fechas: entrada • salida -->
+  <div class="field dates">
+    <app-input
+      class="date-input"
+      type="date"
+      [value]="checkIn"
+      (click)="$any($event.target).showPicker?.()"
+      (valueChange)="onCheckInChange($event)">
+    </app-input>
+
+    <span class="dot" aria-hidden="true">•</span>
+
+    <app-input
+      class="date-input"
+      type="date"
+      [value]="checkOut"
+      (click)="$any($event.target).showPicker?.()"
+      (valueChange)="onCheckOutChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Huéspedes (estático por ahora) -->
+  <div class="field guests">
+    <span class="guests-text">2 huéspedes, 1 habitación</span>
+  </div>
+
+  <!-- Botón Buscar -->
+  <button class="search-button" type="button" (click)="onSearchClick()">
+    Buscar
+  </button>
+
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\search-bar-hero\search-bar-hero.css 
+================================================== 
+/* ============================================================
+   SEARCH BAR HERO — barra de 695 x 46 px (radio 6)
+   ============================================================ */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.search-bar-hero {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 695px;
+  height: 46px;
+  background-color: var(--color-surface, #FFFFFF);
+  border-radius: 6px;
+  /* Sombra del diseño: dy 4, blur ~8, spread -1, 25% negro */
+  box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.25);
+  font-family: 'Inter', var(--font-family, 'Segoe UI', system-ui, sans-serif);
+  font-size: 12px;
+  color: var(--color-text, #1A1A1A);
+}
+
+/* ---------- Campos ---------- */
+
+.field {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+}
+
+.destination {
+  flex: 1 1 auto;
+  padding: 0 14px;
+}
+
+.dates {
+  flex: 0 0 192px;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.guests {
+  flex: 0 0 158px;
+  padding: 0 0 0 12px;
+}
+
+.guests-text {
+  font-size: 12px;
+  color: var(--color-text, #1A1A1A);
+  white-space: nowrap;
+}
+
+.dot {
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-text, #1A1A1A);
+}
+
+/* Separadores verticales: 1px x 26px */
+.divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 26px;
+  background-color: #B9B9B9;
+}
+
+/* ---------- Botón ---------- */
+
+.search-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 59px;
+  height: 34px;
+  margin: 0 5px 0 0;
+  padding: 0 12px;
+  border: none;
+  border-radius: 7px;
+  /* Degradado exacto del diseño (SVG del botón) */
+  background: linear-gradient(180deg, #032C70 26%, #0654D6 100%);
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.search-button:hover {
+  filter: brightness(1.12);
+}
+
+.search-button:active {
+  transform: scale(0.98);
+}
+
+.search-button:focus-visible {
+  outline: 3px solid var(--color-accent, #FEBB02);
+  outline-offset: 2px;
+}
+
+/* ---------- Ajustes de los <app-input> internos ---------- */
+
+.search-bar-hero ::ng-deep app-input {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.search-bar-hero ::ng-deep app-input input {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--color-text, #1A1A1A);
+}
+
+.search-bar-hero ::ng-deep app-input input::placeholder {
+  color: var(--color-text-muted, #6B7280);
+}
+
+/* Fechas: se oculta el icono nativo; el clic en el campo abre el calendario */
+.search-bar-hero ::ng-deep .date-input input[type="date"] {
+  cursor: pointer;
+}
+
+.search-bar-hero ::ng-deep .date-input input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+/* ---------- Móvil: barra en columna ---------- */
+
+@media (max-width: 720px) {
+  .search-bar-hero {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    max-width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .field,
+  .destination,
+  .dates,
+  .guests {
+    flex: none;
+    height: 44px;
+    padding: 0 8px;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .search-button {
+    width: 100%;
+    height: 44px;
+    margin: 8px 0 0;
+    font-size: 14px;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\select-field\select-field.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SelectField } from './select-field';
+
+describe('SelectField', () => {
+  let component: SelectField;
+  let fixture: ComponentFixture<SelectField>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SelectField],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SelectField);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\select-field\select-field.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Select } from '../../atoms/select/select';
+import { Label } from '../../atoms/label/label';
+
+@Component({
+  imports: [Label, Select],
+  selector: 'app-select-field',
+  styleUrl: './select-field.css',
+  templateUrl: './select-field.html',
+})
+export class SelectField {
+  @Input() label: string = '';
+  @Input() options: string[] = [];
+  @Input() placeholder: string = 'Todas';
+  @Input() value: string = '';
+  @Output() valueChange = new EventEmitter<string>();
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\select-field\select-field.html 
+================================================== 
+<div class="field">
+    <app-label [text]="label"></app-label>
+    <app-select
+        [options]="options"
+        [placeholder]="placeholder"
+        [value]="value"
+        (valueChange)="valueChange.emit($event)">
+    </app-select>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\select-field\select-field.css 
+================================================== 
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\service-list\service-list.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ServiceList } from './service-list';
+
+describe('ServiceList', () => {
+  let component: ServiceList;
+  let fixture: ComponentFixture<ServiceList>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ServiceList],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ServiceList);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\service-list\service-list.ts 
+================================================== 
+import { Component, Input } from '@angular/core';
+import { Badge } from '../../atoms/badge/badge';
+
+@Component({
+  imports: [Badge],
+  selector: 'app-service-list',
+  styleUrl: './service-list.css',
+  templateUrl: './service-list.html',
+})
+export class ServiceList {
+  @Input() services: string[] = [];
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\service-list\service-list.html 
+================================================== 
+<div class="service-list">
+  @for (service of services; track service) {
+    <app-badge [text]="service" variant="chip"></app-badge>
+  }
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\molecules\service-list\service-list.css 
+================================================== 
+.service-list { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: var(--spacing-xs); 
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card\alojamiento-card.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AlojamientoCard } from './alojamiento-card';
+
+describe('AlojamientoCard', () => {
+  let component: AlojamientoCard;
+  let fixture: ComponentFixture<AlojamientoCard>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AlojamientoCard],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AlojamientoCard);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card\alojamiento-card.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ServiceList } from '../../molecules/service-list/service-list';
+import { PriceTag } from '../../molecules/price-tag/price-tag';
+import { PhotoRating } from '../../molecules/photo-rating/photo-rating';
+import { Button } from '../../atoms/button/button';
+import { Label } from '../../atoms/label/label';
+import { Alojamiento } from '../../../models/alojamiento.model';
+
+@Component({
+  imports: [Label, Button, PhotoRating, PriceTag, ServiceList],
+  selector: 'app-alojamiento-card',
+  styleUrl: './alojamiento-card.css',
+  templateUrl: './alojamiento-card.html',
+})
+export class AlojamientoCard {
+  @Input() alojamiento!: Alojamiento;
+  @Output() viewDetail = new EventEmitter<number>();
+
+  getUbicacion(): string {
+    if (this.alojamiento.ubicacion.includes(this.alojamiento.ciudad)) {
+      return this.alojamiento.ubicacion;
+    }
+    return this.alojamiento.ubicacion + ', ' + this.alojamiento.ciudad;
+  }
+
+  getDetalle(): string {
+    return this.alojamiento.tipo + ' · ' + this.alojamiento.capacidad + ' huéspedes';
+  }
+
+  onViewDetail(): void {
+    this.viewDetail.emit(this.alojamiento.id);
+  }
+}
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card\alojamiento-card.html 
+================================================== 
+<article class="card">
+  <app-photo-rating
+    [src]="alojamiento.imagenPrincipal"
+    [alt]="alojamiento.nombre"
+    [rating]="alojamiento.calificacion">
+  </app-photo-rating>
+
+
+  <div class="info">
+    <app-label [text]="getUbicacion()" variant="muted"></app-label>
+    <app-label [text]="alojamiento.nombre" variant="heading"></app-label>
+    <app-label [text]="getDetalle()" variant="muted"></app-label>
+    <app-service-list [services]="alojamiento.servicios"></app-service-list>
+  </div>
+
+
+  <div class="footer">
+    <app-price-tag [price]="alojamiento.precioNoche"></app-price-tag>
+    <hr>
+    <app-button
+      label="Ver Detalle"
+      variant="accent"
+      [fullWidth]="true"
+      (clicked)="onViewDetail()">
+    </app-button>
+  </div>
+</article>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card\alojamiento-card.css 
+================================================== 
+/* El host es un elemento custom (display: inline por defecto).
+   Para que ocupe toda la celda del grid y se pueda estirar, debe ser block y height: 100%. */
+:host {
+  display: block;
+  height: 100%;
+  min-width: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  height: 100%;                 /* llena toda la celda → misma altura en cada fila */
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+}
+
+/* El wrapper de la foto no debe encogerse; la imagen usa object-fit: cover (photo.css) */
+app-photo-rating {
+  display: block;
+  flex-shrink: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-sm);
+  flex: 1;                      /* ocupa el espacio libre y empuja el footer al fondo */
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: auto;
+  padding: 0 var(--spacing-sm);
+}
+
+hr {
+  width: 100%;
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--color-surface-muted);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card-compressed\alojamiento-card-compressed.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AlojamientoCardCompressed } from './alojamiento-card-compressed';
+
+describe('AlojamientoCardCompressed', () => {
+  let component: AlojamientoCardCompressed;
+  let fixture: ComponentFixture<AlojamientoCardCompressed>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AlojamientoCardCompressed],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AlojamientoCardCompressed);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card-compressed\alojamiento-card-compressed.ts 
+================================================== 
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Photo } from '../../atoms/photo/photo';
+import { Badge } from '../../atoms/badge/badge';
+import { Label } from '../../atoms/label/label';
+import { PriceTag } from '../../molecules/price-tag/price-tag';
+import { Button } from '../../atoms/button/button';
+import { Alojamiento } from '../../../models/alojamiento.model';
+
+@Component({
+  selector: 'app-alojamiento-card-compressed',
+  standalone: true,
+  imports: [Photo, Badge, Label, PriceTag, Button],
+  templateUrl: './alojamiento-card-compressed.html',
+  styleUrl: './alojamiento-card-compressed.css',
+})
+export class AlojamientoCardCompressed {
+
+  @Input() alojamiento!: Alojamiento;
+  @Output() viewDetail = new EventEmitter<number>();
+
+  getUbicacion(): string {
+    if (this.alojamiento.ubicacion.includes(this.alojamiento.ciudad)) {
+      return this.alojamiento.ubicacion;
+    }
+    return this.alojamiento.ubicacion + ', ' + this.alojamiento.ciudad;
+  }
+
+  onViewDetail(): void {
+    this.viewDetail.emit(this.alojamiento.id);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card-compressed\alojamiento-card-compressed.html 
+================================================== 
+<article class="card-compressed">
+  <!-- Imagen + Badge de calificación -->
+  <div class="photo-wrapper">
+    <app-photo
+      [src]="alojamiento.imagenPrincipal"
+      [alt]="alojamiento.nombre">
+    </app-photo>
+
+    <app-badge
+      class="rating"
+      [text]="alojamiento.calificacion + ' ★'"
+      variant="overlay">
+    </app-badge>
+  </div>
+
+  <!-- Información -->
+  <div class="info">
+    <app-label
+      [text]="getUbicacion()"
+      variant="muted">
+    </app-label>
+
+    <app-label
+      [text]="alojamiento.nombre"
+      variant="heading">
+    </app-label>
+
+    <app-price-tag
+      [price]="alojamiento.precioNoche">
+    </app-price-tag>
+  </div>
+
+  <!-- Botón -->
+  <app-button
+    label="Ver Detalle"
+    variant="accent"
+    [fullWidth]="true"
+    (clicked)="onViewDetail()">
+  </app-button>
+</article>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\alojamiento-card-compressed\alojamiento-card-compressed.css 
+================================================== 
+.card-compressed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 314px;
+  height: 460px;
+  padding: var(--spacing-sm);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+.photo-wrapper {
+  position: relative;
+  height: 240px;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.photo-wrapper app-photo {
+  height: 100%;
+}
+
+.rating {
+  position: absolute;
+  left: var(--spacing-sm);
+  bottom: var(--spacing-sm);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: 0 var(--spacing-xs);
+  flex: 1;
+}
+
+/* Ajuste de tipografía más compacta */
+.info app-label.heading {
+  font-size: var(--font-size-md);
+  line-height: 1.3;
+}
+
+.info app-label.muted {
+  font-size: var(--font-size-sm);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\featured-alojamientos\featured-alojamientos.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FeaturedAlojamientos } from './featured-alojamientos';
+
+describe('FeaturedAlojamientos', () => {
+  let component: FeaturedAlojamientos;
+  let fixture: ComponentFixture<FeaturedAlojamientos>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FeaturedAlojamientos],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(FeaturedAlojamientos);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\featured-alojamientos\featured-alojamientos.ts 
+================================================== 
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { Label } from '../../atoms/label/label';
+import { AlojamientoCardCompressed } from '../alojamiento-card-compressed/alojamiento-card-compressed';
+import { AlojamientoService } from '../../../services/alojamiento';
+import { Alojamiento } from '../../../models/alojamiento.model';
+
+@Component({
+  selector: 'app-featured-alojamientos',
+  standalone: true,
+  imports: [Label, AlojamientoCardCompressed, RouterLink],
+  templateUrl: './featured-alojamientos.html',
+  styleUrl: './featured-alojamientos.css',
+})
+export class FeaturedAlojamientos implements OnInit {
+
+  alojamientosDestacados: Alojamiento[] = [];
+  cargando: boolean = true;
+
+  constructor(
+    private alojamientoService: AlojamientoService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarDestacados();
+  }
+
+  cargarDestacados(): void {
+    this.cargando = true;
+
+    this.alojamientoService.getAlojamientos().subscribe({
+      next: (data) => {
+        this.alojamientosDestacados = data.slice(0, 3);
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar alojamientos destacados', err);
+        this.cargando = false;
+      }
+    });
+  }
+
+  onViewDetail(id: number): void {
+    this.router.navigate(['/alojamiento', id]);
+  }
+
+  explorarMas(): void {
+    this.router.navigate(['/alojamientos']);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\featured-alojamientos\featured-alojamientos.html 
+================================================== 
+<section class="featured">
+  <!-- Cabecera con título + enlace -->
+  <div class="header">
+    <app-label text="Alojamientos destacados" variant="title"></app-label>
+
+    <a class="explore-link" routerLink="/alojamientos">
+      Explorar más →
+    </a>
+  </div>
+
+  @if (cargando) {
+    <p class="loading">Cargando alojamientos destacados...</p>
+  } @else if (alojamientosDestacados.length === 0) {
+    <p class="loading">No hay alojamientos disponibles.</p>
+  } @else {
+    <div class="grid">
+      @for (alojamiento of alojamientosDestacados; track alojamiento.id) {
+        <app-alojamiento-card-compressed
+          [alojamiento]="alojamiento"
+          (viewDetail)="onViewDetail($event)">
+        </app-alojamiento-card-compressed>
+      }
+    </div>
+  }
+</section>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\featured-alojamientos\featured-alojamientos.css 
+================================================== 
+.featured {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) 40px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+}
+
+.explore-link {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: #032C70;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.explore-link:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  justify-items: center;
+}
+
+.loading {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+}
+
+@media (max-width: 768px) {
+  .featured {
+    padding: var(--spacing-md) 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\filter-sidebar\filter-sidebar.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FilterSidebar } from './filter-sidebar';
+
+describe('FilterSidebar', () => {
+  let component: FilterSidebar;
+  let fixture: ComponentFixture<FilterSidebar>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FilterSidebar],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(FilterSidebar);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\filter-sidebar\filter-sidebar.ts 
+================================================== 
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { RangeField } from '../../molecules/range-field/range-field';
+import { CheckboxGroup } from '../../molecules/checkbox-group/checkbox-group';
+import { CounterField } from '../../molecules/counter-field/counter-field';
+import { SelectField } from '../../molecules/select-field/select-field';
+import { Button } from '../../atoms/button/button';
+import { Label } from '../../atoms/label/label';
+import { FiltroAlojamiento } from '../../../models/alojamiento.model';
+
+@Component({
+  imports: [Label, Button, SelectField, CounterField, CheckboxGroup, RangeField],
+  selector: 'app-filter-sidebar',
+  styleUrl: './filter-sidebar.css',
+  templateUrl: './filter-sidebar.html',
+})
+export class FilterSidebar implements OnChanges {
+  @Input() ciudades: string[] = [];
+  @Input() tipos: string[] = [];
+  @Input() precioLimite: number = 1000000;
+  @Output() filtersChange = new EventEmitter<FiltroAlojamiento>();
+
+  ciudad: string = '';
+  huespedes: number = 1;
+  tiposSeleccionados: string[] = [];
+  precioMaximo: number = 1000000;
+
+  /**
+   * precioLimite llega de forma asíncrona (cuando termina de cargar el JSON).
+   * ngOnInit solo veía el valor por defecto; ngOnChanges sincroniza el slider
+   * con el precio máximo real cada vez que el límite cambia.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['precioLimite']) {
+      this.precioMaximo = this.precioLimite;
+    }
+  }
+
+  onCiudadChange(ciudad: string): void {
+    this.ciudad = ciudad;
+    this.emitFilters();
+  }
+
+  onHuespedesChange(huespedes: number): void {
+    this.huespedes = huespedes;
+    this.emitFilters();
+  }
+
+  onTiposChange(tipos: string[]): void {
+    this.tiposSeleccionados = tipos;
+    this.emitFilters();
+  }
+
+  onPrecioChange(precio: number): void {
+    this.precioMaximo = precio;
+    this.emitFilters();
+  }
+
+  clearFilters(): void {
+    this.ciudad = '';
+    this.huespedes = 1;
+    this.tiposSeleccionados = [];
+    this.precioMaximo = this.precioLimite;
+    this.emitFilters();
+  }
+
+  emitFilters(): void {
+    this.filtersChange.emit({
+      ciudad: this.ciudad || undefined,
+      huespedes: this.huespedes,
+      tipos: this.tiposSeleccionados,
+      precioMaximo: this.precioMaximo,
+    });
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\filter-sidebar\filter-sidebar.html 
+================================================== 
+<aside class="sidebar">
+  <app-label text="Filtros" variant="title"></app-label>
+
+  <div class="card">
+    <app-select-field
+      label="Ciudad"
+      placeholder="Todas las ciudades"
+      [options]="ciudades"
+      [value]="ciudad"
+      (valueChange)="onCiudadChange($event)">
+    </app-select-field>
+
+    <hr>
+
+    <app-counter-field
+      label="Huéspedes"
+      unit="huéspedes"
+      [value]="huespedes"
+      [min]="1"
+      [max]="10"
+      (valueChange)="onHuespedesChange($event)">
+    </app-counter-field>
+
+    <hr>
+
+    <app-checkbox-group
+      label="Tipo de propiedad"
+      [options]="tipos"
+      [selected]="tiposSeleccionados"
+      (selectedChange)="onTiposChange($event)">
+    </app-checkbox-group>
+
+    <hr>
+
+    <app-range-field
+      label="Precio máximo"
+      [min]="0"
+      [max]="precioLimite"
+      [step]="10000"
+      [value]="precioMaximo"
+      (valueChange)="onPrecioChange($event)">
+    </app-range-field>
+
+    <hr>
+
+    <app-button 
+      label="Limpiar filtros" 
+      variant="outline" 
+      [fullWidth]="true" 
+      (clicked)="clearFilters()">
+    </app-button>
+  </div>
+</aside>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\filter-sidebar\filter-sidebar.css 
+================================================== 
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 217px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-md);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+hr {
+  width: 100%;
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--color-surface-muted);
+}
+
+@media (max-width: 768px) {
+  .sidebar { width: 100%; }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\header\header.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Header } from './header';
+
+describe('Header', () => {
+  let component: Header;
+  let fixture: ComponentFixture<Header>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Header],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Header);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\header\header.ts 
+================================================== 
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { SearchBar } from '../../molecules/search-bar/search-bar';
+import { Logo } from '../../atoms/logo/logo';
+import { LinkComponent } from '../../atoms/link/link';
+
+@Component({
+  selector: 'app-header',
+  standalone: true,
+  imports: [SearchBar, Logo, LinkComponent],
+  templateUrl: './header.html',
+  styleUrl: './header.css',
+})
+export class Header {
+
+  destination = '';
+  checkIn = '';
+  checkOut = '';
+
+  @Output() search = new EventEmitter<{
+    destination: string;
+    checkIn: string;
+    checkOut: string;
+  }>();
+
+  constructor(private router: Router) {}
+
+  onSearch(): void {
+    this.search.emit({
+      destination: this.destination,
+      checkIn: this.checkIn,
+      checkOut: this.checkOut
+    });
+  }
+
+  irAHome(): void {
+    this.router.navigate(['/home']);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\header\header.html 
+================================================== 
+<header class="header">
+  <div class="header-content">
+
+    <!-- Logo (ahora es clickeable) -->
+    <div class="logo-section" (click)="irAHome()" style="cursor: pointer;">
+      <app-logo></app-logo>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-section">
+      <app-search-bar
+        [destination]="destination"
+        [checkIn]="checkIn"
+        [checkOut]="checkOut"
+        (destinationChange)="destination = $event"
+        (checkInChange)="checkIn = $event"
+        (checkOutChange)="checkOut = $event"
+        (search)="onSearch()">
+      </app-search-bar>
+    </div>
+
+    <!-- Acciones derecha -->
+    <div class="actions-section">
+      <app-link 
+        label="Mis reservas" 
+        href="/reservas"
+        [active]="false">
+      </app-link>
+
+      <app-link 
+        label="Alojamientos" 
+        href="/alojamientos"
+        [active]="false">
+      </app-link>
+    </div>
+
+  </div>
+</header>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\header\header.css 
+================================================== 
+.header {
+  width: 100%;
+  height: 92px;
+  background-color: #032C70;
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px;
+  display: flex;
+  align-items: center;
+}
+
+.header-content {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.logo-section {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.search-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  max-width: 480px;
+}
+
+.actions-section {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-shrink: 0;
+}
+
+/* Ajuste para que los links se vean bien sobre el fondo azul */
+.actions-section app-link a {
+  color: #F6F7F8;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logo-section {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.logo-section:hover {
+  opacity: 0.9;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\hero\hero.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Hero } from './hero';
+
+describe('Hero', () => {
+  let component: Hero;
+  let fixture: ComponentFixture<Hero>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Hero],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Hero);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\hero\hero.ts 
+================================================== 
+import { Component, EventEmitter, Output } from '@angular/core';
+import { SearchBarHero } from '../../molecules/search-bar-hero/search-bar-hero';
+
+@Component({
+  selector: 'app-hero',
+  standalone: true,
+  imports: [SearchBarHero],
+  templateUrl: './hero.html',
+  styleUrl: './hero.css',
+})
+export class Hero {
+
+  destination = '';
+  checkIn = '';
+  checkOut = '';
+
+  @Output() search = new EventEmitter<{
+    destination: string;
+    checkIn: string;
+    checkOut: string;
+  }>();
+
+  onSearch(): void {
+    this.search.emit({
+      destination: this.destination,
+      checkIn: this.checkIn,
+      checkOut: this.checkOut
+    });
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\hero\hero.html 
+================================================== 
+<section class="hero">
+
+  <!-- Columna izquierda: título, subtítulo y buscador -->
+  <div class="hero-content">
+    <h1 class="title">Encuentra tu próxima estancia</h1>
+    <p class="subtitle">Busca ofertas en hoteles, casas y mucho más...</p>
+
+    <div class="search-wrapper">
+      <app-search-bar-hero
+        [destination]="destination"
+        [checkIn]="checkIn"
+        [checkOut]="checkOut"
+        (destinationChange)="destination = $event"
+        (checkInChange)="checkIn = $event"
+        (checkOutChange)="checkOut = $event"
+        (search)="onSearch()">
+      </app-search-bar-hero>
+    </div>
+  </div>
+
+  <!-- Columna derecha: mosaico decorativo (2 columnas x 3 recortes) -->
+  <div class="images" aria-hidden="true">
+    <div class="img-card img-c"></div>
+    <div class="img-card img-b"></div>
+    <div class="img-card img-f"></div>
+
+    <div class="img-card img-d"></div>
+    <div class="img-card img-a"></div>
+    <div class="img-card img-e"></div>
+  </div>
+
+</section>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\components\organisms\hero\hero.css 
+================================================== 
+/* ============================================================
+   HERO — lienzo de diseño: 1416 x 300 px
+   Todas las medidas salen del SVG de especificación.
+   ============================================================ */
+
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1416px;
+  height: 300px;
+  margin: 0 auto;
+  background-color: #F0F3F5;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ---------- Columna de contenido ---------- */
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  /* 224px a 1416px de ancho; se encoge sola para no pisar el mosaico */
+  padding-left: max(32px, min(224px, calc(100% - 1192px)));
+  padding-top: 69px;
+}
+
+.title {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  color: var(--color-text, #1A1A1A);
+}
+
+.subtitle {
+  margin: 12px 0 0;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--color-text, #1A1A1A);
+}
+
+/* El SVG tiene la barra 7px dentro de su marco (por la sombra) */
+.search-wrapper {
+  width: 100%;
+  max-width: 695px;
+  margin: 65px 0 0 7px;
+}
+
+/* ---------- Mosaico de imágenes ---------- */
+/* Bloque de 351 x 300 anclado a la derecha (115px de margen) */
+
+.images {
+  position: absolute;
+  top: 0;
+  right: 115px;
+  width: 351px;
+  height: 300px;
+  pointer-events: none;
+}
+
+.img-card {
+  position: absolute;
+  width: 166px;
+  background-color: #DDE3EA;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Columna izquierda (x = 0) */
+
+.img-c {            /* arriba, solo redondeado abajo */
+  left: 0;
+  top: 0;
+  height: 88px;
+  border-radius: 0 0 35px 35px;
+  background-image: url('/assets/images/hero/hero-c.jpg');
+  background-position: 50% 99%;
+}
+
+.img-b {            /* centro, cuadrada */
+  left: 0;
+  top: 101px;
+  height: 165px;
+  border-radius: 35px;
+  background-image: url('/assets/images/hero/hero-b.jpg');
+  background-position: 50% 50%;
+}
+
+.img-f {            /* abajo, solo redondeado arriba */
+  left: 0;
+  top: 279px;
+  height: 21px;
+  border-radius: 21px 21px 0 0;
+  background-image: url('/assets/images/hero/hero-f.jpg');
+  background-position: 50% 43%;
+}
+
+/* Columna derecha (x = 185) */
+
+.img-d {            /* arriba, solo redondeado abajo */
+  left: 185px;
+  top: 0;
+  height: 34px;
+  border-radius: 0 0 34px 34px;
+  background-image: url('/assets/images/hero/hero-d.jpg');
+  background-position: 50% 58%;
+}
+
+.img-a {            /* centro, cuadrada */
+  left: 185px;
+  top: 46px;
+  height: 165px;
+  border-radius: 35px;
+  background-image: url('/assets/images/hero/hero-a.jpg');
+  background-position: 56% 50%;
+}
+
+.img-e {            /* abajo, solo redondeado arriba */
+  left: 185px;
+  top: 225px;
+  height: 75px;
+  border-radius: 37px 37px 0 0;
+  background-image: url('/assets/images/hero/hero-e.jpg');
+  background-size: auto 220%;
+  background-position: 50% 0;
+}
+
+/* ---------- Responsive ---------- */
+
+/* Con menos de ~1250px el mosaico ya no cabe junto al buscador */
+@media (max-width: 1248px) {
+  .images {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: auto;
+    padding: 32px 16px 40px;
+  }
+
+  .hero-content {
+    padding: 0;
+  }
+
+  .title {
+    font-size: 28px;
+    line-height: 1.15;
+  }
+
+  .subtitle {
+    margin-top: 8px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .search-wrapper {
+    margin: 28px 0 0;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\models\alojamiento.model.ts 
+================================================== 
+export interface Alojamiento {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  ciudad: string;
+  ubicacion: string;
+  tipo: string;
+  capacidad: number;
+  habitaciones: number;
+  camas: number;
+  banos: number;
+  precioNoche: number;
+  tarifaLimpieza: number;
+  calificacion: number;
+  activo: boolean;
+  imagenPrincipal: string;
+  imagenes: string[];
+  servicios: string[];
+  reglas: string[];
+}
+
+export interface Resena {
+  id: number;
+  alojamientoId: number;
+  usuario: string;
+  calificacion: number;
+  comentario: string;
+}
+
+/** Forma del archivo assets/data/marketplace-data.json */
+export interface MarketplaceData {
+  alojamientos: Alojamiento[];
+  resenas: Resena[];
+}
+
+export interface Cotizacion {
+  alojamientoId: number;
+  fechaLlegada: string;
+  fechaSalida: string;
+  numeroHuespedes: number;
+  numeroNoches: number;
+  precioNoche: number;
+  subtotal: number;
+  tarifaLimpieza: number;
+  tarifaServicio: number;
+  total: number;
+}
+
+export interface Reserva {
+  id: string | number;
+  alojamientoId: number;
+  alojamientoNombre: string;
+  ciudad: string;
+  fechaLlegada: string;
+  fechaSalida: string;
+  numeroHuespedes: number;
+  numeroNoches: number;
+  valorTotal: number;
+  nombreHuesped: string;
+  correoHuesped: string;
+  estado: 'CONFIRMADA';
+}
+
+export interface FiltroAlojamiento {
+  ciudad?: string;
+  huespedes?: number;
+  tipos?: string[];
+  precioMaximo?: number;
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\catalog\catalog.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Catalog } from './catalog';
+
+describe('Catalog', () => {
+  let component: Catalog;
+  let fixture: ComponentFixture<Catalog>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Catalog],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Catalog);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\catalog\catalog.ts 
+================================================== 
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subject, catchError, debounceTime, forkJoin, of, switchMap, takeUntil } from 'rxjs';
+import { Label } from '../../components/atoms/label/label';
+import { FilterSidebar } from '../../components/organisms/filter-sidebar/filter-sidebar';
+import { AlojamientoCard } from '../../components/organisms/alojamiento-card/alojamiento-card';
+import { EmptyState } from '../../components/molecules/empty-state/empty-state';
+import { AlojamientoService } from '../../services/alojamiento';
+import { Alojamiento, FiltroAlojamiento } from '../../models/alojamiento.model';
+
+@Component({
+  selector: 'app-catalog-page',
+  standalone: true,
+  imports: [Label, FilterSidebar, AlojamientoCard, EmptyState],
+  templateUrl: './catalog.html',
+  styleUrl: './catalog.css',
+})
+export class CatalogPage implements OnInit, OnDestroy {
+  /** Referencia al sidebar para poder limpiar sus filtros desde el empty state */
+  @ViewChild(FilterSidebar) private filterSidebar?: FilterSidebar;
+
+  alojamientos: Alojamiento[] = [];
+  ciudades: string[] = [];
+  tipos: string[] = [];
+  precioLimite: number = 1000000;
+  cargando: boolean = true;
+  error: string = '';
+
+  private destroy$ = new Subject<void>();
+  private filtro$ = new Subject<FiltroAlojamiento>();
+
+  constructor(
+    private alojamientoService: AlojamientoService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarDatosIniciales();
+    this.escucharFiltros();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private cargarDatosIniciales(): void {
+    this.cargando = true;
+    this.error = '';
+
+    forkJoin({
+      alojamientos: this.alojamientoService.getAlojamientos(),
+      ciudades: this.alojamientoService.getCiudades(),
+      tipos: this.alojamientoService.getTipos()
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ alojamientos, ciudades, tipos }) => {
+          this.alojamientos = alojamientos;
+          this.ciudades = ciudades;
+          this.tipos = tipos;
+          if (alojamientos.length > 0) {
+            this.precioLimite = Math.max(...alojamientos.map(a => a.precioNoche));
+          }
+          this.cargando = false;
+        },
+        error: (err: Error) => {
+          this.error = err.message;
+          this.cargando = false;
+        }
+      });
+  }
+
+  private escucharFiltros(): void {
+    this.filtro$
+      .pipe(
+        debounceTime(150),
+        switchMap(filtro =>
+          this.alojamientoService.filtrarAlojamientos(filtro).pipe(
+            catchError((err: Error) => {
+              this.error = err.message;
+              return of<Alojamiento[]>([]);
+            })
+          )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(data => {
+        this.alojamientos = data;
+      });
+  }
+
+  onFiltersChange(filtro: FiltroAlojamiento): void {
+    this.filtro$.next(filtro);
+  }
+
+  /**
+   * Botón "Limpiar filtros" del empty state.
+   * clearFilters() resetea los controles del sidebar y emite filtersChange,
+   * así que el listado se recarga por el mismo flujo de siempre.
+   */
+  limpiarFiltros(): void {
+    this.filterSidebar?.clearFilters();
+  }
+
+  onViewDetail(id: number): void {
+    this.router.navigate(['/alojamiento', id]);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\catalog\catalog.html 
+================================================== 
+<section class="catalog">
+  <div class="header">
+    <app-label text="Alojamientos" variant="title"></app-label>
+  </div>
+
+  <div class="content">
+    <app-filter-sidebar
+      [ciudades]="ciudades"
+      [tipos]="tipos"
+      [precioLimite]="precioLimite"
+      (filtersChange)="onFiltersChange($event)">
+    </app-filter-sidebar>
+
+    <div class="grid">
+      @if (cargando) {
+        <p class="empty">Cargando alojamientos...</p>
+      } @else if (error) {
+        <p class="empty error">{{ error }}</p>
+      } @else if (alojamientos.length === 0) {
+        <app-empty-state (resetFilters)="limpiarFiltros()"></app-empty-state>
+      } @else {
+        @for (alojamiento of alojamientos; track alojamiento.id) {
+          <app-alojamiento-card
+            [alojamiento]="alojamiento"
+            (viewDetail)="onViewDetail($event)">
+          </app-alojamiento-card>
+        }
+      }
+    </div>
+  </div>
+</section>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\catalog\catalog.css 
+================================================== 
+.catalog {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) 40px;
+}
+
+.header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.content {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+/* ───────── GRILLA DEL CATÁLOGO ─────────
+   Desktop: exactamente 3 columnas iguales.
+   minmax(0, 1fr) evita que el contenido (chips, textos largos) ensanche una columna.
+   min-width: 0 permite que el grid se encoja dentro del contenedor flex.
+   align-items: stretch (valor por defecto) iguala el alto de las tarjetas por fila. */
+.grid {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-lg);
+  align-items: stretch;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+}
+
+.empty.error {
+  color: #b3261e;
+}
+
+/* Tablet: 2 columnas */
+@media (max-width: 1199px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Móvil: sidebar arriba y 1 columna */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .catalog {
+    padding: var(--spacing-md) 16px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\detail\detail.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Detail } from './detail';
+
+describe('Detail', () => {
+  let component: Detail;
+  let fixture: ComponentFixture<Detail>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Detail],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Detail);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\detail\detail.ts 
+================================================== 
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
+import { Label } from '../../components/atoms/label/label';
+import { Button } from '../../components/atoms/button/button';
+import { Photo } from '../../components/atoms/photo/photo';
+import { ServiceList } from '../../components/molecules/service-list/service-list';
+import { PriceTag } from '../../components/molecules/price-tag/price-tag';
+import { CounterField } from '../../components/molecules/counter-field/counter-field';
+import { AlojamientoService } from '../../services/alojamiento';
+import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamiento.model';
+
+@Component({
+  selector: 'app-detail-page',
+  standalone: true,
+  imports: [
+    FormsModule,
+    Label,
+    Button,
+    Photo,
+    ServiceList,
+    PriceTag,
+    CounterField
+  ],
+  templateUrl: './detail.html',
+  styleUrl: './detail.css',
+})
+export class DetailPage implements OnInit, OnDestroy {
+  alojamiento: Alojamiento | null = null;
+  resenas: Resena[] = [];
+  cotizacion: Cotizacion | null = null;
+  cargando: boolean = true;
+  error: string = '';
+  errorFormulario: string = '';
+  mensajeExito: string = '';
+
+  // Formulario
+  fechaLlegada: string = '';
+  fechaSalida: string = '';
+  numeroHuespedes: number = 1;
+  nombreHuesped: string = '';
+  correoHuesped: string = '';
+
+  /** Fecha mínima seleccionable (hoy, en hora local) en formato YYYY-MM-DD */
+  hoy: string = this.obtenerHoyLocal();
+
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private alojamientoService: AlojamientoService
+  ) {}
+
+  ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : NaN;
+
+    if (!Number.isInteger(id) || id <= 0) {
+      this.error = 'ID de alojamiento inválido';
+      this.cargando = false;
+      return;
+    }
+
+    this.cargarAlojamiento(id);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Alojamiento + reseñas en una sola suscripción (sin subscribe anidado).
+   * Ambas consultas reutilizan la misma petición HTTP cacheada en el servicio.
+   * Si fallan las reseñas, el detalle igual se muestra.
+   */
+  private cargarAlojamiento(id: number): void {
+    this.cargando = true;
+
+    forkJoin({
+      alojamiento: this.alojamientoService.getAlojamientoById(id),
+      resenas: this.alojamientoService.getResenasByAlojamiento(id).pipe(
+        catchError(() => of<Resena[]>([]))
+      )
+    })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: ({ alojamiento, resenas }) => {
+          if (!alojamiento) {
+            this.error = 'Alojamiento no encontrado';
+          } else {
+            this.alojamiento = alojamiento;
+            this.resenas = resenas;
+            this.numeroHuespedes = 1;
+          }
+          this.cargando = false;
+        },
+        error: (err: Error) => {
+          console.error(err);
+          this.error = 'Error al cargar el alojamiento';
+          this.cargando = false;
+        }
+      });
+  }
+
+  calcularCotizacion(): void {
+    this.errorFormulario = '';
+
+    if (!this.alojamiento || !this.fechaLlegada || !this.fechaSalida) {
+      this.cotizacion = null;
+      return;
+    }
+
+    this.cotizacion = this.alojamientoService.calcularCotizacion(
+      this.alojamiento,
+      this.fechaLlegada,
+      this.fechaSalida,
+      this.numeroHuespedes
+    );
+
+    if (!this.cotizacion) {
+      this.errorFormulario = 'La fecha de salida debe ser posterior a la fecha de llegada.';
+    }
+  }
+
+  onFechasChange(): void {
+    this.mensajeExito = '';
+    this.calcularCotizacion();
+  }
+
+  onHuespedesChange(valor: number): void {
+    this.numeroHuespedes = valor;
+    this.calcularCotizacion();
+  }
+
+  reservar(): void {
+    if (!this.alojamiento || !this.cotizacion) {
+      return;
+    }
+
+    if (!this.nombreHuesped.trim() || !this.correoHuesped.trim()) {
+      this.errorFormulario = 'Por favor completa nombre y correo.';
+      return;
+    }
+
+    if (!this.correoValido(this.correoHuesped)) {
+      this.errorFormulario = 'Ingresa un correo electrónico válido.';
+      return;
+    }
+
+    const reserva: Reserva = {
+      id: this.alojamientoService.generarIdReserva(),
+      alojamientoId: this.alojamiento.id,
+      alojamientoNombre: this.alojamiento.nombre,
+      ciudad: this.alojamiento.ciudad,
+      fechaLlegada: this.fechaLlegada,
+      fechaSalida: this.fechaSalida,
+      numeroHuespedes: this.numeroHuespedes,
+      numeroNoches: this.cotizacion.numeroNoches,
+      valorTotal: this.cotizacion.total,
+      nombreHuesped: this.nombreHuesped.trim(),
+      correoHuesped: this.correoHuesped.trim(),
+      estado: 'CONFIRMADA'
+    };
+
+    const guardada = this.alojamientoService.guardarReserva(reserva);
+
+    if (!guardada) {
+      this.errorFormulario = 'No se pudo guardar la reserva en este navegador. Intenta de nuevo.';
+      return;
+    }
+
+    this.errorFormulario = '';
+    this.mensajeExito = `¡Reserva confirmada! ID: ${reserva.id}`;
+
+    // Limpiar formulario
+    this.fechaLlegada = '';
+    this.fechaSalida = '';
+    this.nombreHuesped = '';
+    this.correoHuesped = '';
+    this.cotizacion = null;
+  }
+
+  volver(): void {
+    this.router.navigate(['/alojamientos']);
+  }
+
+  /** Método público: la plantilla no puede usar el Router privado directamente */
+  irAReservas(): void {
+    this.router.navigate(['/reservas']);
+  }
+
+  formatMoney(valor: number): string {
+    return '$' + valor.toLocaleString('es-CO') + ' COP';
+  }
+
+  private correoValido(correo: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim());
+  }
+
+  private obtenerHoyLocal(): string {
+    const d = new Date();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${d.getFullYear()}-${mes}-${dia}`;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\detail\detail.html 
+================================================== 
+<section class="detail">
+  @if (cargando) {
+    <p class="mensaje">Cargando alojamiento...</p>
+  } @else if (error) {
+    <div class="mensaje">
+      <app-label [text]="error" variant="heading"></app-label>
+      <app-button label="Volver al catálogo" variant="outline" (clicked)="volver()"></app-button>
+    </div>
+  } @else if (alojamiento) {
+
+    <!-- Mensaje de éxito -->
+    @if (mensajeExito) {
+      <div class="exito">
+        <app-label [text]="mensajeExito" variant="heading"></app-label>
+        <app-button label="Ver mis reservas" variant="accent" (clicked)="irAReservas()"></app-button>
+      </div>
+    }
+
+    <!-- Galería principal (imagen above-the-fold: carga inmediata) -->
+    <div class="gallery">
+      <app-photo
+        [src]="alojamiento.imagenPrincipal"
+        [alt]="alojamiento.nombre"
+        loading="eager">
+      </app-photo>
+    </div>
+
+    <div class="content">
+      <!-- Información principal -->
+      <div class="info">
+        <app-label [text]="alojamiento.ubicacion + ', ' + alojamiento.ciudad" variant="muted"></app-label>
+        <app-label [text]="alojamiento.nombre" variant="title"></app-label>
+        <app-label [text]="alojamiento.tipo + ' · ' + alojamiento.capacidad + ' huéspedes · ' + alojamiento.habitaciones + ' habitaciones'" variant="muted"></app-label>
+
+        <p class="descripcion">{{ alojamiento.descripcion }}</p>
+
+        <app-label text="Servicios" variant="heading"></app-label>
+        <app-service-list [services]="alojamiento.servicios"></app-service-list>
+
+        <app-label text="Reglas de la casa" variant="heading"></app-label>
+        <ul class="reglas">
+          @for (regla of alojamiento.reglas; track regla) {
+            <li>{{ regla }}</li>
+          }
+        </ul>
+
+        @if (resenas.length > 0) {
+          <app-label text="Reseñas" variant="heading"></app-label>
+          <div class="resenas">
+            @for (resena of resenas; track resena.id) {
+              <div class="resena">
+                <strong>{{ resena.usuario }}</strong>
+                <span>{{ resena.calificacion }} ★</span>
+                <p>{{ resena.comentario }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Sidebar de cotización y reserva -->
+      <aside class="sidebar">
+        <app-price-tag [price]="alojamiento.precioNoche"></app-price-tag>
+
+        <div class="campo">
+          <app-label text="Fecha de llegada" variant="field"></app-label>
+          <input
+            type="date"
+            [(ngModel)]="fechaLlegada"
+            [attr.min]="hoy"
+            (change)="onFechasChange()"
+            class="date-input">
+        </div>
+
+        <div class="campo">
+          <app-label text="Fecha de salida" variant="field"></app-label>
+          <input
+            type="date"
+            [(ngModel)]="fechaSalida"
+            [attr.min]="fechaLlegada || hoy"
+            (change)="onFechasChange()"
+            class="date-input">
+        </div>
+
+        <app-counter-field
+          label="Huéspedes"
+          unit="huéspedes"
+          [value]="numeroHuespedes"
+          [min]="1"
+          [max]="alojamiento.capacidad"
+          (valueChange)="onHuespedesChange($event)">
+        </app-counter-field>
+
+        @if (cotizacion) {
+          <div class="resumen">
+            <div class="linea">
+              <span>{{ cotizacion.numeroNoches }} noche(s) × {{ formatMoney(cotizacion.precioNoche) }}</span>
+              <span>{{ formatMoney(cotizacion.subtotal) }}</span>
+            </div>
+            <div class="linea">
+              <span>Tarifa de limpieza</span>
+              <span>{{ formatMoney(cotizacion.tarifaLimpieza) }}</span>
+            </div>
+            <div class="linea">
+              <span>Tarifa de servicio (10%)</span>
+              <span>{{ formatMoney(cotizacion.tarifaServicio) }}</span>
+            </div>
+            <div class="linea total">
+              <strong>Total</strong>
+              <strong>{{ formatMoney(cotizacion.total) }}</strong>
+            </div>
+          </div>
+        }
+
+        <div class="campo">
+          <app-label text="Nombre completo" variant="field"></app-label>
+          <input
+            type="text"
+            [(ngModel)]="nombreHuesped"
+            placeholder="Tu nombre"
+            class="text-input">
+        </div>
+
+        <div class="campo">
+          <app-label text="Correo electrónico" variant="field"></app-label>
+          <input
+            type="email"
+            [(ngModel)]="correoHuesped"
+            placeholder="tu@correo.com"
+            class="text-input">
+        </div>
+
+        @if (errorFormulario) {
+          <p class="error-form" role="alert">{{ errorFormulario }}</p>
+        }
+
+        <app-button
+          label="Confirmar reserva"
+          variant="accent"
+          [fullWidth]="true"
+          [disabled]="!cotizacion"
+          (clicked)="reservar()">
+        </app-button>
+
+        <app-button
+          label="Volver al catálogo"
+          variant="outline"
+          [fullWidth]="true"
+          (clicked)="volver()">
+        </app-button>
+      </aside>
+    </div>
+  }
+</section>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\detail\detail.css 
+================================================== 
+.exito {
+  background-color: #e8f5e9;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.date-input,
+.text-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-control);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--spacing-md);
+  background-color: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.linea {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-secondary);
+}
+
+.linea.total {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-control);
+  color: var(--color-text-strong);
+  font-size: var(--font-size-md);
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\home\home.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Home } from './home';
+
+describe('Home', () => {
+  let component: Home;
+  let fixture: ComponentFixture<Home>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Home],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Home);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\home\home.ts 
+================================================== 
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { Hero } from '../../components/organisms/hero/hero';
+import { FeaturedAlojamientos } from '../../components/organisms/featured-alojamientos/featured-alojamientos';
+
+@Component({
+  selector: 'app-home-page',
+  standalone: true,
+  imports: [Hero, FeaturedAlojamientos],
+  templateUrl: './home.html',
+  styleUrl: './home.css',
+})
+export class HomePage {
+
+  constructor(private router: Router) {}
+
+  onSearch(data: { destination: string; checkIn: string; checkOut: string }): void {
+    // Por ahora solo redirigimos al catálogo.
+    // Más adelante podemos pasar los filtros por query params.
+    console.log('Búsqueda desde Home:', data);
+    this.router.navigate(['/alojamientos']);
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\home\home.html 
+================================================== 
+<div class="home-page">
+  <!-- Hero Section -->
+  <app-hero (search)="onSearch($event)"></app-hero>
+
+  <!-- Alojamientos Destacados -->
+  <app-featured-alojamientos></app-featured-alojamientos>
+</div>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\home\home.css 
+================================================== 
+:host {
+  display: block;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding-bottom: var(--spacing-xl);
+}
+
+/* El host del Hero ocupa todo el ancho; el Hero interno mide hasta 1416px */
+app-hero {
+  display: block;
+  width: 100%;
+  max-width: 1448px;
+  margin: var(--spacing-md) auto 0;
+  padding: 0 16px;
+}
+
+app-featured-alojamientos {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  app-hero {
+    padding: 0 12px;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\reservations\reservations.spec.ts 
+================================================== 
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Reservations } from './reservations';
+
+describe('Reservations', () => {
+  let component: Reservations;
+  let fixture: ComponentFixture<Reservations>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Reservations],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Reservations);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\reservations\reservations.ts 
+================================================== 
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Label } from '../../components/atoms/label/label';
+import { Button } from '../../components/atoms/button/button';
+import { AlojamientoService } from '../../services/alojamiento';
+import { Reserva } from '../../models/alojamiento.model';
+
+@Component({
+  selector: 'app-reservations-page',
+  standalone: true,
+  imports: [Label, Button],
+  templateUrl: './reservations.html',
+  styleUrl: './reservations.css',
+})
+export class ReservationsPage implements OnInit {
+
+  reservas: Reserva[] = [];
+
+  constructor(
+    private alojamientoService: AlojamientoService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarReservas();
+  }
+
+  cargarReservas(): void {
+    this.reservas = this.alojamientoService.getReservas();
+  }
+
+  eliminarReserva(id: string | number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
+      this.alojamientoService.eliminarReserva(id);
+      this.cargarReservas();
+    }
+  }
+
+  irACatalogo(): void {
+    this.router.navigate(['/alojamientos']);
+  }
+
+  formatMoney(valor: number): string {
+    return '$' + valor.toLocaleString('es-CO') + ' COP';
+  }
+
+  formatFecha(fecha: string): string {
+    if (!fecha) return '';
+    const d = new Date(fecha + 'T00:00:00');
+    return d.toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\reservations\reservations.html 
+================================================== 
+<section class="reservations">
+  <div class="header">
+    <app-label text="Mis reservas" variant="title"></app-label>
+  </div>
+
+  @if (reservas.length === 0) {
+    <div class="empty">
+      <app-label text="Aún no tienes reservas" variant="heading"></app-label>
+      <p>Explora los alojamientos y reserva tu próxima estadía.</p>
+      <app-button
+        label="Ver alojamientos"
+        variant="accent"
+        (clicked)="irACatalogo()">
+      </app-button>
+    </div>
+  } @else {
+    <div class="lista">
+      @for (reserva of reservas; track reserva.id) {
+        <article class="card">
+          <div class="info">
+            <app-label [text]="reserva.alojamientoNombre" variant="heading"></app-label>
+            <app-label [text]="reserva.ciudad" variant="muted"></app-label>
+
+            <div class="detalle">
+              <span><strong>Llegada:</strong> {{ formatFecha(reserva.fechaLlegada) }}</span>
+              <span><strong>Salida:</strong> {{ formatFecha(reserva.fechaSalida) }}</span>
+              <span><strong>Noches:</strong> {{ reserva.numeroNoches }}</span>
+              <span><strong>Huéspedes:</strong> {{ reserva.numeroHuespedes }}</span>
+            </div>
+
+            <div class="huesped">
+              <span>{{ reserva.nombreHuesped }}</span>
+              <span>{{ reserva.correoHuesped }}</span>
+            </div>
+
+            <div class="precio">
+              <app-label [text]="formatMoney(reserva.valorTotal)" variant="heading"></app-label>
+              <span class="estado">{{ reserva.estado }}</span>
+            </div>
+          </div>
+
+          <div class="acciones">
+            <app-button
+              label="Eliminar"
+              variant="outline"
+              (clicked)="eliminarReserva(reserva.id)">
+            </app-button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\pages\reservations\reservations.css 
+================================================== 
+.reservations {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) 40px;
+}
+
+.header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) 0;
+}
+
+.empty p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.detalle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.huesped {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.precio {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+}
+
+.estado {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.acciones {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .reservations {
+    padding: var(--spacing-md) 16px;
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\services\alojamiento.spec.ts 
+================================================== 
+import { TestBed } from '@angular/core/testing';
+import { Alojamiento } from './alojamiento';
+
+describe('Alojamiento', () => {
+  let service: Alojamiento;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(Alojamiento);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\app\services\alojamiento.ts 
+================================================== 
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, map, shareReplay, throwError } from 'rxjs';
+import {
+  Alojamiento,
+  Cotizacion,
+  FiltroAlojamiento,
+  MarketplaceData,
+  Reserva,
+  Resena
+} from '../models/alojamiento.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AlojamientoService {
+
+  private http = inject(HttpClient);
+  private readonly dataUrl = 'assets/data/marketplace-data.json';
+  private readonly RESERVAS_KEY = 'lr_stays_reservas';
+  private readonly TASA_SERVICIO = 0.10;
+  private readonly MS_POR_DIA = 1000 * 60 * 60 * 24;
+
+  /**
+   * CACHE: el JSON se descarga UNA sola vez y se reutiliza en toda la app.
+   * shareReplay(1) comparte la misma petición entre todos los suscriptores
+   * y reemite el último valor a los que lleguen después.
+   * Si la petición falla, se reinicia sola y el siguiente intento vuelve a pedirla.
+   */
+  private data$: Observable<MarketplaceData> = this.http
+    .get<MarketplaceData>(this.dataUrl)
+    .pipe(
+      shareReplay({ bufferSize: 1, refCount: false }),
+      catchError(err => {
+        console.error('Error al cargar marketplace-data.json', err);
+        return throwError(() => new Error('No se pudieron cargar los datos del marketplace.'));
+      })
+    );
+
+  /** Regla de negocio: solo alojamientos activos (activo === true) */
+  getAlojamientos(): Observable<Alojamiento[]> {
+    return this.data$.pipe(
+      map(data => data.alojamientos.filter(a => a.activo === true))
+    );
+  }
+
+  getAlojamientoById(id: number): Observable<Alojamiento | undefined> {
+    return this.getAlojamientos().pipe(
+      map(alojamientos => alojamientos.find(a => a.id === id))
+    );
+  }
+
+  filtrarAlojamientos(filtro: FiltroAlojamiento): Observable<Alojamiento[]> {
+    return this.getAlojamientos().pipe(
+      map(alojamientos =>
+        alojamientos.filter(a => {
+          const cumpleCiudad = !filtro.ciudad || a.ciudad === filtro.ciudad;
+          const cumpleHuespedes = !filtro.huespedes || a.capacidad >= filtro.huespedes;
+          const cumpleTipo = !filtro.tipos || filtro.tipos.length === 0 || filtro.tipos.includes(a.tipo);
+          const cumplePrecio = !filtro.precioMaximo || a.precioNoche <= filtro.precioMaximo;
+          return cumpleCiudad && cumpleHuespedes && cumpleTipo && cumplePrecio;
+        })
+      )
+    );
+  }
+
+  getResenasByAlojamiento(id: number): Observable<Resena[]> {
+    return this.data$.pipe(
+      map(data => data.resenas.filter(r => r.alojamientoId === id))
+    );
+  }
+
+  getCiudades(): Observable<string[]> {
+    return this.getAlojamientos().pipe(
+      map(alojamientos => [...new Set(alojamientos.map(a => a.ciudad))].sort())
+    );
+  }
+
+  getTipos(): Observable<string[]> {
+    return this.getAlojamientos().pipe(
+      map(alojamientos => [...new Set(alojamientos.map(a => a.tipo))].sort())
+    );
+  }
+
+  /**
+   * Regla: (Noches × PrecioNoche) + TarifaLimpieza + 10% de servicio sobre el subtotal.
+   * Devuelve null si el rango de fechas no es válido (salida debe ser posterior a llegada).
+   */
+  calcularCotizacion(
+    alojamiento: Alojamiento,
+    fechaLlegada: string,
+    fechaSalida: string,
+    numeroHuespedes: number
+  ): Cotizacion | null {
+    // Se fuerza UTC para que la diferencia en días sea exacta (sin efecto de zona horaria)
+    const llegada = new Date(fechaLlegada + 'T00:00:00Z');
+    const salida = new Date(fechaSalida + 'T00:00:00Z');
+    const numeroNoches = Math.round((salida.getTime() - llegada.getTime()) / this.MS_POR_DIA);
+
+    if (isNaN(numeroNoches) || numeroNoches < 1) {
+      return null;
+    }
+
+    const subtotal = numeroNoches * alojamiento.precioNoche;
+    const tarifaLimpieza = alojamiento.tarifaLimpieza;
+    const tarifaServicio = subtotal * this.TASA_SERVICIO;
+    const total = subtotal + tarifaLimpieza + tarifaServicio;
+
+    return {
+      alojamientoId: alojamiento.id,
+      fechaLlegada,
+      fechaSalida,
+      numeroHuespedes,
+      numeroNoches,
+      precioNoche: alojamiento.precioNoche,
+      subtotal,
+      tarifaLimpieza,
+      tarifaServicio,
+      total
+    };
+  }
+
+  // ───────────── Persistencia de reservas (localStorage) ─────────────
+
+  /** Devuelve true si se guardó correctamente */
+  guardarReserva(reserva: Reserva): boolean {
+    const reservas = this.getReservas();
+    reservas.push(reserva);
+    return this.persistir(reservas);
+  }
+
+  getReservas(): Reserva[] {
+    try {
+      const data = localStorage.getItem(this.RESERVAS_KEY);
+      const parsed: unknown = data ? JSON.parse(data) : [];
+      return Array.isArray(parsed) ? (parsed as Reserva[]) : [];
+    } catch (error) {
+      console.error('No se pudieron leer las reservas guardadas', error);
+      return [];
+    }
+  }
+
+  getReservaById(id: string | number): Reserva | undefined {
+    return this.getReservas().find(r => r.id === id);
+  }
+
+  eliminarReserva(id: string | number): void {
+    this.persistir(this.getReservas().filter(r => r.id !== id));
+  }
+
+  generarIdReserva(): string {
+    return 'RES-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+  }
+
+  private persistir(reservas: Reserva[]): boolean {
+    try {
+      localStorage.setItem(this.RESERVAS_KEY, JSON.stringify(reservas));
+      return true;
+    } catch (error) {
+      console.error('No se pudieron guardar las reservas', error);
+      return false;
+    }
+  }
+}..
+ 
+================================================== 
+ARCHIVO: C:\Users\Daniel\Desktop\Repos\Proyecto-de-Curso-Marketplace-de-Alojamientos\inversiones-lr-marketplace\src\assets\data\marketplace-data.json 
+================================================== 
+{
+    "alojamientos": [
+        {
+            "id": 1,
+            "nombre": "Loft moderno en Chapinero",
+            "descripcion": "Loft moderno ubicado cerca de restaurantes, cafés y zonas comerciales de Bogotá.",
+            "ciudad": "Bogotá",
+            "ubicacion": "Chapinero, Bogotá",
+            "tipo": "Apartamento",
+            "capacidad": 2,
+            "habitaciones": 1,
+            "camas": 1,
+            "banos": 1,
+            "precioNoche": 180000,
+            "tarifaLimpieza": 45000,
+            "calificacion": 4.8,
+            "activo": true,
+            "imagenPrincipal": "assets/images/loft-bogota.jpg",
+            "imagenes": [
+                "assets/images/loft-bogota.jpg",
+                "assets/images/loft-bogota-2.jpg"
+            ],
+            "servicios": [
+                "Wi-Fi",
+                "Cocina",
+                "Televisión",
+                "Lavadora"
+            ],
+            "reglas": [
+                "No fumar",
+                "No se permiten fiestas"
+            ]
+        },
+        {
+            "id": 2,
+            "nombre": "Apartamento frente al mar",
+            "descripcion": "Apartamento con vista al mar ubicado en una zona turística de Cartagena.",
+            "ciudad": "Cartagena",
+            "ubicacion": "Bocagrande, Cartagena",
+            "tipo": "Apartamento",
+            "capacidad": 5,
+            "habitaciones": 2,
+            "camas": 3,
+            "banos": 2,
+            "precioNoche": 420000,
+            "tarifaLimpieza": 70000,
+            "calificacion": 4.9,
+            "activo": true,
+            "imagenPrincipal": "assets/images/cartagena.jpg",
+            "imagenes": [
+                "assets/images/cartagena.jpg",
+                "assets/images/cartagena-2.jpg"
+            ],
+            "servicios": [
+                "Wi-Fi",
+                "Piscina",
+                "Aire acondicionado",
+                "Cocina",
+                "Parqueadero"
+            ],
+            "reglas": [
+                "No fumar",
+                "No mascotas"
+            ]
+        },
+        {
+            "id": 3,
+            "nombre": "Cabaña en Guatapé",
+            "descripcion": "Cabaña rodeada de naturaleza con vista al embalse de Guatapé.",
+            "ciudad": "Guatapé",
+            "ubicacion": "Guatapé, Antioquia",
+            "tipo": "Cabaña",
+            "capacidad": 6,
+            "habitaciones": 3,
+            "camas": 4,
+            "banos": 2,
+            "precioNoche": 350000,
+            "tarifaLimpieza": 60000,
+            "calificacion": 4.7,
+            "activo": true,
+            "imagenPrincipal": "assets/images/guatape.jpg",
+            "imagenes": [
+                "assets/images/guatape.jpg",
+                "assets/images/guatape-2.jpg"
+            ],
+            "servicios": [
+                "Wi-Fi",
+                "Cocina",
+                "Parqueadero",
+                "BBQ"
+            ],
+            "reglas": [
+                "No fumar",
+                "Silencio después de las 10 PM"
+            ]
+        },
+        {
+            "id": 4,
+            "nombre": "Casa colonial en Villa de Leyva",
+            "descripcion": "Casa de estilo colonial localizada cerca de la plaza principal.",
+            "ciudad": "Villa de Leyva",
+            "ubicacion": "Centro histórico",
+            "tipo": "Casa",
+            "capacidad": 8,
+            "habitaciones": 4,
+            "camas": 5,
+            "banos": 3,
+            "precioNoche": 520000,
+            "tarifaLimpieza": 90000,
+            "calificacion": 4.6,
+            "activo": true,
+            "imagenPrincipal": "assets/images/villa-leyva.jpg",
+            "imagenes": [
+                "assets/images/villa-leyva.jpg",
+                "assets/images/villa-leyva-2.jpg"
+            ],
+            "servicios": [
+                "Wi-Fi",
+                "Cocina",
+                "Chimenea",
+                "Parqueadero"
+            ],
+            "reglas": [
+                "No fiestas",
+                "Máximo 8 huéspedes"
+            ]
+        },
+        {
+            "id": 5,
+            "nombre": "Apartamento ejecutivo Medellín",
+            "descripcion": "Apartamento moderno cercano a zonas comerciales y empresariales.",
+            "ciudad": "Medellín",
+            "ubicacion": "El Poblado, Medellín",
+            "tipo": "Apartamento",
+            "capacidad": 3,
+            "habitaciones": 1,
+            "camas": 2,
+            "banos": 1,
+            "precioNoche": 230000,
+            "tarifaLimpieza": 50000,
+            "calificacion": 4.5,
+            "activo": true,
+            "imagenPrincipal": "assets/images/medellin.jpg",
+            "imagenes": [
+                "assets/images/medellin.jpg"
+            ],
+            "servicios": [
+                "Wi-Fi",
+                "Cocina",
+                "Gimnasio",
+                "Parqueadero"
+            ],
+            "reglas": [
+                "No fumar"
+            ]
+        },
+        {
+            "id": 6,
+            "nombre": "Casa campestre",
+            "descripcion": "Casa campestre actualmente fuera de servicio.",
+            "ciudad": "Armenia",
+            "ubicacion": "Zona rural",
+            "tipo": "Casa",
+            "capacidad": 10,
+            "habitaciones": 5,
+            "camas": 7,
+            "banos": 4,
+            "precioNoche": 650000,
+            "tarifaLimpieza": 120000,
+            "calificacion": 4.4,
+            "activo": false,
+            "imagenPrincipal": "assets/images/armenia.jpg",
+            "imagenes": [
+                "assets/images/armenia.jpg"
+            ],
+            "servicios": [
+                "Piscina",
+                "Parqueadero",
+                "BBQ"
+            ],
+            "reglas": [
+                "No fiestas"
+            ]
+        }
+    ],
+    "resenas": [
+        {
+            "id": 1,
+            "alojamientoId": 1,
+            "usuario": "Laura Gómez",
+            "calificacion": 5,
+            "comentario": "Excelente ubicación y apartamento muy cómodo."
+        },
+        {
+            "id": 2,
+            "alojamientoId": 1,
+            "usuario": "Carlos Ruiz",
+            "calificacion": 4,
+            "comentario": "Muy buena experiencia."
+        },
+        {
+            "id": 3,
+            "alojamientoId": 2,
+            "usuario": "Andrea López",
+            "calificacion": 5,
+            "comentario": "La vista es excelente y la ubicación muy conveniente."
+        },
+        {
+            "id": 4,
+            "alojamientoId": 3,
+            "usuario": "Miguel Torres",
+            "calificacion": 5,
+            "comentario": "Excelente lugar para descansar."
+        },
+        {
+            "id": 5,
+            "alojamientoId": 4,
+            "usuario": "Natalia Pérez",
+            "calificacion": 4,
+            "comentario": "La casa es amplia y está muy bien ubicada."
+        }
+    ]
+}..
