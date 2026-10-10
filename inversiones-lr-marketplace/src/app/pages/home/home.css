@@ -9,13 +9,13 @@
   padding-bottom: var(--spacing-xl);
 }
 
-/* El host del Hero ocupa todo el ancho; el Hero interno mide hasta 1416px */
 app-hero {
   display: block;
   width: 100%;
   max-width: 1448px;
   margin: var(--spacing-md) auto 0;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
 app-featured-alojamientos {

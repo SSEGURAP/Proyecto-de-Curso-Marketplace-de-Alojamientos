@@ -54,3 +54,31 @@
 .logo-section:hover {
   opacity: 0.9;
 }
+
+@media (max-width: 768px) {
+  .header {
+    height: auto;
+    padding: 12px 0;
+  }
+
+  .header-content {
+    flex-wrap: wrap;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .search-section {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .search-section app-search-bar {
+    display: block;
+    width: 100%;
+  }
+
+  .actions-section {
+    gap: 16px;
+  }
+}
