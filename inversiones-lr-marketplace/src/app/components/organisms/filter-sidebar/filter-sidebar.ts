@@ -25,11 +25,6 @@ export class FilterSidebar implements OnChanges {
   tiposSeleccionados: string[] = [];
   precioMaximo: number = 1000000;
 
-  /**
-   * precioLimite llega de forma asíncrona (cuando termina de cargar el JSON).
-   * ngOnInit solo veía el valor por defecto; ngOnChanges sincroniza el slider
-   * con el precio máximo real cada vez que el límite cambia.
-   */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['precioLimite']) {
       this.precioMaximo = this.precioLimite;

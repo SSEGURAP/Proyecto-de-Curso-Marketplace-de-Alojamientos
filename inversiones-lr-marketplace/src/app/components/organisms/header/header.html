@@ -1,12 +1,10 @@
 <header class="header">
   <div class="header-content">
 
-    <!-- Logo (ahora es clickeable) -->
     <div class="logo-section" (click)="irAHome()" style="cursor: pointer;">
       <app-logo></app-logo>
     </div>
 
-    <!-- Search Bar -->
     <div class="search-section">
       <app-search-bar
         [destination]="destination"
@@ -19,7 +17,6 @@
       </app-search-bar>
     </div>
 
-    <!-- Acciones derecha -->
     <div class="actions-section">
       <app-link 
         label="Mis reservas" 
