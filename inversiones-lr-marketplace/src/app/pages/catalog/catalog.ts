@@ -16,7 +16,6 @@ import { Alojamiento, FiltroAlojamiento } from '../../models/alojamiento.model';
   styleUrl: './catalog.css',
 })
 export class CatalogPage implements OnInit, OnDestroy {
-  /** Referencia al sidebar para poder limpiar sus filtros desde el empty state */
   @ViewChild(FilterSidebar) private filterSidebar?: FilterSidebar;
 
   alojamientos: Alojamiento[] = [];
@@ -132,11 +131,6 @@ export class CatalogPage implements OnInit, OnDestroy {
     this.filtro$.next(filtro);
   }
 
-  /**
-   * Botón "Limpiar filtros" del empty state.
-   * clearFilters() resetea los controles del sidebar y emite filtersChange,
-   * así que el listado se recarga por el mismo flujo de siempre.
-   */
   limpiarFiltros(): void {
     this.filterSidebar?.clearFilters();
   }

@@ -14,11 +14,6 @@
   align-items: flex-start;
 }
 
-/* ───────── GRILLA DEL CATÁLOGO ─────────
-   Desktop: exactamente 3 columnas iguales.
-   minmax(0, 1fr) evita que el contenido (chips, textos largos) ensanche una columna.
-   min-width: 0 permite que el grid se encoja dentro del contenedor flex.
-   align-items: stretch (valor por defecto) iguala el alto de las tarjetas por fila. */
 .grid {
   flex: 1;
   min-width: 0;
@@ -39,14 +34,12 @@
   color: #b3261e;
 }
 
-/* Tablet: 2 columnas */
 @media (max-width: 1199px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Móvil: sidebar arriba y 1 columna */
 @media (max-width: 768px) {
   .content {
     flex-direction: column;

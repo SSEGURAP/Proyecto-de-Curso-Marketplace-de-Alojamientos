@@ -39,7 +39,6 @@
   flex-shrink: 0;
 }
 
-/* Ajuste para que los links se vean bien sobre el fondo azul */
 .actions-section app-link a {
   color: #F6F7F8;
   font-size: 14px;
