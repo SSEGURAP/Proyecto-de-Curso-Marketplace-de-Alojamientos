@@ -1,0 +1,22 @@
+<div class="gallery">
+  <app-photo
+    class="main"
+    [src]="images[selectedIndex]"
+    [alt]="alt"
+    loading="eager">
+  </app-photo>
+
+  @if (images.length > 1) {
+    <div class="thumbnails">
+      @for (image of images; track image) {
+        <button
+          type="button"
+          class="thumbnail"
+          [class.active]="$index === selectedIndex"
+          (click)="selectImage($index)">
+          <app-photo [src]="image" [alt]="alt + ' ' + ($index + 1)"></app-photo>
+        </button>
+      }
+    </div>
+  }
+</div>

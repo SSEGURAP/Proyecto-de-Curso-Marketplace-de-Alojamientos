@@ -1,0 +1,40 @@
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.main {
+  height: 420px;
+}
+
+.thumbnails {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.thumbnail {
+  width: 96px;
+  height: 72px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  background: none;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.thumbnail app-photo {
+  height: 100%;
+}
+
+.thumbnail.active {
+  border-color: var(--color-primary);
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .main {
+    height: 240px;
+  }
+}

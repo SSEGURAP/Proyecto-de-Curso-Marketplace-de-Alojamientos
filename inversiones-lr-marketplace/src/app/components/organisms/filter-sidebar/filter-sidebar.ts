@@ -17,6 +17,7 @@ export class FilterSidebar implements OnChanges {
   @Input() ciudades: string[] = [];
   @Input() tipos: string[] = [];
   @Input() precioLimite: number = 1000000;
+  @Input() ciudadInicial: string = '';
   @Output() filtersChange = new EventEmitter<FiltroAlojamiento>();
 
   ciudad: string = '';
@@ -32,6 +33,10 @@ export class FilterSidebar implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['precioLimite']) {
       this.precioMaximo = this.precioLimite;
+    }
+    if (changes['ciudadInicial'] && this.ciudadInicial) {
+      this.ciudad = this.ciudadInicial;
+      this.emitFilters();
     }
   }
 
