@@ -9,7 +9,6 @@
   padding-bottom: var(--spacing-xl);
 }
 
-/* El host del Hero ocupa todo el ancho; el Hero interno mide hasta 1416px */
 app-hero {
   display: block;
   width: 100%;

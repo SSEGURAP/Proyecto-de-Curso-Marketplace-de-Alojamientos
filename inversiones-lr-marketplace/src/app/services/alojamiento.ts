@@ -21,12 +21,6 @@ export class AlojamientoService {
   private readonly TASA_SERVICIO = 0.10;
   private readonly MS_POR_DIA = 1000 * 60 * 60 * 24;
 
-  /**
-   * CACHE: el JSON se descarga UNA sola vez y se reutiliza en toda la app.
-   * shareReplay(1) comparte la misma petición entre todos los suscriptores
-   * y reemite el último valor a los que lleguen después.
-   * Si la petición falla, se reinicia sola y el siguiente intento vuelve a pedirla.
-   */
   private data$: Observable<MarketplaceData> = this.http
     .get<MarketplaceData>(this.dataUrl)
     .pipe(
@@ -37,7 +31,6 @@ export class AlojamientoService {
       })
     );
 
-  /** Regla de negocio: solo alojamientos activos (activo === true) */
   getAlojamientos(): Observable<Alojamiento[]> {
     return this.data$.pipe(
       map(data => data.alojamientos.filter(a => a.activo === true))
@@ -82,17 +75,12 @@ export class AlojamientoService {
     );
   }
 
-  /**
-   * Regla: (Noches × PrecioNoche) + TarifaLimpieza + 10% de servicio sobre el subtotal.
-   * Devuelve null si el rango de fechas no es válido (salida debe ser posterior a llegada).
-   */
   calcularCotizacion(
     alojamiento: Alojamiento,
     fechaLlegada: string,
     fechaSalida: string,
     numeroHuespedes: number
   ): Cotizacion | null {
-    // Se fuerza UTC para que la diferencia en días sea exacta (sin efecto de zona horaria)
     const llegada = new Date(fechaLlegada + 'T00:00:00Z');
     const salida = new Date(fechaSalida + 'T00:00:00Z');
     const numeroNoches = Math.round((salida.getTime() - llegada.getTime()) / this.MS_POR_DIA);
@@ -120,9 +108,6 @@ export class AlojamientoService {
     };
   }
 
-  // ───────────── Persistencia de reservas (localStorage) ─────────────
-
-  /** Devuelve true si se guardó correctamente */
   guardarReserva(reserva: Reserva): boolean {
     const reservas = this.getReservas();
     reservas.push(reserva);
