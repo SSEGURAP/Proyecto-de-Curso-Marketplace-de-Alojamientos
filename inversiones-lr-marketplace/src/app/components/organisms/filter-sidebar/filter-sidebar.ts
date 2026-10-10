@@ -5,9 +5,10 @@ import { CounterField } from '../../molecules/counter-field/counter-field';
 import { SelectField } from '../../molecules/select-field/select-field';
 import { Button } from '../../atoms/button/button';
 import { Label } from '../../atoms/label/label';
-import { FiltroAlojamiento } from '../../../models/alojamiento.model';
+import { FiltroAlojamiento, ParametrosBusqueda } from '../../../models/alojamiento.model';
 
 @Component({
+  standalone: true,
   imports: [Label, Button, SelectField, CounterField, CheckboxGroup, RangeField],
   selector: 'app-filter-sidebar',
   styleUrl: './filter-sidebar.css',
@@ -17,7 +18,14 @@ export class FilterSidebar implements OnChanges {
   @Input() ciudades: string[] = [];
   @Input() tipos: string[] = [];
   @Input() precioLimite: number = 1000000;
-  @Input() ciudadInicial: string = '';
+
+  /**
+   * Búsqueda que llega desde el Header o el Hero (query params).
+   * El catálogo entrega un objeto NUEVO en cada cambio de URL, así que ngOnChanges
+   * se dispara siempre, incluso si se repite la misma ciudad.
+   */
+  @Input() busquedaInicial: ParametrosBusqueda | null = null;
+
   @Output() filtersChange = new EventEmitter<FiltroAlojamiento>();
 
   ciudad: string = '';
@@ -29,8 +37,9 @@ export class FilterSidebar implements OnChanges {
     if (changes['precioLimite']) {
       this.precioMaximo = this.precioLimite;
     }
-    if (changes['ciudadInicial'] && this.ciudadInicial) {
-      this.ciudad = this.ciudadInicial;
+    if (changes['busquedaInicial'] && this.busquedaInicial) {
+      this.ciudad = this.busquedaInicial.ciudad;
+      this.huespedes = this.busquedaInicial.huespedes;
       this.emitFilters();
     }
   }

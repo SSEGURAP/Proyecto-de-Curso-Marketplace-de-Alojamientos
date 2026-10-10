@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { SearchBarHero } from '../../molecules/search-bar-hero/search-bar-hero';
+import { AlojamientoService } from '../../../services/alojamiento';
+import { ParametrosBusqueda } from '../../../models/alojamiento.model';
 
 @Component({
   selector: 'app-hero',
@@ -8,23 +10,28 @@ import { SearchBarHero } from '../../molecules/search-bar-hero/search-bar-hero';
   templateUrl: './hero.html',
   styleUrl: './hero.css',
 })
-export class Hero {
+export class Hero implements OnInit {
 
-  destination = '';
-  checkIn = '';
-  checkOut = '';
+  ciudades: string[] = [];
 
-  @Output() search = new EventEmitter<{
-    destination: string;
-    checkIn: string;
-    checkOut: string;
-  }>();
+  @Output() search = new EventEmitter<ParametrosBusqueda>();
 
-  onSearch(): void {
-    this.search.emit({
-      destination: this.destination,
-      checkIn: this.checkIn,
-      checkOut: this.checkOut
+  constructor(
+    private alojamientoService: AlojamientoService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.alojamientoService.getCiudades().subscribe({
+      next: ciudades => {
+        this.ciudades = ciudades;
+        this.cdr.markForCheck();
+      },
+      error: err => console.error('No se pudieron cargar las ciudades del buscador', err)
     });
+  }
+
+  onSearch(busqueda: ParametrosBusqueda): void {
+    this.search.emit(busqueda);
   }
 }

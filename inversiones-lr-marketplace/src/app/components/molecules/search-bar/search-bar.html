@@ -1,35 +1,67 @@
-<div class="search-bar">
-  <div class="field">
-    <app-icon-component name="search" size="20px" color="#899199"></app-icon-component>
-    <app-input
-      placeholder="¿A dónde vas?"
-      [value]="destination"
-      (valueChange)="onDestinationChange($event)">
-    </app-input>
-  </div>
+<div class="search-bar" role="search">
+
+  <label class="field ciudad">
+    <app-icon-component name="place" size="18px" color="#899199"></app-icon-component>
+    <select
+      aria-label="Ciudad"
+      [(ngModel)]="ciudad"
+      (ngModelChange)="onCampoChange()"
+      (keydown.enter)="onSearchClick()">
+      <option value="">Todas las ciudades</option>
+      @for (c of ciudades; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </label>
 
   <div class="divider"></div>
 
-  <div class="field">
+  <label class="field fecha">
     <app-icon-component name="calendar_today" size="18px" color="#899199"></app-icon-component>
-    <app-input
-      placeholder="Entrada"
-      [value]="checkIn"
-      (valueChange)="onCheckInChange($event)">
-    </app-input>
-  </div>
+    <input
+      type="date"
+      aria-label="Fecha de llegada"
+      [(ngModel)]="llegada"
+      [attr.min]="hoy"
+      (ngModelChange)="onLlegadaChange()"
+      (click)="$any($event.target).showPicker?.()"
+      (keydown.enter)="onSearchClick()">
+  </label>
 
   <div class="divider"></div>
 
-  <div class="field">
-    <app-input
-      placeholder="Salida"
-      [value]="checkOut"
-      (valueChange)="onCheckOutChange($event)">
-    </app-input>
-  </div>
+  <label class="field fecha">
+    <app-icon-component name="event" size="18px" color="#899199"></app-icon-component>
+    <input
+      type="date"
+      aria-label="Fecha de salida"
+      [(ngModel)]="salida"
+      [attr.min]="llegada || hoy"
+      (ngModelChange)="onCampoChange()"
+      (click)="$any($event.target).showPicker?.()"
+      (keydown.enter)="onSearchClick()">
+  </label>
 
-  <button class="search-button" (click)="onSearchClick()">
+  <div class="divider"></div>
+
+  <label class="field huespedes">
+    <app-icon-component name="person" size="18px" color="#899199"></app-icon-component>
+    <select
+      aria-label="Número de huéspedes"
+      [(ngModel)]="huespedes"
+      (ngModelChange)="onCampoChange()"
+      (keydown.enter)="onSearchClick()">
+      @for (n of opcionesHuespedes; track n) {
+        <option [ngValue]="n">{{ n }} {{ n === 1 ? 'huésped' : 'huéspedes' }}</option>
+      }
+    </select>
+  </label>
+
+  <button class="search-button" type="button" aria-label="Buscar alojamientos" (click)="onSearchClick()">
     <app-icon-component name="search" size="22px" color="#ffffff"></app-icon-component>
   </button>
 </div>
+
+@if (error) {
+  <p class="error" role="alert">{{ error }}</p>
+}

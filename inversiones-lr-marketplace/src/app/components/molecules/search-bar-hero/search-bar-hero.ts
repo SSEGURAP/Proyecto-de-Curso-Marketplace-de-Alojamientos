@@ -1,40 +1,66 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { InputComponent } from '../../atoms/input/input';
+import { FormsModule } from '@angular/forms';
+import { ParametrosBusqueda } from '../../../models/alojamiento.model';
+import { obtenerHoyLocal } from '../../../utils/fecha.util';
 
 @Component({
   selector: 'app-search-bar-hero',
   standalone: true,
-  imports: [ InputComponent],
+  imports: [FormsModule],
   templateUrl: './search-bar-hero.html',
   styleUrl: './search-bar-hero.css',
 })
 export class SearchBarHero {
 
-  @Input() destination: string = '';
-  @Input() checkIn: string = '';
-  @Input() checkOut: string = '';
+  /** Ciudades disponibles (las provee el organismo Hero desde el servicio). */
+  @Input() ciudades: string[] = [];
 
-  @Output() destinationChange = new EventEmitter<string>();
-  @Output() checkInChange = new EventEmitter<string>();
-  @Output() checkOutChange = new EventEmitter<string>();
-  @Output() search = new EventEmitter<void>();
+  /** Emite exactamente los mismos datos que SearchBar (Navbar). */
+  @Output() search = new EventEmitter<ParametrosBusqueda>();
 
-  onDestinationChange(value: string): void {
-    this.destination = value;
-    this.destinationChange.emit(value);
+  ciudad: string = '';
+  llegada: string = '';
+  salida: string = '';
+  huespedes: number = 1;
+  error: string = '';
+
+  readonly opcionesHuespedes: number[] = Array.from({ length: 10 }, (_, i) => i + 1);
+  readonly hoy: string = obtenerHoyLocal();
+
+  onCampoChange(): void {
+    this.error = '';
   }
 
-  onCheckInChange(value: string): void {
-    this.checkIn = value;
-    this.checkInChange.emit(value);
-  }
-
-  onCheckOutChange(value: string): void {
-    this.checkOut = value;
-    this.checkOutChange.emit(value);
+  onLlegadaChange(): void {
+    if (this.llegada && this.salida && this.salida <= this.llegada) {
+      this.salida = '';
+    }
+    this.error = '';
   }
 
   onSearchClick(): void {
-    this.search.emit();
+    this.error = this.validar();
+    if (this.error) {
+      return;
+    }
+    this.search.emit({
+      ciudad: this.ciudad,
+      llegada: this.llegada,
+      salida: this.salida,
+      huespedes: this.huespedes
+    });
+  }
+
+  private validar(): string {
+    if ((this.llegada && !this.salida) || (!this.llegada && this.salida)) {
+      return 'Selecciona la fecha de llegada y la de salida.';
+    }
+    if (this.llegada && this.llegada < this.hoy) {
+      return 'La llegada no puede ser anterior a hoy.';
+    }
+    if (this.llegada && this.salida && this.salida <= this.llegada) {
+      return 'La salida debe ser posterior a la llegada.';
+    }
+    return '';
   }
 }

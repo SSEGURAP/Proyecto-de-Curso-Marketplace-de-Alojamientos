@@ -1,4 +1,4 @@
-import { ChangeDetectorRef ,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, catchError, debounceTime, forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
@@ -6,7 +6,7 @@ import { FilterSidebar } from '../../components/organisms/filter-sidebar/filter-
 import { AlojamientoCard } from '../../components/organisms/alojamiento-card/alojamiento-card';
 import { EmptyState } from '../../components/molecules/empty-state/empty-state';
 import { AlojamientoService } from '../../services/alojamiento';
-import { Alojamiento, FiltroAlojamiento } from '../../models/alojamiento.model';
+import { Alojamiento, FiltroAlojamiento, ParametrosBusqueda } from '../../models/alojamiento.model';
 
 @Component({
   selector: 'app-catalog-page',
@@ -24,9 +24,12 @@ export class CatalogPage implements OnInit, OnDestroy {
   precioLimite: number = 1000000;
   cargando: boolean = true;
   error: string = '';
-  destino: string = '';
-  ciudadBuscada: string = '';
 
+  /** Búsqueda leída de la URL (?ciudad=&llegada=&salida=&huespedes=). */
+  busqueda: ParametrosBusqueda | null = null;
+  resumenBusqueda: string = '';
+
+  private filtroActual: FiltroAlojamiento | null = null;
   private destroy$ = new Subject<void>();
   private filtro$ = new Subject<FiltroAlojamiento>();
 
@@ -67,7 +70,12 @@ export class CatalogPage implements OnInit, OnDestroy {
             this.precioLimite = Math.max(...alojamientos.map(a => a.precioNoche));
           }
           this.cargando = false;
-          this.aplicarDestino();
+
+          // Si ya había un filtro activo (por ejemplo, el que llegó desde la búsqueda),
+          // se vuelve a aplicar para que la lista completa no lo sobrescriba.
+          if (this.filtroActual) {
+            this.filtro$.next(this.filtroActual);
+          }
           this.cdr.markForCheck();
         },
         error: (err: Error) => {
@@ -102,40 +110,44 @@ export class CatalogPage implements OnInit, OnDestroy {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
-        this.destino = params.get('destino') ?? '';
-        this.aplicarDestino();
+        // Objeto nuevo en cada cambio de URL: el sidebar lo detecta en ngOnChanges.
+        this.busqueda = this.alojamientoService.leerQueryParams(params);
+        this.resumenBusqueda = this.construirResumen(this.busqueda);
+        this.cdr.markForCheck();
       });
   }
 
-  private aplicarDestino(): void {
-    if (!this.destino || this.ciudades.length === 0) {
-      return;
+  private construirResumen(busqueda: ParametrosBusqueda): string {
+    if (!busqueda.llegada || !busqueda.salida) {
+      return '';
     }
-
-    const buscado = this.normalizar(this.destino);
-    const ciudad = this.ciudades.find(c => this.normalizar(c).includes(buscado));
-
-    if (ciudad) {
-      this.ciudadBuscada = ciudad;
-    } else {
-      this.alojamientos = [];
-    }
-    this.cdr.markForCheck();
+    const huespedes = busqueda.huespedes === 1 ? '1 huésped' : busqueda.huespedes + ' huéspedes';
+    return `Estancia del ${this.formatFecha(busqueda.llegada)} al ${this.formatFecha(busqueda.salida)} · ${huespedes}`;
   }
 
-  private normalizar(texto: string): string {
-    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  private formatFecha(fecha: string): string {
+    const d = new Date(fecha + 'T00:00:00');
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   onFiltersChange(filtro: FiltroAlojamiento): void {
+    this.filtroActual = filtro;
     this.filtro$.next(filtro);
   }
 
   limpiarFiltros(): void {
     this.filterSidebar?.clearFilters();
+    // También se limpian los query params para que la URL refleje el estado real.
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   onViewDetail(id: number): void {
-    this.router.navigate(['/alojamiento', id]);
+    // Las fechas vienen de la búsqueda; los huéspedes, del filtro vigente en el sidebar.
+    const queryParams = this.alojamientoService.construirQueryParams({
+      llegada: this.busqueda?.llegada,
+      salida: this.busqueda?.salida,
+      huespedes: this.filtroActual?.huespedes ?? this.busqueda?.huespedes ?? 1
+    });
+    this.router.navigate(['/alojamiento', id], { queryParams });
   }
 }

@@ -6,13 +6,8 @@
 
     <div class="search-wrapper">
       <app-search-bar-hero
-        [destination]="destination"
-        [checkIn]="checkIn"
-        [checkOut]="checkOut"
-        (destinationChange)="destination = $event"
-        (checkInChange)="checkIn = $event"
-        (checkOutChange)="checkOut = $event"
-        (search)="onSearch()">
+        [ciudades]="ciudades"
+        (search)="onSearch($event)">
       </app-search-bar-hero>
     </div>
   </div>
