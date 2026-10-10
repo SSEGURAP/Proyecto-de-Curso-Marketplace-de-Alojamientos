@@ -9,6 +9,7 @@
 
 .search-bar-hero {
   display: flex;
+  box-sizing: border-box;
   align-items: center;
   width: 100%;
   max-width: 695px;
