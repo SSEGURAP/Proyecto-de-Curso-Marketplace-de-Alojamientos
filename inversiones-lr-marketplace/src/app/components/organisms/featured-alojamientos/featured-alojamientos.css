@@ -28,9 +28,13 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 314px));
+  justify-content: center;
   gap: var(--spacing-lg);
-  justify-items: center;
+}
+
+.grid app-alojamiento-card-compressed {
+  display: block;
 }
 
 .loading {
