@@ -31,20 +31,9 @@
 }
 
 .dates {
-  flex: 0 0 192px;
+  flex: 0 0 240px;
   gap: 8px;
   padding: 0 12px;
-}
-
-.guests {
-  flex: 0 0 158px;
-  padding: 0 0 0 12px;
-}
-
-.guests-text {
-  font-size: 12px;
-  color: var(--color-text, #1A1A1A);
-  white-space: nowrap;
 }
 
 .dot {
@@ -133,8 +122,7 @@
 
   .field,
   .destination,
-  .dates,
-  .guests {
+  .dates{
     flex: none;
     height: 44px;
     padding: 0 8px;
