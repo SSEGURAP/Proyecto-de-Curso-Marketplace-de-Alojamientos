@@ -35,14 +35,12 @@ export class DetailPage implements OnInit, OnDestroy {
   errorFormulario: string = '';
   mensajeExito: string = '';
 
-  // Formulario
   fechaLlegada: string = '';
   fechaSalida: string = '';
   numeroHuespedes: number = 1;
   nombreHuesped: string = '';
   correoHuesped: string = '';
 
-  /** Fecha mínima seleccionable (hoy, en hora local) en formato YYYY-MM-DD */
   hoy: string = this.obtenerHoyLocal();
 
   private destroy$ = new Subject<void>();
@@ -72,11 +70,6 @@ export class DetailPage implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Alojamiento + reseñas en una sola suscripción (sin subscribe anidado).
-   * Ambas consultas reutilizan la misma petición HTTP cacheada en el servicio.
-   * Si fallan las reseñas, el detalle igual se muestra.
-   */
   private cargarAlojamiento(id: number): void {
     this.cargando = true;
 
@@ -113,6 +106,12 @@ export class DetailPage implements OnInit, OnDestroy {
 
     if (!this.alojamiento || !this.fechaLlegada || !this.fechaSalida) {
       this.cotizacion = null;
+      return;
+    }
+
+    if (this.fechaLlegada < this.hoy) {
+      this.cotizacion = null;
+      this.errorFormulario = 'La fecha de llegada no puede ser anterior a la fecha actual.';
       return;
     }
 
@@ -178,7 +177,6 @@ export class DetailPage implements OnInit, OnDestroy {
     this.errorFormulario = '';
     this.mensajeExito = `¡Reserva confirmada! ID: ${reserva.id}`;
 
-    // Limpiar formulario
     this.fechaLlegada = '';
     this.fechaSalida = '';
     this.nombreHuesped = '';
@@ -190,7 +188,6 @@ export class DetailPage implements OnInit, OnDestroy {
     this.router.navigate(['/alojamientos']);
   }
 
-  /** Método público: la plantilla no puede usar el Router privado directamente */
   irAReservas(): void {
     this.router.navigate(['/reservas']);
   }
