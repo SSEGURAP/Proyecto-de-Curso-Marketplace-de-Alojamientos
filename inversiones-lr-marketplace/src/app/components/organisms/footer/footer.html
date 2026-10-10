@@ -1,0 +1,127 @@
+<footer class="footer">
+    <div class="footer-inner">
+
+        <div class="footer-grid">
+
+
+            <div class="footer-brand">
+                <a class="brand-link" routerLink="/home" aria-label="Inversiones LR Stays - Ir al inicio">
+                    <app-logo></app-logo>
+                </a>
+            </div>
+
+
+            @for (columna of columnas; track columna.title) {
+            <nav class="footer-col" [attr.aria-label]="columna.title">
+                <h2 class="footer-title">{{ columna.title }}</h2>
+                <ul class="footer-list">
+                    @for (link of columna.links; track link.label) {
+                    <li>
+                        @if (link.route) {
+                        <a class="footer-link" [routerLink]="link.route">{{ link.label }}</a>
+                        } @else {
+                        <a class="footer-link" href="#" (click)="$event.preventDefault()">{{ link.label }}</a>
+                        }
+                    </li>
+                    }
+                </ul>
+            </nav>
+            }
+
+
+            <div class="footer-col footer-col--app">
+                <h2 class="footer-title">Social</h2>
+
+                <ul class="social-list">
+                    <li>
+                        <a class="social-link" href="https://www.facebook.com/" target="_blank"
+                            rel="noopener noreferrer" aria-label="Facebook">
+                            <svg class="social-icon" viewBox="1064.3 155.9 9.4 19.1" xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true" focusable="false">
+                                <path fill="currentColor"
+                                    d="M1070.4 174.941V166.29H1073.16L1073.57 162.903H1070.4V160.745C1070.4 159.768 1070.66 159.098 1071.98 159.098H1073.67V156.079C1072.85 155.986 1072.03 155.941 1071.2 155.944C1068.76 155.944 1067.08 157.519 1067.08 160.411V162.896H1064.33V166.284H1067.09V174.941H1070.4Z" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" href="https://www.instagram.com/" target="_blank"
+                            rel="noopener noreferrer" aria-label="Instagram">
+                            <svg class="social-icon" viewBox="1099 155.9 18 19" xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true" focusable="false">
+                                <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M1112.5 155.944H1103.5C1101.03 155.944 1099 158.081 1099 160.694V170.194C1099 172.807 1101.03 174.944 1103.5 174.944H1112.5C1114.97 174.944 1117 172.807 1117 170.194V160.694C1117 158.081 1114.97 155.944 1112.5 155.944ZM1108 169.403C1105.93 169.403 1104.25 167.63 1104.25 165.444C1104.25 163.258 1105.93 161.486 1108 161.486C1110.07 161.486 1111.75 163.258 1111.75 165.444C1111.75 167.63 1110.07 169.403 1108 169.403ZM1111.75 160.299C1111.75 160.954 1112.25 161.486 1112.88 161.486C1113.5 161.486 1114 160.954 1114 160.299C1114 159.643 1113.5 159.111 1112.88 159.111C1112.25 159.111 1111.75 159.643 1111.75 160.299Z" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" href="https://x.com/" target="_blank" rel="noopener noreferrer"
+                            aria-label="X (antes Twitter)">
+                            <svg class="social-icon" viewBox="-1.1 0 300.1 271" xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true" focusable="false">
+                                <path fill="currentColor"
+                                    d="m236 0h46l-101 115 118 156h-92.6l-72.5-94.8-83 94.8h-46l107-123-113-148h94.9l65.5 86.6zm-16.1 244h25.5l-165-218h-27.4z" />
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-link" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer"
+                            aria-label="YouTube">
+                            <svg class="social-icon" viewBox="1188 157 22.3 17.4" xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true" focusable="false">
+                                <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M1207.97 157.772C1208.93 157.904 1209.85 158.892 1209.97 159.921C1210.38 163.695 1210.38 167.354 1209.97 171.126C1209.85 172.155 1208.93 173.144 1207.97 173.275C1202.1 174.044 1196.17 174.044 1190.31 173.275C1189.35 173.143 1188.43 172.155 1188.31 171.126C1187.9 167.353 1187.9 163.695 1188.31 159.921C1188.43 158.892 1189.35 157.904 1190.31 157.772C1196.17 157.003 1202.1 157.003 1207.97 157.772ZM1197.28 161.605V169.443L1202.85 165.524L1197.28 161.605Z" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+
+                <h2 class="footer-title footer-title--app">Descarga la app de LR</h2>
+
+                <div class="store-badges">
+                    <a class="store-badge store-badge--apple" href="https://apps.apple.com/" target="_blank"
+                        rel="noopener noreferrer" aria-label="Descargar en el App Store">
+                        <svg class="store-icon" viewBox="1067 263.8 19.2 23.7" xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true" focusable="false">
+                            <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"
+                                d="M1080.39 267.538C1081.26 266.601 1081.85 265.299 1081.69 264C1080.44 264.045 1078.92 264.741 1078.02 265.677C1077.21 266.508 1076.51 267.833 1076.7 269.106C1078.1 269.202 1079.52 268.474 1080.39 267.538ZM1083.06 276.502C1083.03 273.591 1085.35 272.194 1085.45 272.126C1084.15 270.15 1082.12 269.879 1081.4 269.849C1079.68 269.667 1078.04 270.902 1077.16 270.902C1076.29 270.902 1074.94 269.874 1073.51 269.901C1071.63 269.932 1069.89 271.035 1068.93 272.783C1066.97 276.3 1068.43 281.511 1070.33 284.363C1071.26 285.76 1072.37 287.326 1073.83 287.269C1075.23 287.213 1075.76 286.328 1077.46 286.328C1079.15 286.328 1079.63 287.269 1081.11 287.241C1082.62 287.213 1083.58 285.817 1084.5 284.417C1085.57 282.798 1086.01 281.23 1086.03 281.15C1086 281.133 1083.09 279.979 1083.06 276.502Z" />
+                        </svg>
+                        <span class="store-text">
+                            <span class="store-small">Download on the</span>
+                            <span class="store-big">App Store</span>
+                        </span>
+                    </a>
+
+                    <a class="store-badge store-badge--google" href="https://play.google.com/store" target="_blank"
+                        rel="noopener noreferrer" aria-label="Disponible en Google Play">
+                        <svg class="store-icon" viewBox="1069 341.9 22.4 24.2" xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true" focusable="false">
+                            <path
+                                d="M1069.1 343.129C1069.04 343.33 1069 343.545 1069 343.792V364.107C1069 364.35 1069.04 364.564 1069.09 364.762L1080.42 353.96L1069.1 343.129Z"
+                                fill="#48A0DC" />
+                            <path
+                                d="M1071.62 342.34C1071.09 342.017 1070.57 341.936 1070.13 342.048L1081.5 352.926L1084.84 349.745L1071.62 342.34Z"
+                                fill="#88C057" />
+                            <path
+                                d="M1089.72 352.475L1086.19 350.499L1082.57 353.946L1086.25 357.47L1089.69 355.571C1091.37 354.61 1090.75 353.061 1089.72 352.475Z"
+                                fill="#FFCC66" />
+                            <path
+                                d="M1081.49 354.98L1070.1 365.839C1070.54 365.965 1071.08 365.89 1071.62 365.558L1084.88 358.227L1081.49 354.98Z"
+                                fill="#ED7161" />
+                        </svg>
+                        <span class="store-text">
+                            <span class="store-small">Get it on</span>
+                            <span class="store-big">Google Play</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+            <p class="footer-copy">© {{ anoActual }} LR | Todos los derechos reservados</p>
+        </div>
+
+    </div>
+</footer>
