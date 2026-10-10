@@ -1,5 +1,3 @@
-/* El host es un elemento custom (display: inline por defecto).
-   Para que ocupe toda la celda del grid y se pueda estirar, debe ser block y height: 100%. */
 :host {
   display: block;
   height: 100%;
@@ -10,7 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  height: 100%;                 /* llena toda la celda → misma altura en cada fila */
+  height: 100%;                
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
   background-color: var(--color-surface);
@@ -19,7 +17,6 @@
   box-sizing: border-box;
 }
 
-/* El wrapper de la foto no debe encogerse; la imagen usa object-fit: cover (photo.css) */
 app-photo-rating {
   display: block;
   flex-shrink: 0;
@@ -30,7 +27,7 @@ app-photo-rating {
   flex-direction: column;
   gap: var(--spacing-sm);
   padding: 0 var(--spacing-sm);
-  flex: 1;                      /* ocupa el espacio libre y empuja el footer al fondo */
+  flex: 1;                      
 }
 
 .footer {

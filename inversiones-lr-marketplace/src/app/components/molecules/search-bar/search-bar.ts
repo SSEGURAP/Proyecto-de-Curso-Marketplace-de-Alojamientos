@@ -3,7 +3,7 @@ import { IconComponent } from '../../atoms/icon/icon';
 import { InputComponent } from '../../atoms/input/input';
 
 @Component({
-  imports: [IconComponent, InputComponent],   // ← ESTO es lo que faltaba
+  imports: [IconComponent, InputComponent],   
   selector: 'app-search-bar',
   styleUrl: './search-bar.css',
   templateUrl: './search-bar.html',
