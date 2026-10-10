@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
@@ -50,7 +50,8 @@ export class DetailPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private alojamientoService: AlojamientoService
+    private alojamientoService: AlojamientoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -96,11 +97,13 @@ export class DetailPage implements OnInit, OnDestroy {
             this.numeroHuespedes = 1;
           }
           this.cargando = false;
+          this.cdr.markForCheck();
         },
         error: (err: Error) => {
           console.error(err);
           this.error = 'Error al cargar el alojamiento';
           this.cargando = false;
+          this.cdr.markForCheck();
         }
       });
   }
