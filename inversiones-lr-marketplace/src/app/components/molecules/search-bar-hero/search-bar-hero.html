@@ -1,43 +1,62 @@
-<div class="search-bar-hero">
+<div class="search-bar-hero" role="search">
 
-  <div class="field destination">
-    <app-input
-      placeholder="Añade una ciudad, hotel, dirección o lugar..."
-      [value]="destination"
-      (valueChange)="onDestinationChange($event)">
-    </app-input>
-  </div>
+  <label class="field destination">
+    <select
+      aria-label="Ciudad"
+      [(ngModel)]="ciudad"
+      (ngModelChange)="onCampoChange()"
+      (keydown.enter)="onSearchClick()">
+      <option value="">Todas las ciudades</option>
+      @for (c of ciudades; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </label>
 
   <div class="divider"></div>
 
   <div class="field dates">
-    <app-input
-      class="date-input"
+    <input
       type="date"
-      [value]="checkIn"
+      aria-label="Fecha de llegada"
+      [(ngModel)]="llegada"
+      [attr.min]="hoy"
+      (ngModelChange)="onLlegadaChange()"
       (click)="$any($event.target).showPicker?.()"
-      (valueChange)="onCheckInChange($event)">
-    </app-input>
+      (keydown.enter)="onSearchClick()">
 
     <span class="dot" aria-hidden="true">•</span>
 
-    <app-input
-      class="date-input"
+    <input
       type="date"
-      [value]="checkOut"
+      aria-label="Fecha de salida"
+      [(ngModel)]="salida"
+      [attr.min]="llegada || hoy"
+      (ngModelChange)="onCampoChange()"
       (click)="$any($event.target).showPicker?.()"
-      (valueChange)="onCheckOutChange($event)">
-    </app-input>
+      (keydown.enter)="onSearchClick()">
   </div>
 
   <div class="divider"></div>
 
-  <div class="field guests">
-    <span class="guests-text">2 huéspedes, 1 habitación</span>
-  </div>
+  <label class="field guests">
+    <select
+      aria-label="Número de huéspedes"
+      [(ngModel)]="huespedes"
+      (ngModelChange)="onCampoChange()"
+      (keydown.enter)="onSearchClick()">
+      @for (n of opcionesHuespedes; track n) {
+        <option [ngValue]="n">{{ n }} {{ n === 1 ? 'huésped' : 'huéspedes' }}</option>
+      }
+    </select>
+  </label>
 
   <button class="search-button" type="button" (click)="onSearchClick()">
     Buscar
   </button>
 
 </div>
+
+@if (error) {
+  <p class="error" role="alert">{{ error }}</p>
+}

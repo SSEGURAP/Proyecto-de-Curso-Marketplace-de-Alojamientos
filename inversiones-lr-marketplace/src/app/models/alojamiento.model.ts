@@ -66,3 +66,17 @@ export interface FiltroAlojamiento {
   tipos?: string[];
   precioMaximo?: number;
 }
+
+/**
+ * Datos que viajan desde las barras de búsqueda (Header y Hero) hacia el
+ * catálogo y, desde allí, hacia el detalle (query params de la URL).
+ * - ciudad y huespedes se traducen a FiltroAlojamiento.
+ * - llegada y salida (YYYY-MM-DD) no filtran; se arrastran al detalle
+ *   para precargar la cotización.
+ */
+export interface ParametrosBusqueda {
+  ciudad: string;
+  llegada: string;
+  salida: string;
+  huespedes: number;
+}

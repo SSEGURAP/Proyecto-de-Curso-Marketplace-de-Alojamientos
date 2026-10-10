@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ParamMap, Params } from '@angular/router';
 import { Observable, catchError, map, shareReplay, throwError } from 'rxjs';
 import {
   Alojamiento,
   Cotizacion,
   FiltroAlojamiento,
   MarketplaceData,
+  ParametrosBusqueda,
   Reserva,
   Resena
 } from '../models/alojamiento.model';
@@ -32,8 +34,9 @@ export class AlojamientoService {
     );
 
   getAlojamientos(): Observable<Alojamiento[]> {
+    // Regla de negocio: nunca se exponen alojamientos inactivos (5 de 6 en el JSON).
     return this.data$.pipe(
-            map(data => data.alojamientos.filter(a => a.activo === true && a.precioNoche > 0))
+      map(data => data.alojamientos.filter(a => a.activo === true && a.precioNoche > 0))
     );
   }
 
@@ -74,6 +77,31 @@ export class AlojamientoService {
       map(alojamientos => [...new Set(alojamientos.map(a => a.tipo))].sort())
     );
   }
+
+  // ---------- Parámetros de búsqueda (URL) ----------
+
+  /** ParametrosBusqueda -> query params. Los valores vacíos se omiten de la URL. */
+  construirQueryParams(busqueda: Partial<ParametrosBusqueda>): Params {
+    return {
+      ciudad: busqueda.ciudad || null,
+      llegada: busqueda.llegada || null,
+      salida: busqueda.salida || null,
+      huespedes: busqueda.huespedes && busqueda.huespedes > 1 ? busqueda.huespedes : null
+    };
+  }
+
+  /** Query params -> ParametrosBusqueda (con valores por defecto seguros). */
+  leerQueryParams(params: ParamMap): ParametrosBusqueda {
+    const huespedes = Number(params.get('huespedes'));
+    return {
+      ciudad: params.get('ciudad') ?? '',
+      llegada: params.get('llegada') ?? '',
+      salida: params.get('salida') ?? '',
+      huespedes: Number.isInteger(huespedes) && huespedes > 0 ? huespedes : 1
+    };
+  }
+
+  // ---------- Cotización y reservas ----------
 
   calcularCotizacion(
     alojamiento: Alojamiento,

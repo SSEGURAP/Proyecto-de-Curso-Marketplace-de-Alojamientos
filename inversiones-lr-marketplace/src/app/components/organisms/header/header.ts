@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchBar } from '../../molecules/search-bar/search-bar';
 import { Logo } from '../../atoms/logo/logo';
 import { LinkComponent } from '../../atoms/link/link';
+import { AlojamientoService } from '../../../services/alojamiento';
+import { ParametrosBusqueda } from '../../../models/alojamiento.model';
 
 @Component({
   selector: 'app-header',
@@ -11,26 +13,30 @@ import { LinkComponent } from '../../atoms/link/link';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header {
+export class Header implements OnInit {
 
-  destination = '';
-  checkIn = '';
-  checkOut = '';
+  ciudades: string[] = [];
 
-  @Output() search = new EventEmitter<{
-    destination: string;
-    checkIn: string;
-    checkOut: string;
-  }>();
+  @Output() search = new EventEmitter<ParametrosBusqueda>();
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private alojamientoService: AlojamientoService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  onSearch(): void {
-    this.search.emit({
-      destination: this.destination,
-      checkIn: this.checkIn,
-      checkOut: this.checkOut
+  ngOnInit(): void {
+    this.alojamientoService.getCiudades().subscribe({
+      next: ciudades => {
+        this.ciudades = ciudades;
+        this.cdr.markForCheck();
+      },
+      error: err => console.error('No se pudieron cargar las ciudades del buscador', err)
     });
+  }
+
+  onSearch(busqueda: ParametrosBusqueda): void {
+    this.search.emit(busqueda);
   }
 
   irAHome(): void {

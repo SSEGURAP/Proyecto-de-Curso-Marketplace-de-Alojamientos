@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Header } from './components/organisms/header/header';
 import { Footer } from './components/organisms/footer/footer';
+import { AlojamientoService } from './services/alojamiento';
+import { ParametrosBusqueda } from './models/alojamiento.model';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +13,15 @@ import { Footer } from './components/organisms/footer/footer';
   styleUrl: './app.css',
 })
 export class App {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private alojamientoService: AlojamientoService
+  ) {}
 
-  onSearch(data: { destination: string; checkIn: string; checkOut: string }): void {
+  /** Búsqueda lanzada desde la barra del Header -> catálogo con query params. */
+  onSearch(busqueda: ParametrosBusqueda): void {
     this.router.navigate(['/alojamientos'], {
-      queryParams: { destino: data.destination.trim() || null }
+      queryParams: this.alojamientoService.construirQueryParams(busqueda)
     });
   }
 }

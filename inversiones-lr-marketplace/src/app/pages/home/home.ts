@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Hero } from '../../components/organisms/hero/hero';
 import { FeaturedAlojamientos } from '../../components/organisms/featured-alojamientos/featured-alojamientos';
+import { AlojamientoService } from '../../services/alojamiento';
+import { ParametrosBusqueda } from '../../models/alojamiento.model';
 
 @Component({
   selector: 'app-home-page',
@@ -12,11 +14,15 @@ import { FeaturedAlojamientos } from '../../components/organisms/featured-alojam
 })
 export class HomePage {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private alojamientoService: AlojamientoService
+  ) {}
 
-  onSearch(data: { destination: string; checkIn: string; checkOut: string }): void {
-      this.router.navigate(['/alojamientos'], {
-      queryParams: { destino: data.destination.trim() || null }
+  /** Búsqueda lanzada desde el Hero -> catálogo con query params. */
+  onSearch(busqueda: ParametrosBusqueda): void {
+    this.router.navigate(['/alojamientos'], {
+      queryParams: this.alojamientoService.construirQueryParams(busqueda)
     });
   }
 }
