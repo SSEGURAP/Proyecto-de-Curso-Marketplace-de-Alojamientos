@@ -51,7 +51,9 @@ export class AlojamientoService {
           const cumpleHuespedes = !filtro.huespedes || a.capacidad >= filtro.huespedes;
           const cumpleTipo = !filtro.tipos || filtro.tipos.length === 0 || filtro.tipos.includes(a.tipo);
           const cumplePrecio = !filtro.precioMaximo || a.precioNoche <= filtro.precioMaximo;
-          return cumpleCiudad && cumpleHuespedes && cumpleTipo && cumplePrecio;
+          const cumpleFechas = !filtro.fechaLlegada || !filtro.fechaSalida ||
+            this.estaDisponible(a.id, filtro.fechaLlegada, filtro.fechaSalida);
+          return cumpleCiudad && cumpleHuespedes && cumpleTipo && cumplePrecio && cumpleFechas;
         })
       )
     );
@@ -123,6 +125,14 @@ export class AlojamientoService {
       console.error('No se pudieron leer las reservas guardadas', error);
       return [];
     }
+  }
+
+    estaDisponible(alojamientoId: number, fechaLlegada: string, fechaSalida: string): boolean {
+    return !this.getReservas().some(r =>
+      r.alojamientoId === alojamientoId &&
+      fechaLlegada < r.fechaSalida &&
+      fechaSalida > r.fechaLlegada
+    );
   }
 
   getReservaById(id: string | number): Reserva | undefined {

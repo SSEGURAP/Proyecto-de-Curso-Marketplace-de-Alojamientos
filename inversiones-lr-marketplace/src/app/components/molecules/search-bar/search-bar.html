@@ -13,8 +13,10 @@
   <div class="field">
     <app-icon-component name="calendar_today" size="18px" color="#899199"></app-icon-component>
     <app-input
-      placeholder="Entrada"
+      class="date-input"
+      type="date"
       [value]="checkIn"
+      (click)="$any($event.target).showPicker?.()"
       (valueChange)="onCheckInChange($event)">
     </app-input>
   </div>
@@ -23,8 +25,10 @@
 
   <div class="field">
     <app-input
-      placeholder="Salida"
+      class="date-input"
+      type="date"
       [value]="checkOut"
+      (click)="$any($event.target).showPicker?.()"
       (valueChange)="onCheckOutChange($event)">
     </app-input>
   </div>

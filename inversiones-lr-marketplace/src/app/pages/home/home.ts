@@ -16,7 +16,11 @@ export class HomePage {
 
   onSearch(data: { destination: string; checkIn: string; checkOut: string }): void {
       this.router.navigate(['/alojamientos'], {
-      queryParams: { destino: data.destination.trim() || null }
+      queryParams: {
+        destino: data.destination.trim() || null,
+        llegada: data.checkIn || null,
+        salida: data.checkOut || null
+      }
     });
   }
 }

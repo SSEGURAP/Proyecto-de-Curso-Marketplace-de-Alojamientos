@@ -49,3 +49,12 @@
 .search-button:hover {
   background-color: #021f4f;
 }
+
+.search-bar ::ng-deep .date-input input[type="date"] {
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.search-bar ::ng-deep .date-input input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
