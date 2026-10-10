@@ -8,7 +8,6 @@
     </div>
   } @else if (alojamiento) {
 
-    <!-- Mensaje de éxito -->
     @if (mensajeExito) {
       <div class="exito">
         <app-label [text]="mensajeExito" variant="heading"></app-label>
@@ -16,7 +15,6 @@
       </div>
     }
 
-    <!-- Galería principal (imagen above-the-fold: carga inmediata) -->
     <div class="gallery">
       <app-photo
         [src]="alojamiento.imagenPrincipal"
@@ -26,7 +24,6 @@
     </div>
 
     <div class="content">
-      <!-- Información principal -->
       <div class="info">
         <app-label [text]="alojamiento.ubicacion + ', ' + alojamiento.ciudad" variant="muted"></app-label>
         <app-label [text]="alojamiento.nombre" variant="title"></app-label>
@@ -58,7 +55,6 @@
         }
       </div>
 
-      <!-- Sidebar de cotización y reserva -->
       <aside class="sidebar">
         <app-price-tag [price]="alojamiento.precioNoche"></app-price-tag>
 

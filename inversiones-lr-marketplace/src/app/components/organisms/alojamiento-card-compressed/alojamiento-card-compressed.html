@@ -1,5 +1,4 @@
 <article class="card-compressed">
-  <!-- Imagen + Badge de calificación -->
   <div class="photo-wrapper">
     <app-photo
       [src]="alojamiento.imagenPrincipal"
@@ -13,7 +12,6 @@
     </app-badge>
   </div>
 
-  <!-- Información -->
   <div class="info">
     <app-label
       [text]="getUbicacion()"
@@ -30,7 +28,6 @@
     </app-price-tag>
   </div>
 
-  <!-- Botón -->
   <app-button
     label="Ver Detalle"
     variant="accent"

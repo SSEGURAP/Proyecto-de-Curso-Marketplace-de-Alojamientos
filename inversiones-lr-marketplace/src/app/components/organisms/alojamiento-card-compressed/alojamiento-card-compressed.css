@@ -38,7 +38,6 @@
   flex: 1;
 }
 
-/* Ajuste de tipografía más compacta */
 .info app-label.heading {
   font-size: var(--font-size-md);
   line-height: 1.3;
