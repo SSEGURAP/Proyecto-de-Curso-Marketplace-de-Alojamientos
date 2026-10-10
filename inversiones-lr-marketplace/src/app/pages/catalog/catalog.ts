@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef ,Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, catchError, debounceTime, forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
@@ -31,7 +31,8 @@ export class CatalogPage implements OnInit, OnDestroy {
 
   constructor(
     private alojamientoService: AlojamientoService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -63,10 +64,12 @@ export class CatalogPage implements OnInit, OnDestroy {
             this.precioLimite = Math.max(...alojamientos.map(a => a.precioNoche));
           }
           this.cargando = false;
+          this.cdr.markForCheck();
         },
         error: (err: Error) => {
           this.error = err.message;
           this.cargando = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -87,6 +90,7 @@ export class CatalogPage implements OnInit, OnDestroy {
       )
       .subscribe(data => {
         this.alojamientos = data;
+        this.cdr.markForCheck();
       });
   }
 
