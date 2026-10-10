@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
 import { Button } from '../../components/atoms/button/button';
-import { Photo } from '../../components/atoms/photo/photo';
 import { ServiceList } from '../../components/molecules/service-list/service-list';
 import { PriceTag } from '../../components/molecules/price-tag/price-tag';
 import { CounterField } from '../../components/molecules/counter-field/counter-field';
 import { AlojamientoService } from '../../services/alojamiento';
 import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamiento.model';
+import { PhotoGallery } from '../../components/molecules/photo-gallery/photo-gallery';
+import { Badge } from '../../components/atoms/badge/badge';
 
 @Component({
   selector: 'app-detail-page',
@@ -18,7 +19,8 @@ import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamien
     FormsModule,
     Label,
     Button,
-    Photo,
+    Badge,
+    PhotoGallery,
     ServiceList,
     PriceTag,
     CounterField
@@ -190,6 +192,25 @@ export class DetailPage implements OnInit, OnDestroy {
 
   irAReservas(): void {
     this.router.navigate(['/reservas']);
+  }
+
+  getUbicacion(alojamiento: Alojamiento): string {
+    if (alojamiento.ubicacion.includes(alojamiento.ciudad)) {
+      return alojamiento.ubicacion;
+    }
+    return alojamiento.ubicacion + ', ' + alojamiento.ciudad;
+  }
+
+  getCaracteristicas(alojamiento: Alojamiento): string {
+    return alojamiento.tipo + ' · ' +
+      alojamiento.capacidad + ' huéspedes · ' +
+      alojamiento.habitaciones + ' habitaciones · ' +
+      alojamiento.camas + ' camas · ' +
+      alojamiento.banos + ' baños';
+  }
+
+  getCalificacion(alojamiento: Alojamiento): string {
+    return alojamiento.calificacion + ' ★ · ' + this.resenas.length + ' reseña(s)';
   }
 
   formatMoney(valor: number): string {
