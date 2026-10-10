@@ -27,6 +27,11 @@ export interface Resena {
   comentario: string;
 }
 
+export interface MarketplaceData {
+  alojamientos: Alojamiento[];
+  resenas: Resena[];
+}
+
 export interface Cotizacion {
   alojamientoId: number;
   fechaLlegada: string;

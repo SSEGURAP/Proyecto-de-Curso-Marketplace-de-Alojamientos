@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding-bottom: var(--spacing-xl);
+}
+
+app-hero {
+  display: block;
+  width: 100%;
+  max-width: 1448px;
+  margin: var(--spacing-md) auto 0;
+  padding: 0 16px;
+}
+
+app-featured-alojamientos {
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  app-hero {
+    padding: 0 12px;
+  }
+}

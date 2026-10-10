@@ -1,0 +1,35 @@
+<header class="header">
+  <div class="header-content">
+
+    <div class="logo-section" (click)="irAHome()" style="cursor: pointer;">
+      <app-logo></app-logo>
+    </div>
+
+    <div class="search-section">
+      <app-search-bar
+        [destination]="destination"
+        [checkIn]="checkIn"
+        [checkOut]="checkOut"
+        (destinationChange)="destination = $event"
+        (checkInChange)="checkIn = $event"
+        (checkOutChange)="checkOut = $event"
+        (search)="onSearch()">
+      </app-search-bar>
+    </div>
+
+    <div class="actions-section">
+      <app-link 
+        label="Mis reservas" 
+        href="/reservas"
+        [active]="false">
+      </app-link>
+
+      <app-link 
+        label="Alojamientos" 
+        href="/alojamientos"
+        [active]="false">
+      </app-link>
+    </div>
+
+  </div>
+</header>

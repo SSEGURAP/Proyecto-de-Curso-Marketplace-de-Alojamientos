@@ -1,0 +1,30 @@
+<section class="hero">
+
+  <div class="hero-content">
+    <h1 class="title">Encuentra tu próxima estancia</h1>
+    <p class="subtitle">Busca ofertas en hoteles, casas y mucho más...</p>
+
+    <div class="search-wrapper">
+      <app-search-bar-hero
+        [destination]="destination"
+        [checkIn]="checkIn"
+        [checkOut]="checkOut"
+        (destinationChange)="destination = $event"
+        (checkInChange)="checkIn = $event"
+        (checkOutChange)="checkOut = $event"
+        (search)="onSearch()">
+      </app-search-bar-hero>
+    </div>
+  </div>
+
+  <div class="images" aria-hidden="true">
+    <div class="img-card img-c"></div>
+    <div class="img-card img-b"></div>
+    <div class="img-card img-f"></div>
+
+    <div class="img-card img-d"></div>
+    <div class="img-card img-a"></div>
+    <div class="img-card img-e"></div>
+  </div>
+
+</section>

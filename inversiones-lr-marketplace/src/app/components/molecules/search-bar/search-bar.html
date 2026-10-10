@@ -1,0 +1,35 @@
+<div class="search-bar">
+  <div class="field">
+    <app-icon-component name="search" size="20px" color="#899199"></app-icon-component>
+    <app-input
+      placeholder="¿A dónde vas?"
+      [value]="destination"
+      (valueChange)="onDestinationChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field">
+    <app-icon-component name="calendar_today" size="18px" color="#899199"></app-icon-component>
+    <app-input
+      placeholder="Entrada"
+      [value]="checkIn"
+      (valueChange)="onCheckInChange($event)">
+    </app-input>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="field">
+    <app-input
+      placeholder="Salida"
+      [value]="checkOut"
+      (valueChange)="onCheckOutChange($event)">
+    </app-input>
+  </div>
+
+  <button class="search-button" (click)="onSearchClick()">
+    <app-icon-component name="search" size="22px" color="#ffffff"></app-icon-component>
+  </button>
+</div>

@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 export class Photo {
   @Input() src: string = '';
   @Input() alt: string = '';
+  @Input() loading: 'lazy' | 'eager' = 'lazy';
 }

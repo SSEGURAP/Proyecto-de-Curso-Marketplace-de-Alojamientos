@@ -1,0 +1,150 @@
+<section class="detail">
+  @if (cargando) {
+    <p class="mensaje">Cargando alojamiento...</p>
+  } @else if (error) {
+    <div class="mensaje">
+      <app-label [text]="error" variant="heading"></app-label>
+      <app-button label="Volver al catálogo" variant="outline" (clicked)="volver()"></app-button>
+    </div>
+  } @else if (alojamiento) {
+
+    @if (mensajeExito) {
+      <div class="exito">
+        <app-label [text]="mensajeExito" variant="heading"></app-label>
+        <app-button label="Ver mis reservas" variant="accent" (clicked)="irAReservas()"></app-button>
+      </div>
+    }
+
+    <div class="gallery">
+      <app-photo
+        [src]="alojamiento.imagenPrincipal"
+        [alt]="alojamiento.nombre"
+        loading="eager">
+      </app-photo>
+    </div>
+
+    <div class="content">
+      <div class="info">
+        <app-label [text]="alojamiento.ubicacion + ', ' + alojamiento.ciudad" variant="muted"></app-label>
+        <app-label [text]="alojamiento.nombre" variant="title"></app-label>
+        <app-label [text]="alojamiento.tipo + ' · ' + alojamiento.capacidad + ' huéspedes · ' + alojamiento.habitaciones + ' habitaciones'" variant="muted"></app-label>
+
+        <p class="descripcion">{{ alojamiento.descripcion }}</p>
+
+        <app-label text="Servicios" variant="heading"></app-label>
+        <app-service-list [services]="alojamiento.servicios"></app-service-list>
+
+        <app-label text="Reglas de la casa" variant="heading"></app-label>
+        <ul class="reglas">
+          @for (regla of alojamiento.reglas; track regla) {
+            <li>{{ regla }}</li>
+          }
+        </ul>
+
+        @if (resenas.length > 0) {
+          <app-label text="Reseñas" variant="heading"></app-label>
+          <div class="resenas">
+            @for (resena of resenas; track resena.id) {
+              <div class="resena">
+                <strong>{{ resena.usuario }}</strong>
+                <span>{{ resena.calificacion }} ★</span>
+                <p>{{ resena.comentario }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <aside class="sidebar">
+        <app-price-tag [price]="alojamiento.precioNoche"></app-price-tag>
+
+        <div class="campo">
+          <app-label text="Fecha de llegada" variant="field"></app-label>
+          <input
+            type="date"
+            [(ngModel)]="fechaLlegada"
+            [attr.min]="hoy"
+            (change)="onFechasChange()"
+            class="date-input">
+        </div>
+
+        <div class="campo">
+          <app-label text="Fecha de salida" variant="field"></app-label>
+          <input
+            type="date"
+            [(ngModel)]="fechaSalida"
+            [attr.min]="fechaLlegada || hoy"
+            (change)="onFechasChange()"
+            class="date-input">
+        </div>
+
+        <app-counter-field
+          label="Huéspedes"
+          unit="huéspedes"
+          [value]="numeroHuespedes"
+          [min]="1"
+          [max]="alojamiento.capacidad"
+          (valueChange)="onHuespedesChange($event)">
+        </app-counter-field>
+
+        @if (cotizacion) {
+          <div class="resumen">
+            <div class="linea">
+              <span>{{ cotizacion.numeroNoches }} noche(s) × {{ formatMoney(cotizacion.precioNoche) }}</span>
+              <span>{{ formatMoney(cotizacion.subtotal) }}</span>
+            </div>
+            <div class="linea">
+              <span>Tarifa de limpieza</span>
+              <span>{{ formatMoney(cotizacion.tarifaLimpieza) }}</span>
+            </div>
+            <div class="linea">
+              <span>Tarifa de servicio (10%)</span>
+              <span>{{ formatMoney(cotizacion.tarifaServicio) }}</span>
+            </div>
+            <div class="linea total">
+              <strong>Total</strong>
+              <strong>{{ formatMoney(cotizacion.total) }}</strong>
+            </div>
+          </div>
+        }
+
+        <div class="campo">
+          <app-label text="Nombre completo" variant="field"></app-label>
+          <input
+            type="text"
+            [(ngModel)]="nombreHuesped"
+            placeholder="Tu nombre"
+            class="text-input">
+        </div>
+
+        <div class="campo">
+          <app-label text="Correo electrónico" variant="field"></app-label>
+          <input
+            type="email"
+            [(ngModel)]="correoHuesped"
+            placeholder="tu@correo.com"
+            class="text-input">
+        </div>
+
+        @if (errorFormulario) {
+          <p class="error-form" role="alert">{{ errorFormulario }}</p>
+        }
+
+        <app-button
+          label="Confirmar reserva"
+          variant="accent"
+          [fullWidth]="true"
+          [disabled]="!cotizacion"
+          (clicked)="reservar()">
+        </app-button>
+
+        <app-button
+          label="Volver al catálogo"
+          variant="outline"
+          [fullWidth]="true"
+          (clicked)="volver()">
+        </app-button>
+      </aside>
+    </div>
+  }
+</section>
