@@ -40,7 +40,7 @@ export class AlojamientoService {
   /** Regla de negocio: solo alojamientos activos (activo === true) */
   getAlojamientos(): Observable<Alojamiento[]> {
     return this.data$.pipe(
-      map(data => data.alojamientos.filter(a => a.activo === true))
+            map(data => data.alojamientos.filter(a => a.activo === true && a.precioNoche > 0))
     );
   }
 
