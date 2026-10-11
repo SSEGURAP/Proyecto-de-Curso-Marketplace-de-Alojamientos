@@ -135,8 +135,7 @@
 
   .field,
   .destination,
-  .dates,
-  .guests {
+  .dates{
     flex: none;
     height: 44px;
     padding: 0 8px;

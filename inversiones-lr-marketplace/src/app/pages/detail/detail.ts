@@ -63,6 +63,8 @@ export class DetailPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.fechaLlegada = this.route.snapshot.queryParamMap.get('llegada') ?? '';
+    this.fechaSalida = this.route.snapshot.queryParamMap.get('salida') ?? '';
     this.cargarAlojamiento(id);
   }
 
