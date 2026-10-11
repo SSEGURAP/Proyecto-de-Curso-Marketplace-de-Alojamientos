@@ -1,37 +1,62 @@
-<div class="search-bar-hero">
+<div class="search-bar-hero" role="search">
 
-  <div class="field destination">
-    <app-input
-      placeholder="Añade una ciudad, hotel, dirección o lugar..."
-      [value]="destination"
-      (valueChange)="onDestinationChange($event)">
-    </app-input>
-  </div>
+  <label class="field destination">
+    <app-select
+      variant="plain"
+      ariaLabel="Ciudad"
+      placeholder="Todas las ciudades"
+      [options]="opcionesCiudad"
+      [value]="ciudad"
+      (valueChange)="onCiudadChange($event)"
+      (keydown.enter)="onSearchClick()">
+    </app-select>
+  </label>
 
   <div class="divider"></div>
 
   <div class="field dates">
     <app-input
-      class="date-input"
       type="date"
-      [value]="checkIn"
+      ariaLabel="Fecha de llegada"
+      [min]="hoy"
+      [value]="llegada"
+      (valueChange)="onLlegadaChange($event)"
       (click)="$any($event.target).showPicker?.()"
-      (valueChange)="onCheckInChange($event)">
+      (keydown.enter)="onSearchClick()">
     </app-input>
 
     <span class="dot" aria-hidden="true">•</span>
 
     <app-input
-      class="date-input"
       type="date"
-      [value]="checkOut"
+      ariaLabel="Fecha de salida"
+      [min]="llegada || hoy"
+      [value]="salida"
+      (valueChange)="onSalidaChange($event)"
       (click)="$any($event.target).showPicker?.()"
-      (valueChange)="onCheckOutChange($event)">
+      (keydown.enter)="onSearchClick()">
     </app-input>
   </div>
+
+  <div class="divider"></div>
+
+  <label class="field guests">
+    <app-select
+      variant="plain"
+      ariaLabel="Número de huéspedes"
+      [options]="opcionesHuespedes"
+      [value]="huespedes"
+      (valueChange)="onHuespedesChange($event)"
+      (keydown.enter)="onSearchClick()">
+    </app-select>
+  </label>
 
   <button class="search-button" type="button" (click)="onSearchClick()">
     Buscar
   </button>
 
 </div>
+
+@if (error) {
+  <p class="error" role="alert">{{ error }}</p>
+}

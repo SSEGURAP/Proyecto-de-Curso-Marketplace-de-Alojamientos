@@ -1,8 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Label } from '../../atoms/label/label';
 import { AlojamientoCardCompressed } from '../alojamiento-card-compressed/alojamiento-card-compressed';
-import { AlojamientoService } from '../../../services/alojamiento';
 import { Alojamiento } from '../../../models/alojamiento.model';
 
 @Component({
@@ -12,43 +11,14 @@ import { Alojamiento } from '../../../models/alojamiento.model';
   templateUrl: './featured-alojamientos.html',
   styleUrl: './featured-alojamientos.css',
 })
-export class FeaturedAlojamientos implements OnInit {
+export class FeaturedAlojamientos {
 
-  alojamientosDestacados: Alojamiento[] = [];
-  cargando: boolean = true;
+  @Input() alojamientosDestacados: Alojamiento[] = [];
+  @Input() cargando: boolean = true;
 
-  constructor(
-    private alojamientoService: AlojamientoService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
-    this.cargarDestacados();
-  }
-
-  cargarDestacados(): void {
-    this.cargando = true;
-
-    this.alojamientoService.getAlojamientos().subscribe({
-      next: (data) => {
-        this.alojamientosDestacados = data.slice(0, 3);
-        this.cargando = false;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        console.error('Error al cargar alojamientos destacados', err);
-        this.cargando = false;
-        this.cdr.markForCheck();
-      }
-    });
-  }
+  @Output() viewDetail = new EventEmitter<number>();
 
   onViewDetail(id: number): void {
-    this.router.navigate(['/alojamiento', id]);
-  }
-
-  explorarMas(): void {
-    this.router.navigate(['/alojamientos']);
+    this.viewDetail.emit(id);
   }
 }

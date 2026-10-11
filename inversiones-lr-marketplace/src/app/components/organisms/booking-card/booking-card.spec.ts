@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PhotoGallery } from './photo-gallery';
+import { BookingCard } from './booking-card';
 
-describe('PhotoGallery', () => {
-  let component: PhotoGallery;
-  let fixture: ComponentFixture<PhotoGallery>;
+describe('BookingCard', () => {
+  let component: BookingCard;
+  let fixture: ComponentFixture<BookingCard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PhotoGallery],
+      imports: [BookingCard],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PhotoGallery);
+    fixture = TestBed.createComponent(BookingCard);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

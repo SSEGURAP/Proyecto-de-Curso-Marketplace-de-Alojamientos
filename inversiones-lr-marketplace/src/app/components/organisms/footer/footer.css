@@ -14,13 +14,11 @@
   padding-top: 96px;
 }
 
-/* Contenedor: 1078px en desktop (márgenes de ~181px sobre 1440, igual que el diseño) */
 .footer-inner {
   width: min(1078px, 100% - 48px);
   margin: 0 auto;
 }
 
-/* ───────── Grilla principal: marca | 3 columnas | social + apps ───────── */
 .footer-grid {
   display: grid;
   grid-template-columns:
@@ -33,7 +31,7 @@
 }
 
 .footer-brand {
-  padding-top: 28px; /* centra el logo con la primera fila de enlaces */
+  padding-top: 28px;
 }
 
 .brand-link {
@@ -56,7 +54,6 @@ app-logo {
   box-sizing: border-box;
 }
 
-/* ───────── Títulos y enlaces ───────── */
 .footer-title {
   margin: 0;
   font-size: 16px;
@@ -90,7 +87,6 @@ app-logo {
   text-underline-offset: 3px;
 }
 
-/* ───────── Redes sociales ───────── */
 .social-list {
   display: flex;
   align-items: center;
@@ -121,7 +117,6 @@ app-logo {
   height: 17px;
 }
 
-/* ───────── Descarga de la app ───────── */
 .footer-title--app {
   margin: 20px 0 30px;
 }
@@ -157,7 +152,7 @@ app-logo {
 .store-badge--google {
   background-color: #000000;
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.25); /* el negro puro casi se pierde sobre el navy */
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .store-icon {
@@ -185,7 +180,6 @@ app-logo {
   white-space: nowrap;
 }
 
-/* ───────── Divisor + copyright ───────── */
 .footer-bottom {
   margin-top: 56px;
   padding: 11px 0 60px;
@@ -200,16 +194,12 @@ app-logo {
   color: var(--footer-text-soft);
 }
 
-/* ───────── Accesibilidad: foco visible ───────── */
 .footer a:focus-visible {
   outline: 2px solid var(--color-accent, #F3B901);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* ───────── Responsive ───────── */
-
-/* Tablet: marca arriba, 3 columnas de enlaces y social + apps abajo */
 @media (max-width: 1024px) {
   .footer {
     padding-top: 64px;
@@ -235,7 +225,6 @@ app-logo {
   }
 }
 
-/* Móvil: 2 columnas */
 @media (max-width: 640px) {
   .footer {
     padding-top: 48px;
@@ -246,7 +235,6 @@ app-logo {
   }
 }
 
-/* Móvil pequeño: 1 columna */
 @media (max-width: 420px) {
   .footer-grid {
     grid-template-columns: minmax(0, 1fr);

@@ -7,7 +7,7 @@ import { FilterSidebar } from '../../components/organisms/filter-sidebar/filter-
 import { AlojamientoCard } from '../../components/organisms/alojamiento-card/alojamiento-card';
 import { EmptyState } from '../../components/molecules/empty-state/empty-state';
 import { AlojamientoService } from '../../services/alojamiento';
-import { Alojamiento, FiltroAlojamiento } from '../../models/alojamiento.model';
+import { Alojamiento, FiltroAlojamiento, ParametrosBusqueda } from '../../models/alojamiento.model';
 
 @Component({
   selector: 'app-catalog-page',
@@ -25,13 +25,11 @@ export class CatalogPage implements OnInit, OnDestroy {
   precioLimite: number = 1000000;
   cargando: boolean = true;
   error: string = '';
-  destino: string = '';
-  ciudadBuscada: string = '';
-  fechaLlegada: string = '';
-  fechaSalida: string = '';
-  errorFechas: string = '';
 
-  private ultimoFiltro: FiltroAlojamiento = {};
+  busqueda: ParametrosBusqueda | null = null;
+  resumenBusqueda: string = '';
+
+  private filtroActual: FiltroAlojamiento | null = null;
   private destroy$ = new Subject<void>();
   private filtro$ = new Subject<FiltroAlojamiento>();
 
@@ -72,7 +70,10 @@ export class CatalogPage implements OnInit, OnDestroy {
             this.precioLimite = Math.max(...alojamientos.map(a => a.precioNoche));
           }
           this.cargando = false;
-          this.aplicarBusqueda();
+
+          if (this.filtroActual) {
+            this.filtro$.next(this.filtroActual);
+          }
           this.cdr.markForCheck();
         },
         error: (err: Error) => {
@@ -107,65 +108,23 @@ export class CatalogPage implements OnInit, OnDestroy {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
-        this.destino = params.get('destino') ?? '';
-        this.validarFechas(params.get('llegada') ?? '', params.get('salida') ?? '');
-        this.aplicarBusqueda();
+        this.busqueda = this.alojamientoService.leerQueryParams(params);
+        this.resumenBusqueda = this.construirResumen(this.busqueda);
+        this.cdr.markForCheck();
       });
   }
 
-  private validarFechas(llegada: string, salida: string): void {
-    this.fechaLlegada = '';
-    this.fechaSalida = '';
-    this.errorFechas = '';
-
-    if (!llegada && !salida) {
-      return;
+  private construirResumen(busqueda: ParametrosBusqueda): string {
+    if (!busqueda.llegada || !busqueda.salida) {
+      return '';
     }
-
-    if (!llegada || !salida) {
-      this.errorFechas = 'Para buscar por fechas selecciona la llegada y la salida.';
-    } else if (llegada < this.obtenerHoy()) {
-      this.errorFechas = 'La fecha de llegada no puede ser anterior a la fecha actual.';
-    } else if (salida <= llegada) {
-      this.errorFechas = 'La fecha de salida debe ser posterior a la fecha de llegada.';
-    } else {
-      this.fechaLlegada = llegada;
-      this.fechaSalida = salida;
-    }
+    const huespedes = busqueda.huespedes === 1 ? '1 huésped' : busqueda.huespedes + ' huéspedes';
+    return `Estancia del ${this.formatFecha(busqueda.llegada)} al ${this.formatFecha(busqueda.salida)} · ${huespedes}`;
   }
 
-  private aplicarBusqueda(): void {
-    if (this.ciudades.length === 0) {
-      return;
-    }
-
-    if (this.destino) {
-      const buscado = this.normalizar(this.destino);
-      const ciudad = this.ciudades.find(c => this.normalizar(c).includes(buscado));
-
-      if (!ciudad) {
-        this.alojamientos = [];
-        this.cdr.markForCheck();
-        return;
-      }
-
-      this.ciudadBuscada = ciudad;
-      this.ultimoFiltro = { ...this.ultimoFiltro, ciudad: ciudad };
-    }
-
-    this.buscar();
-  }
-
-  private buscar(): void {
-    this.filtro$.next({
-      ...this.ultimoFiltro,
-      fechaLlegada: this.fechaLlegada || undefined,
-      fechaSalida: this.fechaSalida || undefined
-    });
-  }
-
-  private normalizar(texto: string): string {
-    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  private formatFecha(fecha: string): string {
+    const d = new Date(fecha + 'T00:00:00');
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   private obtenerHoy(): string {
@@ -196,20 +155,21 @@ export class CatalogPage implements OnInit, OnDestroy {
   }
 
   onFiltersChange(filtro: FiltroAlojamiento): void {
-    this.ultimoFiltro = filtro;
-    this.buscar();
+    this.filtroActual = filtro;
+    this.filtro$.next(filtro);
   }
 
   limpiarFiltros(): void {
     this.filterSidebar?.clearFilters();
+    this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   onViewDetail(id: number): void {
-    this.router.navigate(['/alojamiento', id], {
-      queryParams: {
-        llegada: this.fechaLlegada || null,
-        salida: this.fechaSalida || null
-      }
+    const queryParams = this.alojamientoService.construirQueryParams({
+      llegada: this.busqueda?.llegada,
+      salida: this.busqueda?.salida,
+      huespedes: this.filtroActual?.huespedes ?? this.busqueda?.huespedes ?? 1
     });
+    this.router.navigate(['/alojamiento', id], { queryParams });
   }
 }

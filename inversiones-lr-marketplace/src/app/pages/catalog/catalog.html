@@ -1,16 +1,8 @@
 <section class="catalog">
     <div class="header">
     <app-label text="Alojamientos" variant="title"></app-label>
-
-    @if (fechaLlegada) {
-      <div class="aviso">
-        <app-label [text]="getTextoFechas()" variant="body"></app-label>
-        <app-button label="Quitar fechas" variant="outline" (clicked)="quitarFechas()"></app-button>
-      </div>
-    }
-
-    @if (errorFechas) {
-      <p class="aviso error" role="alert">{{ errorFechas }}</p>
+    @if (resumenBusqueda) {
+      <p class="resumen-busqueda">{{ resumenBusqueda }}</p>
     }
   </div>
 
@@ -19,7 +11,7 @@
       [ciudades]="ciudades"
       [tipos]="tipos"
       [precioLimite]="precioLimite"
-      [ciudadInicial]="ciudadBuscada"
+      [busquedaInicial]="busqueda"
       (filtersChange)="onFiltersChange($event)">
     </app-filter-sidebar>
 

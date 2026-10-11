@@ -12,6 +12,8 @@ export class InputComponent {
   @Input() placeholder: string = '';
   @Input() value: string = '';
   @Input() disabled: boolean = false;
+  @Input() min: string = '';
+  @Input() ariaLabel: string = '';
 
   @Output() valueChange = new EventEmitter<string>();
 

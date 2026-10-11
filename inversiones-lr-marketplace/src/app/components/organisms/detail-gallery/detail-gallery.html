@@ -1,0 +1,22 @@
+<div class="galeria" [attr.data-cantidad]="getImagenesGaleria().length">
+  @for (imagen of getImagenesGaleria(); track $index) {
+    <button
+      type="button"
+      class="foto"
+      [class.principal]="$index === 0"
+      [attr.aria-label]="'Ver foto ' + ($index + 1) + ' de ' + imagenes.length"
+      (click)="onAbrirFoto($index)">
+      <img
+        [src]="imagen"
+        [alt]="alt + ' - foto ' + ($index + 1)"
+        [attr.loading]="$index === 0 ? 'eager' : 'lazy'">
+    </button>
+  }
+
+  @if (imagenes.length > 1) {
+    <button type="button" class="ver-todas" (click)="onAbrirFoto(0)">
+      <app-icon-component name="grid_view" size="16px"></app-icon-component>
+      Ver todas las fotos
+    </button>
+  }
+</div>

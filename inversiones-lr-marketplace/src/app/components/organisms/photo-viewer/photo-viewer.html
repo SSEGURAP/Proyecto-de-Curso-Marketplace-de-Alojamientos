@@ -1,0 +1,25 @@
+<div class="visor" role="dialog" aria-modal="true" aria-label="Galería de fotos" (click)="onCerrar()">
+  <button type="button" class="visor-cerrar" aria-label="Cerrar galería" (click)="onCerrar()">
+    <app-icon-component name="close" size="26px" color="#FFFFFF"></app-icon-component>
+  </button>
+
+  @if (imagenes.length > 1) {
+    <button type="button" class="visor-nav anterior" aria-label="Foto anterior" (click)="anterior($event)">
+      <app-icon-component name="chevron_left" size="32px" color="#FFFFFF"></app-icon-component>
+    </button>
+  }
+
+  <img
+    class="visor-imagen"
+    [src]="imagenes[indice]"
+    [alt]="alt + ' - foto ' + (indice + 1)"
+    (click)="$event.stopPropagation()">
+
+  @if (imagenes.length > 1) {
+    <button type="button" class="visor-nav siguiente" aria-label="Foto siguiente" (click)="siguiente($event)">
+      <app-icon-component name="chevron_right" size="32px" color="#FFFFFF"></app-icon-component>
+    </button>
+  }
+
+  <p class="visor-contador">{{ indice + 1 }} / {{ imagenes.length }}</p>
+</div>
