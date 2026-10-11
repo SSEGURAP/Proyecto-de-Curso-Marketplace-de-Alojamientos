@@ -1,9 +1,8 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchBar } from '../../molecules/search-bar/search-bar';
 import { Logo } from '../../atoms/logo/logo';
 import { LinkComponent } from '../../atoms/link/link';
-import { AlojamientoService } from '../../../services/alojamiento';
 import { ParametrosBusqueda } from '../../../models/alojamiento.model';
 
 @Component({
@@ -13,27 +12,13 @@ import { ParametrosBusqueda } from '../../../models/alojamiento.model';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header implements OnInit {
+export class Header {
 
-  ciudades: string[] = [];
+  @Input() ciudades: string[] = [];
 
   @Output() search = new EventEmitter<ParametrosBusqueda>();
 
-  constructor(
-    private router: Router,
-    private alojamientoService: AlojamientoService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
-    this.alojamientoService.getCiudades().subscribe({
-      next: ciudades => {
-        this.ciudades = ciudades;
-        this.cdr.markForCheck();
-      },
-      error: err => console.error('No se pudieron cargar las ciudades del buscador', err)
-    });
-  }
+  constructor(private router: Router) {}
 
   onSearch(busqueda: ParametrosBusqueda): void {
     this.search.emit(busqueda);

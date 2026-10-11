@@ -25,7 +25,6 @@ export class CatalogPage implements OnInit, OnDestroy {
   cargando: boolean = true;
   error: string = '';
 
-  /** Búsqueda leída de la URL (?ciudad=&llegada=&salida=&huespedes=). */
   busqueda: ParametrosBusqueda | null = null;
   resumenBusqueda: string = '';
 
@@ -71,8 +70,6 @@ export class CatalogPage implements OnInit, OnDestroy {
           }
           this.cargando = false;
 
-          // Si ya había un filtro activo (por ejemplo, el que llegó desde la búsqueda),
-          // se vuelve a aplicar para que la lista completa no lo sobrescriba.
           if (this.filtroActual) {
             this.filtro$.next(this.filtroActual);
           }
@@ -110,7 +107,6 @@ export class CatalogPage implements OnInit, OnDestroy {
     this.route.queryParamMap
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
-        // Objeto nuevo en cada cambio de URL: el sidebar lo detecta en ngOnChanges.
         this.busqueda = this.alojamientoService.leerQueryParams(params);
         this.resumenBusqueda = this.construirResumen(this.busqueda);
         this.cdr.markForCheck();
@@ -137,12 +133,10 @@ export class CatalogPage implements OnInit, OnDestroy {
 
   limpiarFiltros(): void {
     this.filterSidebar?.clearFilters();
-    // También se limpian los query params para que la URL refleje el estado real.
     this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
   onViewDetail(id: number): void {
-    // Las fechas vienen de la búsqueda; los huéspedes, del filtro vigente en el sidebar.
     const queryParams = this.alojamientoService.construirQueryParams({
       llegada: this.busqueda?.llegada,
       salida: this.busqueda?.salida,

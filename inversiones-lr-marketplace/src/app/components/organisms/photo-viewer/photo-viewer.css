@@ -1,0 +1,70 @@
+:host {
+  display: contents;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--navy);
+  outline-offset: 2px;
+}
+
+.visor {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(26, 26, 26, 0.94);
+}
+
+.visor-imagen {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.visor-cerrar,
+.visor-nav {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+
+.visor-cerrar:hover,
+.visor-nav:hover {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+.visor-cerrar {
+  top: 20px;
+  right: 20px;
+}
+
+.visor-nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.visor-nav.anterior {
+  left: 20px;
+}
+
+.visor-nav.siguiente {
+  right: 20px;
+}
+
+.visor-contador {
+  position: absolute;
+  bottom: 20px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--white);
+}

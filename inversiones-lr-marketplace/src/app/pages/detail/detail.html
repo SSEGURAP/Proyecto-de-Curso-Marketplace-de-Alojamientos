@@ -38,266 +38,48 @@
       </div>
     </header>
 
-    <!-- Galería: imagen principal a la izquierda + mosaico a la derecha -->
-    <div class="galeria" [attr.data-cantidad]="imagenesGaleria.length">
-      @for (imagen of imagenesGaleria; track $index) {
-        <button
-          type="button"
-          class="foto"
-          [class.principal]="$index === 0"
-          [attr.aria-label]="'Ver foto ' + ($index + 1) + ' de ' + imagenes.length"
-          (click)="abrirVisor($index)">
-          <img
-            [src]="imagen"
-            [alt]="alojamiento.nombre + ' - foto ' + ($index + 1)"
-            [attr.loading]="$index === 0 ? 'eager' : 'lazy'"
-            (error)="onImagenError($event)">
-        </button>
-      }
-
-      @if (imagenes.length > 1) {
-        <button type="button" class="ver-todas" (click)="abrirVisor(0)">
-          <app-icon-component name="grid_view" size="16px"></app-icon-component>
-          Ver todas las fotos
-        </button>
-      }
-    </div>
+    <app-detail-gallery
+      [imagenes]="imagenes"
+      [alt]="alojamiento.nombre"
+      (abrirFoto)="abrirVisor($event)">
+    </app-detail-gallery>
 
     <div class="contenido">
-
-      <!-- ============ COLUMNA IZQUIERDA ============ -->
       <div class="principal">
-
-        <section class="bloque">
-          <h2 class="subtitulo">{{ alojamiento.tipo }} en {{ alojamiento.ciudad }}</h2>
-          <ul class="especificaciones">
-            @for (item of especificaciones; track item.texto) {
-              <li>
-                <app-icon-component [name]="item.icono" size="20px"></app-icon-component>
-                {{ item.texto }}
-              </li>
-            }
-          </ul>
-          <div class="insignias">
-            <app-badge [text]="alojamiento.tipo" variant="chip"></app-badge>
-            <app-badge [text]="alojamiento.ciudad" variant="chip"></app-badge>
-            @if (alojamiento.calificacion >= 4.7) {
-              <app-badge text="Muy bien valorado" variant="chip"></app-badge>
-            }
-          </div>
-        </section>
-
-        <section class="bloque anfitrion">
-          <div class="avatar" aria-hidden="true">LR</div>
-          <div>
-            <p class="anfitrion-nombre">Anfitrión: Inversiones LR</p>
-            <p class="anfitrion-detalle">Administra alojamientos temporales en toda Colombia</p>
-          </div>
-        </section>
-
-        <section class="bloque">
-          <h2 class="subtitulo">Sobre este alojamiento</h2>
-          <p class="descripcion">{{ alojamiento.descripcion }}</p>
-        </section>
-
-        <section class="bloque">
-          <h2 class="subtitulo">Lo que ofrece este lugar</h2>
-          <ul class="servicios">
-            @for (servicio of servicios; track servicio.texto) {
-              <li>
-                <app-icon-component [name]="servicio.icono" size="22px"></app-icon-component>
-                {{ servicio.texto }}
-              </li>
-            }
-          </ul>
-        </section>
-
-        <section class="bloque">
-          <h2 class="subtitulo">Reglas de la casa</h2>
-          <ul class="reglas">
-            @for (regla of reglas; track regla.texto) {
-              <li>
-                <app-icon-component [name]="regla.icono" size="20px"></app-icon-component>
-                {{ regla.texto }}
-              </li>
-            }
-          </ul>
-        </section>
-
-        <section class="bloque" id="resenas">
-          <h2 class="subtitulo">
-            <app-icon-component name="star" size="22px" color="#FEBB02"></app-icon-component>
-            {{ alojamiento.calificacion }} · {{ resenas.length }} {{ resenas.length === 1 ? 'reseña' : 'reseñas' }}
-          </h2>
-
-          @if (resenas.length > 0) {
-            <div class="resenas">
-              @for (resena of resenas; track resena.id) {
-                <article class="resena">
-                  <div class="resena-cabecera">
-                    <span class="avatar pequeno" aria-hidden="true">{{ getIniciales(resena.usuario) }}</span>
-                    <div class="resena-autor">
-                      <strong>{{ resena.usuario }}</strong>
-                      <span class="estrellas" [attr.aria-label]="resena.calificacion + ' de 5 estrellas'">
-                        {{ getEstrellas(resena.calificacion) }}
-                      </span>
-                    </div>
-                  </div>
-                  <p class="resena-texto">{{ resena.comentario }}</p>
-                </article>
-              }
-            </div>
-          } @else {
-            <p class="sin-resenas">Este alojamiento aún no tiene reseñas.</p>
-          }
-        </section>
+        <app-detail-info [alojamiento]="alojamiento"></app-detail-info>
+        <app-review-list [resenas]="resenas" [calificacion]="alojamiento.calificacion"></app-review-list>
       </div>
 
-      <!-- ============ COLUMNA DERECHA (sticky) ============ -->
-      <aside class="cotizador" aria-label="Cotización y reserva">
-
-        <div class="precio-fila">
-          <span class="precio">{{ formatNumero(alojamiento.precioNoche) }}</span>
-          <span class="unidad">COP / noche</span>
-        </div>
-
-        <div class="selector">
-          <label class="celda">
-            <span class="etiqueta">Llegada</span>
-            <input
-              type="date"
-              [(ngModel)]="fechaLlegada"
-              [attr.min]="hoy"
-              (ngModelChange)="onLlegadaChange()">
-          </label>
-
-          <label class="celda">
-            <span class="etiqueta">Salida</span>
-            <input
-              type="date"
-              [(ngModel)]="fechaSalida"
-              [attr.min]="fechaLlegada || hoy"
-              (ngModelChange)="onSalidaChange()">
-          </label>
-
-          <label class="celda ancha">
-            <span class="etiqueta">Huéspedes</span>
-            <select [(ngModel)]="numeroHuespedes" (ngModelChange)="calcularCotizacion()">
-              @for (n of opcionesHuespedes; track n) {
-                <option [ngValue]="n">{{ n }} {{ n === 1 ? 'huésped' : 'huéspedes' }}</option>
-              }
-            </select>
-          </label>
-        </div>
-
-        @if (errorFormulario) {
-          <p class="alerta" role="alert">
-            <app-icon-component name="error_outline" size="18px" color="#B3261E"></app-icon-component>
-            <span>{{ errorFormulario }}</span>
-          </p>
-        }
-
-        @if (confirmando) {
-          <div class="datos-huesped">
-            <label class="campo">
-              <span class="etiqueta">Nombre completo</span>
-              <input
-                type="text"
-                class="texto"
-                autocomplete="name"
-                placeholder="Tu nombre"
-                [(ngModel)]="nombreHuesped">
-            </label>
-
-            <label class="campo">
-              <span class="etiqueta">Correo electrónico</span>
-              <input
-                type="email"
-                class="texto"
-                autocomplete="email"
-                placeholder="tu@correo.com"
-                [(ngModel)]="correoHuesped">
-            </label>
-          </div>
-
-          <app-button
-            label="Confirmar reserva"
-            variant="accent"
-            [fullWidth]="true"
-            (clicked)="reservar()">
-          </app-button>
-
-          <app-button
-            label="Cancelar"
-            variant="outline"
-            [fullWidth]="true"
-            (clicked)="cancelarReserva()">
-          </app-button>
-        } @else {
-          <app-button
-            label="Reservar"
-            variant="accent"
-            [fullWidth]="true"
-            [disabled]="!cotizacion"
-            (clicked)="iniciarReserva()">
-          </app-button>
-        }
-
-        @if (cotizacion) {
-          <p class="nota">Reserva simulada: no se realizará ningún cobro.</p>
-
-          <dl class="desglose">
-            <div class="linea">
-              <dt>{{ formatMoney(cotizacion.precioNoche) }} × {{ cotizacion.numeroNoches }} {{ cotizacion.numeroNoches === 1 ? 'noche' : 'noches' }}</dt>
-              <dd>{{ formatMoney(cotizacion.subtotal) }}</dd>
-            </div>
-            <div class="linea">
-              <dt>Tarifa de limpieza</dt>
-              <dd>{{ formatMoney(cotizacion.tarifaLimpieza) }}</dd>
-            </div>
-            <div class="linea">
-              <dt>Tarifa de servicio (10 %)</dt>
-              <dd>{{ formatMoney(cotizacion.tarifaServicio) }}</dd>
-            </div>
-            <div class="linea total">
-              <dt>Total</dt>
-              <dd>{{ formatMoney(cotizacion.total) }}</dd>
-            </div>
-          </dl>
-        } @else {
-          <p class="nota">Selecciona tus fechas para ver el total de la estancia.</p>
-        }
-      </aside>
+      <app-booking-card
+        [precioNoche]="alojamiento.precioNoche"
+        [hoy]="hoy"
+        [fechaLlegada]="fechaLlegada"
+        [fechaSalida]="fechaSalida"
+        [numeroHuespedes]="numeroHuespedes"
+        [opcionesHuespedes]="opcionesHuespedes"
+        [nombreHuesped]="nombreHuesped"
+        [correoHuesped]="correoHuesped"
+        [cotizacion]="cotizacion"
+        [errorFormulario]="errorFormulario"
+        [confirmando]="confirmando"
+        (fechaLlegadaChange)="onLlegadaChange($event)"
+        (fechaSalidaChange)="onSalidaChange($event)"
+        (numeroHuespedesChange)="onHuespedesChange($event)"
+        (nombreHuespedChange)="onNombreChange($event)"
+        (correoHuespedChange)="onCorreoChange($event)"
+        (iniciarReserva)="iniciarReserva()"
+        (confirmarReserva)="reservar()"
+        (cancelarReserva)="cancelarReserva()">
+      </app-booking-card>
     </div>
 
-    <!-- Visor de fotos a pantalla completa -->
     @if (visorAbierto) {
-      <div class="visor" role="dialog" aria-modal="true" aria-label="Galería de fotos" (click)="cerrarVisor()">
-        <button type="button" class="visor-cerrar" aria-label="Cerrar galería" (click)="cerrarVisor()">
-          <app-icon-component name="close" size="26px" color="#FFFFFF"></app-icon-component>
-        </button>
-
-        @if (imagenes.length > 1) {
-          <button type="button" class="visor-nav anterior" aria-label="Foto anterior" (click)="anterior($event)">
-            <app-icon-component name="chevron_left" size="32px" color="#FFFFFF"></app-icon-component>
-          </button>
-        }
-
-        <img
-          class="visor-imagen"
-          [src]="imagenes[visorIndice]"
-          [alt]="alojamiento.nombre + ' - foto ' + (visorIndice + 1)"
-          (click)="$event.stopPropagation()"
-          (error)="onImagenError($event)">
-
-        @if (imagenes.length > 1) {
-          <button type="button" class="visor-nav siguiente" aria-label="Foto siguiente" (click)="siguiente($event)">
-            <app-icon-component name="chevron_right" size="32px" color="#FFFFFF"></app-icon-component>
-          </button>
-        }
-
-        <p class="visor-contador">{{ visorIndice + 1 }} / {{ imagenes.length }}</p>
-      </div>
+      <app-photo-viewer
+        [imagenes]="imagenes"
+        [indice]="visorIndice"
+        [alt]="alojamiento.nombre"
+        (cerrar)="cerrarVisor()">
+      </app-photo-viewer>
     }
   }
 </section>

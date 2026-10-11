@@ -6,7 +6,6 @@ import { routes } from './app.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    // scrollPositionRestoration: al cambiar de página (Catálogo -> Detalle) se vuelve al inicio.
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
     provideHttpClient()
   ]

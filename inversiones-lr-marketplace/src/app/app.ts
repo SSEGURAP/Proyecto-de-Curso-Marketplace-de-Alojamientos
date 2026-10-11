@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { Header } from './components/organisms/header/header';
 import { Footer } from './components/organisms/footer/footer';
@@ -12,13 +12,26 @@ import { ParametrosBusqueda } from './models/alojamiento.model';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
+
+  ciudades: string[] = [];
+
   constructor(
     private router: Router,
-    private alojamientoService: AlojamientoService
+    private alojamientoService: AlojamientoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  /** Búsqueda lanzada desde la barra del Header -> catálogo con query params. */
+  ngOnInit(): void {
+    this.alojamientoService.getCiudades().subscribe({
+      next: ciudades => {
+        this.ciudades = ciudades;
+        this.cdr.markForCheck();
+      },
+      error: err => console.error('No se pudieron cargar las ciudades del buscador', err)
+    });
+  }
+
   onSearch(busqueda: ParametrosBusqueda): void {
     this.router.navigate(['/alojamientos'], {
       queryParams: this.alojamientoService.construirQueryParams(busqueda)

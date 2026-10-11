@@ -34,7 +34,6 @@ export class AlojamientoService {
     );
 
   getAlojamientos(): Observable<Alojamiento[]> {
-    // Regla de negocio: nunca se exponen alojamientos inactivos (5 de 6 en el JSON).
     return this.data$.pipe(
       map(data => data.alojamientos.filter(a => a.activo === true && a.precioNoche > 0))
     );
@@ -78,9 +77,6 @@ export class AlojamientoService {
     );
   }
 
-  // ---------- Parámetros de búsqueda (URL) ----------
-
-  /** ParametrosBusqueda -> query params. Los valores vacíos se omiten de la URL. */
   construirQueryParams(busqueda: Partial<ParametrosBusqueda>): Params {
     return {
       ciudad: busqueda.ciudad || null,
@@ -90,7 +86,6 @@ export class AlojamientoService {
     };
   }
 
-  /** Query params -> ParametrosBusqueda (con valores por defecto seguros). */
   leerQueryParams(params: ParamMap): ParametrosBusqueda {
     const huespedes = Number(params.get('huespedes'));
     return {
@@ -100,8 +95,6 @@ export class AlojamientoService {
       huespedes: Number.isInteger(huespedes) && huespedes > 0 ? huespedes : 1
     };
   }
-
-  // ---------- Cotización y reservas ----------
 
   calcularCotizacion(
     alojamiento: Alojamiento,

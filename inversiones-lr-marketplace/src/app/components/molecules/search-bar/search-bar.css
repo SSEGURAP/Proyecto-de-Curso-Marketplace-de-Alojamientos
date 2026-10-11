@@ -30,23 +30,15 @@
 .fecha { flex: 1.15 1 0; }
 .huespedes { flex: 0.9 1 0; }
 
-.field select,
-.field input {
-  width: 100%;
-  min-width: 0;
-  padding: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
+.field {
   font-size: 13px;
   color: #1A1A1A;
-  text-overflow: ellipsis;
-  cursor: pointer;
 }
 
-.field input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none;
+.field app-select,
+.field app-input {
+  width: 100%;
+  min-width: 0;
 }
 
 .field:focus-within {

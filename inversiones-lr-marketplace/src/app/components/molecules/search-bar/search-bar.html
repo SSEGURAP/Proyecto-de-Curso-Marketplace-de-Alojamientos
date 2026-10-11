@@ -2,59 +2,59 @@
 
   <label class="field ciudad">
     <app-icon-component name="place" size="18px" color="#899199"></app-icon-component>
-    <select
-      aria-label="Ciudad"
-      [(ngModel)]="ciudad"
-      (ngModelChange)="onCampoChange()"
+    <app-select
+      variant="plain"
+      ariaLabel="Ciudad"
+      placeholder="Todas las ciudades"
+      [options]="opcionesCiudad"
+      [value]="ciudad"
+      (valueChange)="onCiudadChange($event)"
       (keydown.enter)="onSearchClick()">
-      <option value="">Todas las ciudades</option>
-      @for (c of ciudades; track c) {
-        <option [value]="c">{{ c }}</option>
-      }
-    </select>
+    </app-select>
   </label>
 
   <div class="divider"></div>
 
   <label class="field fecha">
     <app-icon-component name="calendar_today" size="18px" color="#899199"></app-icon-component>
-    <input
+    <app-input
       type="date"
-      aria-label="Fecha de llegada"
-      [(ngModel)]="llegada"
-      [attr.min]="hoy"
-      (ngModelChange)="onLlegadaChange()"
+      ariaLabel="Fecha de llegada"
+      [min]="hoy"
+      [value]="llegada"
+      (valueChange)="onLlegadaChange($event)"
       (click)="$any($event.target).showPicker?.()"
       (keydown.enter)="onSearchClick()">
+    </app-input>
   </label>
 
   <div class="divider"></div>
 
   <label class="field fecha">
     <app-icon-component name="event" size="18px" color="#899199"></app-icon-component>
-    <input
+    <app-input
       type="date"
-      aria-label="Fecha de salida"
-      [(ngModel)]="salida"
-      [attr.min]="llegada || hoy"
-      (ngModelChange)="onCampoChange()"
+      ariaLabel="Fecha de salida"
+      [min]="llegada || hoy"
+      [value]="salida"
+      (valueChange)="onSalidaChange($event)"
       (click)="$any($event.target).showPicker?.()"
       (keydown.enter)="onSearchClick()">
+    </app-input>
   </label>
 
   <div class="divider"></div>
 
   <label class="field huespedes">
     <app-icon-component name="person" size="18px" color="#899199"></app-icon-component>
-    <select
-      aria-label="Número de huéspedes"
-      [(ngModel)]="huespedes"
-      (ngModelChange)="onCampoChange()"
+    <app-select
+      variant="plain"
+      ariaLabel="Número de huéspedes"
+      [options]="opcionesHuespedes"
+      [value]="huespedes"
+      (valueChange)="onHuespedesChange($event)"
       (keydown.enter)="onSearchClick()">
-      @for (n of opcionesHuespedes; track n) {
-        <option [ngValue]="n">{{ n }} {{ n === 1 ? 'huésped' : 'huéspedes' }}</option>
-      }
-    </select>
+    </app-select>
   </label>
 
   <button class="search-button" type="button" aria-label="Buscar alojamientos" (click)="onSearchClick()">

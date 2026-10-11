@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { OpcionSelect } from '../../../models/alojamiento.model';
 
 @Component({
   imports: [FormsModule],
@@ -8,12 +9,14 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './select.html',
 })
 export class Select {
-  @Input() options: string[] = [];
-  @Input() placeholder: string = 'Seleccione una opción';
-  @Input() value: string = '';
-  @Output() valueChange = new EventEmitter<string>();
+  @Input() options: OpcionSelect[] = [];
+  @Input() placeholder: string = '';
+  @Input() value: string | number = '';
+  @Input() variant: 'filled' | 'plain' = 'filled';
+  @Input() ariaLabel: string = '';
+  @Output() valueChange = new EventEmitter<string | number>();
 
-  onHandleChange(value: string): void {
+  onHandleChange(value: string | number): void {
     this.value = value;
     this.valueChange.emit(value);
   }

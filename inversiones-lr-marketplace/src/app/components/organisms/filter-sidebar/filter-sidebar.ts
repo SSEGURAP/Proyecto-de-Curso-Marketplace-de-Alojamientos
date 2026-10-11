@@ -19,11 +19,6 @@ export class FilterSidebar implements OnChanges {
   @Input() tipos: string[] = [];
   @Input() precioLimite: number = 1000000;
 
-  /**
-   * Búsqueda que llega desde el Header o el Hero (query params).
-   * El catálogo entrega un objeto NUEVO en cada cambio de URL, así que ngOnChanges
-   * se dispara siempre, incluso si se repite la misma ciudad.
-   */
   @Input() busquedaInicial: ParametrosBusqueda | null = null;
 
   @Output() filtersChange = new EventEmitter<FiltroAlojamiento>();
