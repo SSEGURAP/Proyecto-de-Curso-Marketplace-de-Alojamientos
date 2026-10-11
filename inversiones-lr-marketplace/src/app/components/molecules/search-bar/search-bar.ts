@@ -1,22 +1,21 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { IconComponent } from '../../atoms/icon/icon';
-import { ParametrosBusqueda } from '../../../models/alojamiento.model';
+import { Select } from '../../atoms/select/select';
+import { InputComponent } from '../../atoms/input/input';
+import { OpcionSelect, ParametrosBusqueda } from '../../../models/alojamiento.model';
 import { obtenerHoyLocal } from '../../../utils/fecha.util';
 
 @Component({
   selector: 'app-search-bar',
   standalone: true,
-  imports: [FormsModule, IconComponent],
+  imports: [IconComponent, Select, InputComponent],
   templateUrl: './search-bar.html',
   styleUrl: './search-bar.css',
 })
-export class SearchBar {
+export class SearchBar implements OnChanges {
 
-  /** Ciudades disponibles (las provee el organismo Header desde el servicio). */
   @Input() ciudades: string[] = [];
 
-  /** Emite los mismos datos que SearchBarHero: ciudad, fechas y huéspedes. */
   @Output() search = new EventEmitter<ParametrosBusqueda>();
 
   ciudad: string = '';
@@ -25,18 +24,37 @@ export class SearchBar {
   huespedes: number = 1;
   error: string = '';
 
-  readonly opcionesHuespedes: number[] = Array.from({ length: 10 }, (_, i) => i + 1);
+  opcionesCiudad: OpcionSelect[] = [];
+  readonly opcionesHuespedes: OpcionSelect[] = Array.from({ length: 10 }, (_, i) => ({
+    valor: i + 1,
+    texto: (i + 1) + (i === 0 ? ' huésped' : ' huéspedes')
+  }));
   readonly hoy: string = obtenerHoyLocal();
 
-  onCampoChange(): void {
+  ngOnChanges(): void {
+    this.opcionesCiudad = this.ciudades.map(ciudad => ({ valor: ciudad, texto: ciudad }));
+  }
+
+  onCiudadChange(valor: string | number): void {
+    this.ciudad = String(valor);
     this.error = '';
   }
 
-  onLlegadaChange(): void {
-    // Si la salida quedó antes (o igual) que la nueva llegada, se limpia.
+  onLlegadaChange(valor: string): void {
+    this.llegada = valor;
     if (this.llegada && this.salida && this.salida <= this.llegada) {
       this.salida = '';
     }
+    this.error = '';
+  }
+
+  onSalidaChange(valor: string): void {
+    this.salida = valor;
+    this.error = '';
+  }
+
+  onHuespedesChange(valor: string | number): void {
+    this.huespedes = Number(valor);
     this.error = '';
   }
 

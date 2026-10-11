@@ -30,7 +30,6 @@
   opacity: 0.9;
 }
 
-/* La barra ahora tiene 4 campos (ciudad, llegada, salida, huéspedes): necesita más ancho */
 .search-section {
   flex: 1;
   display: flex;
@@ -52,7 +51,6 @@
   font-weight: 500;
 }
 
-/* Por debajo de 1100px la barra pasa a una segunda fila a todo el ancho */
 @media (max-width: 1100px) {
   .header {
     padding: 12px 0;

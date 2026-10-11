@@ -1,0 +1,83 @@
+:host {
+  display: block;
+}
+
+.bloque {
+  padding: 28px 0;
+}
+
+.subtitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.resenas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 40px;
+}
+
+.resena-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--navy);
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.avatar.pequeno {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+  background-color: var(--gold);
+  color: var(--ink);
+}
+
+.resena-autor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.estrellas {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #B58500;
+}
+
+.resena-texto {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.sin-resenas {
+  margin: 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+@media (max-width: 700px) {
+  .resenas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

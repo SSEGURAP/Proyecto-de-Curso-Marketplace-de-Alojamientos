@@ -43,29 +43,15 @@
   padding: 0 12px;
 }
 
-/* Controles nativos sin borde: heredan el aspecto del contenedor */
-.field select,
-.field input {
+.field app-select,
+.field app-input {
   width: 100%;
   min-width: 0;
-  padding: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: 12px;
-  color: var(--color-text, #1A1A1A);
-  text-overflow: ellipsis;
-  cursor: pointer;
 }
 
-.dates input {
+.dates app-input {
   flex: 1 1 0;
   width: auto;
-}
-
-.field input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none;
 }
 
 .field:focus-within {
