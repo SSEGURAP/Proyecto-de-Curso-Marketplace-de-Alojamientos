@@ -3,5 +3,7 @@
   [placeholder]="placeholder"
   [value]="value"
   [disabled]="disabled"
+  [attr.min]="min || null"
+  [attr.aria-label]="ariaLabel || null"
   (input)="onInput($event)"
 />

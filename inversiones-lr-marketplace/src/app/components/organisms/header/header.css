@@ -1,6 +1,6 @@
 .header {
   width: 100%;
-  height: 92px;
+  min-height: 92px;
   background-color: #032C70;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px;
@@ -23,13 +23,19 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  transition: opacity 0.2s ease;
+}
+
+.logo-section:hover {
+  opacity: 0.9;
 }
 
 .search-section {
   flex: 1;
   display: flex;
   justify-content: center;
-  max-width: 480px;
+  max-width: 660px;
+  min-width: 0;
 }
 
 .actions-section {
@@ -45,11 +51,29 @@
   font-weight: 500;
 }
 
-.logo-section {
-  cursor: pointer;
-  transition: opacity 0.2s ease;
+@media (max-width: 1100px) {
+  .header {
+    padding: 12px 0;
+  }
+
+  .header-content {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+
+  .search-section {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
 }
 
-.logo-section:hover {
-  opacity: 0.9;
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 16px;
+  }
+
+  .actions-section {
+    gap: 16px;
+  }
 }

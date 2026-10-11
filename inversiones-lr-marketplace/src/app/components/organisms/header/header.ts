@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchBar } from '../../molecules/search-bar/search-bar';
 import { Logo } from '../../atoms/logo/logo';
 import { LinkComponent } from '../../atoms/link/link';
+import { ParametrosBusqueda } from '../../../models/alojamiento.model';
 
 @Component({
   selector: 'app-header',
@@ -13,24 +14,14 @@ import { LinkComponent } from '../../atoms/link/link';
 })
 export class Header {
 
-  destination = '';
-  checkIn = '';
-  checkOut = '';
+  @Input() ciudades: string[] = [];
 
-  @Output() search = new EventEmitter<{
-    destination: string;
-    checkIn: string;
-    checkOut: string;
-  }>();
+  @Output() search = new EventEmitter<ParametrosBusqueda>();
 
   constructor(private router: Router) {}
 
-  onSearch(): void {
-    this.search.emit({
-      destination: this.destination,
-      checkIn: this.checkIn,
-      checkOut: this.checkOut
-    });
+  onSearch(busqueda: ParametrosBusqueda): void {
+    this.search.emit(busqueda);
   }
 
   irAHome(): void {

@@ -1,6 +1,9 @@
 <section class="catalog">
-  <div class="header">
+    <div class="header">
     <app-label text="Alojamientos" variant="title"></app-label>
+    @if (resumenBusqueda) {
+      <p class="resumen-busqueda">{{ resumenBusqueda }}</p>
+    }
   </div>
 
   <div class="content">
@@ -8,6 +11,7 @@
       [ciudades]="ciudades"
       [tipos]="tipos"
       [precioLimite]="precioLimite"
+      [busquedaInicial]="busqueda"
       (filtersChange)="onFiltersChange($event)">
     </app-filter-sidebar>
 

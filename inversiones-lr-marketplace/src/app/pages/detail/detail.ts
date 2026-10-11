@@ -1,28 +1,22 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { Subject, catchError, forkJoin, of, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
 import { Button } from '../../components/atoms/button/button';
-import { Photo } from '../../components/atoms/photo/photo';
-import { ServiceList } from '../../components/molecules/service-list/service-list';
-import { PriceTag } from '../../components/molecules/price-tag/price-tag';
-import { CounterField } from '../../components/molecules/counter-field/counter-field';
+import { IconComponent } from '../../components/atoms/icon/icon';
+import { DetailGallery } from '../../components/organisms/detail-gallery/detail-gallery';
+import { DetailInfo } from '../../components/organisms/detail-info/detail-info';
+import { ReviewList } from '../../components/organisms/review-list/review-list';
+import { BookingCard } from '../../components/organisms/booking-card/booking-card';
+import { PhotoViewer } from '../../components/organisms/photo-viewer/photo-viewer';
 import { AlojamientoService } from '../../services/alojamiento';
 import { Alojamiento, Resena, Cotizacion, Reserva } from '../../models/alojamiento.model';
+import { obtenerHoyLocal } from '../../utils/fecha.util';
 
 @Component({
   selector: 'app-detail-page',
   standalone: true,
-  imports: [
-    FormsModule,
-    Label,
-    Button,
-    Photo,
-    ServiceList,
-    PriceTag,
-    CounterField
-  ],
+  imports: [Label, Button, IconComponent, DetailGallery, DetailInfo, ReviewList, BookingCard, PhotoViewer],
   templateUrl: './detail.html',
   styleUrl: './detail.css',
 })
@@ -35,13 +29,20 @@ export class DetailPage implements OnInit, OnDestroy {
   errorFormulario: string = '';
   mensajeExito: string = '';
 
+  imagenes: string[] = [];
+  opcionesHuespedes: number[] = [];
+
   fechaLlegada: string = '';
   fechaSalida: string = '';
   numeroHuespedes: number = 1;
   nombreHuesped: string = '';
   correoHuesped: string = '';
+  confirmando: boolean = false;
 
-  hoy: string = this.obtenerHoyLocal();
+  visorAbierto: boolean = false;
+  visorIndice: number = 0;
+
+  readonly hoy: string = obtenerHoyLocal();
 
   private destroy$ = new Subject<void>();
 
@@ -62,6 +63,8 @@ export class DetailPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.fechaLlegada = this.route.snapshot.queryParamMap.get('llegada') ?? '';
+    this.fechaSalida = this.route.snapshot.queryParamMap.get('salida') ?? '';
     this.cargarAlojamiento(id);
   }
 
@@ -87,7 +90,8 @@ export class DetailPage implements OnInit, OnDestroy {
           } else {
             this.alojamiento = alojamiento;
             this.resenas = resenas;
-            this.numeroHuespedes = 1;
+            this.prepararVista(alojamiento);
+            this.aplicarBusquedaInicial(alojamiento);
           }
           this.cargando = false;
           this.cdr.markForCheck();
@@ -101,33 +105,34 @@ export class DetailPage implements OnInit, OnDestroy {
       });
   }
 
-  calcularCotizacion(): void {
-    this.errorFormulario = '';
+  private prepararVista(a: Alojamiento): void {
+    this.imagenes = a.imagenes && a.imagenes.length > 0 ? a.imagenes : [a.imagenPrincipal];
+    this.opcionesHuespedes = Array.from({ length: a.capacidad }, (_, i) => i + 1);
+  }
 
-    if (!this.alojamiento || !this.fechaLlegada || !this.fechaSalida) {
-      this.cotizacion = null;
-      return;
-    }
+  private aplicarBusquedaInicial(a: Alojamiento): void {
+    const busqueda = this.alojamientoService.leerQueryParams(this.route.snapshot.queryParamMap);
 
-    if (this.fechaLlegada < this.hoy) {
-      this.cotizacion = null;
-      this.errorFormulario = 'La fecha de llegada no puede ser anterior a la fecha actual.';
-      return;
-    }
+    this.fechaLlegada = busqueda.llegada;
+    this.fechaSalida = busqueda.salida;
+    this.numeroHuespedes = Math.min(Math.max(busqueda.huespedes, 1), a.capacidad);
 
-    this.cotizacion = this.alojamientoService.calcularCotizacion(
-      this.alojamiento,
-      this.fechaLlegada,
-      this.fechaSalida,
-      this.numeroHuespedes
-    );
-
-    if (!this.cotizacion) {
-      this.errorFormulario = 'La fecha de salida debe ser posterior a la fecha de llegada.';
+    if (this.fechaLlegada && this.fechaSalida) {
+      this.calcularCotizacion();
     }
   }
 
-  onFechasChange(): void {
+  onLlegadaChange(valor: string): void {
+    this.fechaLlegada = valor;
+    this.mensajeExito = '';
+    if (this.fechaLlegada && this.fechaSalida && this.fechaSalida <= this.fechaLlegada) {
+      this.fechaSalida = '';
+    }
+    this.calcularCotizacion();
+  }
+
+  onSalidaChange(valor: string): void {
+    this.fechaSalida = valor;
     this.mensajeExito = '';
     this.calcularCotizacion();
   }
@@ -135,6 +140,66 @@ export class DetailPage implements OnInit, OnDestroy {
   onHuespedesChange(valor: number): void {
     this.numeroHuespedes = valor;
     this.calcularCotizacion();
+  }
+
+  onNombreChange(valor: string): void {
+    this.nombreHuesped = valor;
+  }
+
+  onCorreoChange(valor: string): void {
+    this.correoHuesped = valor;
+  }
+
+  calcularCotizacion(): void {
+    this.errorFormulario = '';
+
+    if (!this.alojamiento || !this.fechaLlegada || !this.fechaSalida) {
+      this.invalidarCotizacion('');
+      return;
+    }
+
+    if (this.fechaLlegada < this.hoy) {
+      this.invalidarCotizacion('La fecha de llegada no puede ser anterior a la fecha actual.');
+      return;
+    }
+
+    if (this.numeroHuespedes < 1 || this.numeroHuespedes > this.alojamiento.capacidad) {
+      this.invalidarCotizacion(`El número de huéspedes debe estar entre 1 y ${this.alojamiento.capacidad}.`);
+      return;
+    }
+
+    const cotizacion = this.alojamientoService.calcularCotizacion(
+      this.alojamiento,
+      this.fechaLlegada,
+      this.fechaSalida,
+      this.numeroHuespedes
+    );
+
+    if (!cotizacion) {
+      this.invalidarCotizacion('La fecha de salida debe ser posterior a la fecha de llegada.');
+      return;
+    }
+
+    this.cotizacion = cotizacion;
+  }
+
+  private invalidarCotizacion(mensaje: string): void {
+    this.cotizacion = null;
+    this.confirmando = false;
+    this.errorFormulario = mensaje;
+  }
+
+  iniciarReserva(): void {
+    if (!this.cotizacion) {
+      return;
+    }
+    this.errorFormulario = '';
+    this.confirmando = true;
+  }
+
+  cancelarReserva(): void {
+    this.errorFormulario = '';
+    this.confirmando = false;
   }
 
   reservar(): void {
@@ -182,6 +247,9 @@ export class DetailPage implements OnInit, OnDestroy {
     this.nombreHuesped = '';
     this.correoHuesped = '';
     this.cotizacion = null;
+    this.confirmando = false;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   volver(): void {
@@ -192,18 +260,27 @@ export class DetailPage implements OnInit, OnDestroy {
     this.router.navigate(['/reservas']);
   }
 
-  formatMoney(valor: number): string {
-    return '$' + valor.toLocaleString('es-CO') + ' COP';
+  irAResenas(): void {
+    document.getElementById('resenas')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  abrirVisor(indice: number): void {
+    this.visorIndice = indice;
+    this.visorAbierto = true;
+  }
+
+  cerrarVisor(): void {
+    this.visorAbierto = false;
+  }
+
+  getUbicacion(alojamiento: Alojamiento): string {
+    if (alojamiento.ubicacion.includes(alojamiento.ciudad)) {
+      return alojamiento.ubicacion;
+    }
+    return alojamiento.ubicacion + ', ' + alojamiento.ciudad;
   }
 
   private correoValido(correo: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim());
-  }
-
-  private obtenerHoyLocal(): string {
-    const d = new Date();
-    const mes = String(d.getMonth() + 1).padStart(2, '0');
-    const dia = String(d.getDate()).padStart(2, '0');
-    return `${d.getFullYear()}-${mes}-${dia}`;
   }
 }
