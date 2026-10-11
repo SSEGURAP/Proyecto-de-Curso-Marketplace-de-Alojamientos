@@ -1,0 +1,116 @@
+<aside class="cotizador" aria-label="Cotización y reserva">
+
+  <div class="precio-fila">
+    <span class="precio">{{ formatNumero(precioNoche) }}</span>
+    <span class="unidad">COP / noche</span>
+  </div>
+
+  <div class="selector">
+    <label class="celda">
+      <span class="etiqueta">Llegada</span>
+      <input
+        type="date"
+        [ngModel]="fechaLlegada"
+        [attr.min]="hoy"
+        (ngModelChange)="onLlegadaChange($event)">
+    </label>
+
+    <label class="celda">
+      <span class="etiqueta">Salida</span>
+      <input
+        type="date"
+        [ngModel]="fechaSalida"
+        [attr.min]="fechaLlegada || hoy"
+        (ngModelChange)="onSalidaChange($event)">
+    </label>
+
+    <label class="celda ancha">
+      <span class="etiqueta">Huéspedes</span>
+      <select [ngModel]="numeroHuespedes" (ngModelChange)="onHuespedesChange($event)">
+        @for (n of opcionesHuespedes; track n) {
+          <option [ngValue]="n">{{ n }} {{ n === 1 ? 'huésped' : 'huéspedes' }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  @if (errorFormulario) {
+    <p class="alerta" role="alert">
+      <app-icon-component name="error_outline" size="18px" color="#B3261E"></app-icon-component>
+      <span>{{ errorFormulario }}</span>
+    </p>
+  }
+
+  @if (confirmando) {
+    <div class="datos-huesped">
+      <label class="campo">
+        <span class="etiqueta">Nombre completo</span>
+        <input
+          type="text"
+          class="texto"
+          autocomplete="name"
+          placeholder="Tu nombre"
+          [ngModel]="nombreHuesped"
+          (ngModelChange)="onNombreChange($event)">
+      </label>
+
+      <label class="campo">
+        <span class="etiqueta">Correo electrónico</span>
+        <input
+          type="email"
+          class="texto"
+          autocomplete="email"
+          placeholder="tu@correo.com"
+          [ngModel]="correoHuesped"
+          (ngModelChange)="onCorreoChange($event)">
+      </label>
+    </div>
+
+    <app-button
+      label="Confirmar reserva"
+      variant="accent"
+      [fullWidth]="true"
+      (clicked)="onConfirmar()">
+    </app-button>
+
+    <app-button
+      label="Cancelar"
+      variant="outline"
+      [fullWidth]="true"
+      (clicked)="onCancelar()">
+    </app-button>
+  } @else {
+    <app-button
+      label="Reservar"
+      variant="accent"
+      [fullWidth]="true"
+      [disabled]="!cotizacion"
+      (clicked)="onReservar()">
+    </app-button>
+  }
+
+  @if (cotizacion) {
+    <p class="nota">Reserva simulada: no se realizará ningún cobro.</p>
+
+    <dl class="desglose">
+      <div class="linea">
+        <dt>{{ formatMoney(cotizacion.precioNoche) }} × {{ cotizacion.numeroNoches }} {{ cotizacion.numeroNoches === 1 ? 'noche' : 'noches' }}</dt>
+        <dd>{{ formatMoney(cotizacion.subtotal) }}</dd>
+      </div>
+      <div class="linea">
+        <dt>Tarifa de limpieza</dt>
+        <dd>{{ formatMoney(cotizacion.tarifaLimpieza) }}</dd>
+      </div>
+      <div class="linea">
+        <dt>Tarifa de servicio (10 %)</dt>
+        <dd>{{ formatMoney(cotizacion.tarifaServicio) }}</dd>
+      </div>
+      <div class="linea total">
+        <dt>Total</dt>
+        <dd>{{ formatMoney(cotizacion.total) }}</dd>
+      </div>
+    </dl>
+  } @else {
+    <p class="nota">Selecciona tus fechas para ver el total de la estancia.</p>
+  }
+</aside>

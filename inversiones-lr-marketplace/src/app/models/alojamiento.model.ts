@@ -66,3 +66,15 @@ export interface FiltroAlojamiento {
   tipos?: string[];
   precioMaximo?: number;
 }
+
+export interface ParametrosBusqueda {
+  ciudad: string;
+  llegada: string;
+  salida: string;
+  huespedes: number;
+}
+
+export interface OpcionSelect {
+  valor: string | number;
+  texto: string;
+}

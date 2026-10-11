@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SearchBarHero } from '../../molecules/search-bar-hero/search-bar-hero';
+import { ParametrosBusqueda } from '../../../models/alojamiento.model';
 
 @Component({
   selector: 'app-hero',
@@ -10,21 +11,11 @@ import { SearchBarHero } from '../../molecules/search-bar-hero/search-bar-hero';
 })
 export class Hero {
 
-  destination = '';
-  checkIn = '';
-  checkOut = '';
+  @Input() ciudades: string[] = [];
 
-  @Output() search = new EventEmitter<{
-    destination: string;
-    checkIn: string;
-    checkOut: string;
-  }>();
+  @Output() search = new EventEmitter<ParametrosBusqueda>();
 
-  onSearch(): void {
-    this.search.emit({
-      destination: this.destination,
-      checkIn: this.checkIn,
-      checkOut: this.checkOut
-    });
+  onSearch(busqueda: ParametrosBusqueda): void {
+    this.search.emit(busqueda);
   }
 }

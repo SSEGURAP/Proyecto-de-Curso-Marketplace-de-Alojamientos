@@ -1,0 +1,27 @@
+<section class="bloque" id="resenas">
+  <h2 class="subtitulo">
+    <app-icon-component name="star" size="22px" color="#FEBB02"></app-icon-component>
+    {{ calificacion }} · {{ resenas.length }} {{ resenas.length === 1 ? 'reseña' : 'reseñas' }}
+  </h2>
+
+  @if (resenas.length > 0) {
+    <div class="resenas">
+      @for (resena of resenas; track resena.id) {
+        <article class="resena">
+          <div class="resena-cabecera">
+            <span class="avatar pequeno" aria-hidden="true">{{ getIniciales(resena.usuario) }}</span>
+            <div class="resena-autor">
+              <strong>{{ resena.usuario }}</strong>
+              <span class="estrellas" [attr.aria-label]="resena.calificacion + ' de 5 estrellas'">
+                {{ getEstrellas(resena.calificacion) }}
+              </span>
+            </div>
+          </div>
+          <p class="resena-texto">{{ resena.comentario }}</p>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="sin-resenas">Este alojamiento aún no tiene reseñas.</p>
+  }
+</section>
