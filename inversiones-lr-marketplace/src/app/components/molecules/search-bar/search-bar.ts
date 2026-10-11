@@ -1,41 +1,86 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { IconComponent } from '../../atoms/icon/icon';
+import { Select } from '../../atoms/select/select';
 import { InputComponent } from '../../atoms/input/input';
+import { OpcionSelect, ParametrosBusqueda } from '../../../models/alojamiento.model';
+import { obtenerHoyLocal } from '../../../utils/fecha.util';
 
 @Component({
-  imports: [IconComponent, InputComponent],   
   selector: 'app-search-bar',
-  styleUrl: './search-bar.css',
+  standalone: true,
+  imports: [IconComponent, Select, InputComponent],
   templateUrl: './search-bar.html',
+  styleUrl: './search-bar.css',
 })
-export class SearchBar {
+export class SearchBar implements OnChanges {
 
-  @Input() destination: string = '';
-  @Input() checkIn: string = '';
-  @Input() checkOut: string = '';
+  @Input() ciudades: string[] = [];
 
-  @Output() destinationChange = new EventEmitter<string>();
-  @Output() checkInChange = new EventEmitter<string>();
-  @Output() checkOutChange = new EventEmitter<string>();
-  @Output() search = new EventEmitter<void>();
+  @Output() search = new EventEmitter<ParametrosBusqueda>();
 
-  onDestinationChange(value: string): void {
-    this.destination = value;
-    this.destinationChange.emit(value);
+  ciudad: string = '';
+  llegada: string = '';
+  salida: string = '';
+  huespedes: number = 1;
+  error: string = '';
+
+  opcionesCiudad: OpcionSelect[] = [];
+  readonly opcionesHuespedes: OpcionSelect[] = Array.from({ length: 10 }, (_, i) => ({
+    valor: i + 1,
+    texto: (i + 1) + (i === 0 ? ' huésped' : ' huéspedes')
+  }));
+  readonly hoy: string = obtenerHoyLocal();
+
+  ngOnChanges(): void {
+    this.opcionesCiudad = this.ciudades.map(ciudad => ({ valor: ciudad, texto: ciudad }));
   }
 
-  onCheckInChange(value: string): void {
-    this.checkIn = value;
-    this.checkInChange.emit(value);
+  onCiudadChange(valor: string | number): void {
+    this.ciudad = String(valor);
+    this.error = '';
   }
 
-  onCheckOutChange(value: string): void {
-    this.checkOut = value;
-    this.checkOutChange.emit(value);
+  onLlegadaChange(valor: string): void {
+    this.llegada = valor;
+    if (this.llegada && this.salida && this.salida <= this.llegada) {
+      this.salida = '';
+    }
+    this.error = '';
+  }
+
+  onSalidaChange(valor: string): void {
+    this.salida = valor;
+    this.error = '';
+  }
+
+  onHuespedesChange(valor: string | number): void {
+    this.huespedes = Number(valor);
+    this.error = '';
   }
 
   onSearchClick(): void {
-    this.search.emit();
+    this.error = this.validar();
+    if (this.error) {
+      return;
+    }
+    this.search.emit({
+      ciudad: this.ciudad,
+      llegada: this.llegada,
+      salida: this.salida,
+      huespedes: this.huespedes
+    });
   }
 
+  private validar(): string {
+    if ((this.llegada && !this.salida) || (!this.llegada && this.salida)) {
+      return 'Selecciona la fecha de llegada y la de salida.';
+    }
+    if (this.llegada && this.llegada < this.hoy) {
+      return 'La llegada no puede ser anterior a hoy.';
+    }
+    if (this.llegada && this.salida && this.salida <= this.llegada) {
+      return 'La salida debe ser posterior a la llegada.';
+    }
+    return '';
+  }
 }

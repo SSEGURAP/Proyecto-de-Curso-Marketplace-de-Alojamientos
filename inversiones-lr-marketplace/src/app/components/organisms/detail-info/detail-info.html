@@ -1,0 +1,55 @@
+<section class="bloque">
+  <h2 class="subtitulo">{{ alojamiento.tipo }} en {{ alojamiento.ciudad }}</h2>
+  <ul class="especificaciones">
+    @for (item of especificaciones; track item.texto) {
+      <li>
+        <app-icon-component [name]="item.icono" size="20px"></app-icon-component>
+        {{ item.texto }}
+      </li>
+    }
+  </ul>
+  <div class="insignias">
+    <app-badge [text]="alojamiento.tipo" variant="chip"></app-badge>
+    <app-badge [text]="alojamiento.ciudad" variant="chip"></app-badge>
+    @if (alojamiento.calificacion >= 4.7) {
+      <app-badge text="Muy bien valorado" variant="chip"></app-badge>
+    }
+  </div>
+</section>
+
+<section class="bloque anfitrion">
+  <div class="avatar" aria-hidden="true">LR</div>
+  <div>
+    <p class="anfitrion-nombre">Anfitrión: Inversiones LR</p>
+    <p class="anfitrion-detalle">Administra alojamientos temporales en toda Colombia</p>
+  </div>
+</section>
+
+<section class="bloque">
+  <h2 class="subtitulo">Sobre este alojamiento</h2>
+  <p class="descripcion">{{ alojamiento.descripcion }}</p>
+</section>
+
+<section class="bloque">
+  <h2 class="subtitulo">Lo que ofrece este lugar</h2>
+  <ul class="servicios">
+    @for (servicio of servicios; track servicio.texto) {
+      <li>
+        <app-icon-component [name]="servicio.icono" size="22px"></app-icon-component>
+        {{ servicio.texto }}
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="bloque">
+  <h2 class="subtitulo">Reglas de la casa</h2>
+  <ul class="reglas">
+    @for (regla of reglas; track regla.texto) {
+      <li>
+        <app-icon-component [name]="regla.icono" size="20px"></app-icon-component>
+        {{ regla.texto }}
+      </li>
+    }
+  </ul>
+</section>

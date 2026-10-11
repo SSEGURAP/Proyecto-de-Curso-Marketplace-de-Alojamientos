@@ -1,4 +1,4 @@
-select{
+select.filled {
     width: 100%;
     padding: var(--spacing-sm) var(--spacing-md);
     background-color: var(--color-surface-muted);
@@ -6,5 +6,20 @@ select{
     border-radius: var(--radius-md);
     font-size: var(--font-size-md);
     color: var(--color-text);
+    cursor: pointer;
+}
+
+select.plain {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-overflow: ellipsis;
     cursor: pointer;
 }
