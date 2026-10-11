@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, catchError, debounceTime, forkJoin, of, switchMap, takeUntil } from 'rxjs';
 import { Label } from '../../components/atoms/label/label';
+import { Button } from '../../components/atoms/button/button';
 import { FilterSidebar } from '../../components/organisms/filter-sidebar/filter-sidebar';
 import { AlojamientoCard } from '../../components/organisms/alojamiento-card/alojamiento-card';
 import { EmptyState } from '../../components/molecules/empty-state/empty-state';
@@ -11,7 +12,7 @@ import { Alojamiento, FiltroAlojamiento, ParametrosBusqueda } from '../../models
 @Component({
   selector: 'app-catalog-page',
   standalone: true,
-  imports: [Label, FilterSidebar, AlojamientoCard, EmptyState],
+  imports: [Label, Button, FilterSidebar, AlojamientoCard, EmptyState],
   templateUrl: './catalog.html',
   styleUrl: './catalog.css',
 })
@@ -124,6 +125,33 @@ export class CatalogPage implements OnInit, OnDestroy {
   private formatFecha(fecha: string): string {
     const d = new Date(fecha + 'T00:00:00');
     return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  private obtenerHoy(): string {
+    const d = new Date();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${d.getFullYear()}-${mes}-${dia}`;
+  }
+
+  private formatFecha(fecha: string): string {
+    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  getTextoFechas(): string {
+    return 'Disponibles del ' + this.formatFecha(this.fechaLlegada) + ' al ' + this.formatFecha(this.fechaSalida);
+  }
+
+  quitarFechas(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { llegada: null, salida: null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   onFiltersChange(filtro: FiltroAlojamiento): void {

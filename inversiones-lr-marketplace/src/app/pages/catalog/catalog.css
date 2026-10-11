@@ -63,3 +63,27 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.aviso {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+}
+
+.aviso.error {
+  color: #b3261e;
+  background-color: #fdecea;
+}
